@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ぼうけんドリル">
+<meta name="theme-color" content="#2C819C">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>ぼうけんドリル 〜まなびの しま〜</title>
+<style>
+:root{
+  --sand:#FBF3E0; --sand2:#F1E3C2; --ink:#4A3B28; --ink-soft:#7A6A50;
+  --jungle:#3E9C63; --jungle-d:#2E7A4C;
+  --ocean:#3AA6C9; --ocean-d:#2C819C; --ocean-deep:#1E6B85;
+  --gold:#F5B841; --gold-d:#D3941F;
+  --coral:#EF6B57; --coral-d:#C94A38;
+  --purple:#8E6BC9; --purple-d:#6E4BA8;
+  --white:#FFFDF7; --lock:#C9BFAC;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Hiragino Maru Gothic ProN','BIZ UDPGothic','Yu Gothic',system-ui,sans-serif;
+  background:var(--sand); color:var(--ink);
+  display:flex; flex-direction:column;
+  user-select:none; -webkit-user-select:none;
+  touch-action:manipulation; overscroll-behavior:none;
+}
+button{font-family:inherit; color:inherit; border:none; background:none; cursor:pointer; touch-action:manipulation}
+
+/* ---------- header ---------- */
+#topbar{
+  padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--ocean-d); color:#fff;
+}
+#topbar h1{font-size:19px; letter-spacing:1px}
+#soundBtn{font-size:22px; width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,.18)}
+
+/* ---------- layout ---------- */
+main{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; position:relative}
+section.screen{min-height:100%; padding-bottom:24px}
+[hidden]{display:none !important}
+
+/* ---------- bottom tabs ---------- */
+#tabs{
+  display:flex; background:var(--white); border-top:2px solid var(--sand2);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#tabs button{
+  flex:1; padding:10px 0 8px; font-size:12px; color:var(--ink-soft);
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+#tabs button .ticon{font-size:24px}
+#tabs button.on{color:var(--ocean-d); font-weight:bold}
+
+/* ---------- map ---------- */
+#scr-map{background:var(--ocean); padding:0}
+#mapWrap{position:relative; margin:14px 10px 20px}
+#island{
+  position:absolute; inset:0 2px;
+  background:var(--sand);
+  border:6px solid #E8D9AE;
+  border-radius:46% 54% 48% 52% / 5% 5% 5% 5%;
+}
+#trail{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+.stageNode{
+  position:absolute; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px; width:120px;
+}
+.stageNode .disc{
+  width:78px; height:78px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:36px;
+  background:var(--white); border:4px solid var(--stagecolor,var(--jungle));
+  box-shadow:0 5px 0 rgba(0,0,0,.15);
+  transition:transform .1s;
+}
+.stageNode:active .disc{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.stageNode .nm{
+  font-size:13px; font-weight:bold; background:var(--white);
+  padding:3px 10px; border-radius:999px; border:2px solid var(--sand2);
+  white-space:nowrap;
+}
+.stageNode .st{font-size:13px; letter-spacing:2px; height:16px; color:var(--gold-d)}
+.stageNode.locked .disc{background:var(--lock); border-color:#A79B85; filter:grayscale(.4)}
+.stageNode.locked .nm{color:var(--ink-soft)}
+.stageNode.current .disc{animation:pulse 1.4s ease-in-out infinite}
+.stageNode.cleared .disc{border-color:var(--gold)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+@media (prefers-reduced-motion:reduce){.stageNode.current .disc{animation:none}}
+
+/* ---------- quiz ---------- */
+#scr-quiz{display:flex; flex-direction:column; padding:14px 16px 24px; max-width:640px; margin:0 auto; width:100%}
+#quizTop{display:flex; align-items:center; gap:12px; margin-bottom:10px}
+#backBtn{font-size:15px; font-weight:bold; color:var(--ink-soft); padding:10px 14px; background:var(--white); border-radius:12px; border:2px solid var(--sand2)}
+#dots{display:flex; gap:6px; flex-wrap:wrap}
+#dots i{width:14px; height:14px; border-radius:50%; background:var(--sand2); border:2px solid #E0D0A8}
+#dots i.ok{background:var(--jungle); border-color:var(--jungle-d)}
+#dots i.ng{background:var(--coral); border-color:var(--coral-d)}
+#dots i.now{background:var(--gold); border-color:var(--gold-d)}
+#qCard{
+  background:var(--white); border:3px solid var(--sand2); border-radius:22px;
+  padding:26px 18px; text-align:center; margin-bottom:16px; min-height:150px;
+  display:flex; flex-direction:column; justify-content:center; gap:8px;
+}
+#qText{font-size:26px; font-weight:bold; line-height:1.5}
+#qText .big{font-size:56px; display:block; margin-top:4px}
+#qSub{font-size:15px; color:var(--ink-soft)}
+#choices{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+#choices.one{grid-template-columns:1fr}
+.chBtn{
+  min-height:72px; font-size:24px; font-weight:bold; border-radius:18px;
+  background:var(--white); border:3px solid var(--ocean);
+  box-shadow:0 5px 0 var(--ocean-d); color:var(--ink); padding:8px;
+}
+.chBtn:active{transform:translateY(4px); box-shadow:0 1px 0 var(--ocean-d)}
+
+/* ---------- tenkey ---------- */
+#pad{display:none; flex-direction:column; gap:10px}
+#pad.show{display:flex}
+#ansBox{
+  background:var(--white); border:3px solid var(--sand2); border-radius:16px;
+  min-height:64px; font-size:38px; font-weight:bold; text-align:center;
+  display:flex; align-items:center; justify-content:center; letter-spacing:4px;
+}
+#keys{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.key{
+  min-height:62px; font-size:26px; font-weight:bold; border-radius:16px;
+  background:var(--white); border:3px solid var(--sand2);
+  box-shadow:0 4px 0 #E0D0A8;
+}
+.key:active{transform:translateY(3px); box-shadow:0 1px 0 #E0D0A8}
+.key.go{background:var(--gold); border-color:var(--gold-d); box-shadow:0 4px 0 var(--gold-d); color:#fff}
+.key.del{font-size:22px; color:var(--ink-soft)}
+
+/* ---------- feedback overlay ---------- */
+#fb{
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+  background:rgba(74,59,40,.35); z-index:50;
+}
+#fb.show{display:flex}
+#fbCard{
+  background:var(--white); border-radius:26px; padding:30px 40px; text-align:center;
+  border:4px solid var(--gold); min-width:240px;
+}
+#fbMark{font-size:74px; line-height:1}
+#fbMsg{font-size:21px; font-weight:bold; margin-top:8px}
+#fbAns{font-size:17px; color:var(--ink-soft); margin-top:6px}
+
+/* ---------- result ---------- */
+#scr-result{display:flex; align-items:center; justify-content:center; padding:20px}
+#resCard{
+  background:var(--white); border:3px solid var(--sand2); border-radius:24px;
+  padding:30px 22px; text-align:center; max-width:460px; width:100%;
+}
+#resStars{font-size:46px; letter-spacing:6px; margin:6px 0}
+#resTitle{font-size:24px; font-weight:bold}
+#resScore{font-size:18px; margin-top:6px}
+#resTreasure{
+  margin-top:16px; padding:14px; border-radius:16px; background:var(--sand);
+  border:2px dashed var(--gold-d); font-size:17px; font-weight:bold;
+}
+#resTreasure .tico{font-size:44px; display:block}
+.bigBtn{
+  display:block; width:100%; margin-top:14px; min-height:60px;
+  font-size:19px; font-weight:bold; border-radius:16px; color:#fff;
+  background:var(--jungle); box-shadow:0 5px 0 var(--jungle-d);
+}
+.bigBtn.alt{background:var(--ocean); box-shadow:0 5px 0 var(--ocean-d)}
+.bigBtn:active{transform:translateY(4px); box-shadow:0 1px 0 var(--jungle-d)}
+
+/* ---------- zukan ---------- */
+#scr-zukan{padding:18px 16px; max-width:640px; margin:0 auto; width:100%}
+#scr-zukan h2, #scr-parent h2{font-size:20px; margin-bottom:4px}
+#zkCount{color:var(--ink-soft); font-size:14px; margin-bottom:14px}
+#zkGrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px}
+.zkCard{
+  background:var(--white); border:3px solid var(--sand2); border-radius:18px;
+  padding:16px 8px; text-align:center;
+}
+.zkCard .zi{font-size:42px}
+.zkCard .zn{font-size:13px; font-weight:bold; margin-top:6px}
+.zkCard.no{opacity:.55}
+.zkCard.yes{border-color:var(--gold)}
+
+/* ---------- parent ---------- */
+#scr-parent{padding:18px 16px; max-width:640px; margin:0 auto; width:100%}
+#pinPad{max-width:300px; margin:20px auto; text-align:center}
+#pinDots{font-size:30px; letter-spacing:10px; min-height:44px; margin-bottom:12px}
+#pinMsg{color:var(--coral-d); font-size:14px; min-height:20px; margin-bottom:6px}
+#dash .cards{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0}
+#dash .card{background:var(--white); border:2px solid var(--sand2); border-radius:14px; padding:12px; text-align:center}
+#dash .card b{font-size:26px; display:block}
+#dash .card span{font-size:12px; color:var(--ink-soft)}
+#week{display:flex; gap:6px; align-items:flex-end; height:80px; margin:8px 0 16px; padding:0 4px}
+#week .bar{flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; color:var(--ink-soft)}
+#week .bar i{width:100%; background:var(--ocean); border-radius:4px 4px 0 0; min-height:2px}
+table{width:100%; border-collapse:collapse; background:var(--white); border-radius:14px; overflow:hidden; font-size:13px}
+th,td{padding:8px 6px; text-align:center; border-bottom:1px solid var(--sand2)}
+th{background:var(--sand2); font-size:12px}
+td.l{text-align:left}
+#resetBtn{margin-top:18px; width:100%; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--coral); color:var(--coral-d); font-weight:bold; font-size:15px}
+.note{font-size:12px; color:var(--ink-soft); margin-top:10px; line-height:1.7}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <h1>🏝️ ぼうけんドリル</h1>
+  <button id="soundBtn" aria-label="おとの せってい">🔊</button>
+</header>
+
+<main>
+  <!-- ぼうけんマップ -->
+  <section class="screen" id="scr-map">
+    <div id="mapWrap">
+      <div id="island"></div>
+      <svg id="trail" aria-hidden="true"></svg>
+    </div>
+  </section>
+
+  <!-- クイズ -->
+  <section class="screen" id="scr-quiz" hidden>
+    <div id="quizTop">
+      <button id="backBtn">← やめる</button>
+      <div id="dots"></div>
+    </div>
+    <div id="qCard">
+      <div id="qText"></div>
+      <div id="qSub"></div>
+    </div>
+    <div id="choices"></div>
+    <div id="pad">
+      <div id="ansBox">&nbsp;</div>
+      <div id="keys"></div>
+    </div>
+  </section>
+
+  <!-- けっか -->
+  <section class="screen" id="scr-result" hidden>
+    <div id="resCard">
+      <div id="resTitle"></div>
+      <div id="resStars"></div>
+      <div id="resScore"></div>
+      <div id="resTreasure" hidden></div>
+      <button class="bigBtn" id="retryBtn">もういちど やる</button>
+      <button class="bigBtn alt" id="mapBtn">マップに もどる</button>
+    </div>
+  </section>
+
+  <!-- ずかん -->
+  <section class="screen" id="scr-zukan" hidden>
+    <h2>💎 たからもの ずかん</h2>
+    <div id="zkCount"></div>
+    <div id="zkGrid"></div>
+  </section>
+
+  <!-- おうちのひと -->
+  <section class="screen" id="scr-parent" hidden>
+    <h2>👨‍👩‍👧 おうちの ひと メニュー</h2>
+    <div id="pinPad">
+      <p style="font-size:14px;color:var(--ink-soft)">PINを いれてね</p>
+      <div id="pinDots"></div>
+      <div id="pinMsg"></div>
+      <div id="keys2" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+    </div>
+    <div id="dash" hidden></div>
+  </section>
+</main>
+
+<nav id="tabs">
+  <button data-scr="map" class="on"><span class="ticon">🗺️</span>ぼうけん</button>
+  <button data-scr="zukan"><span class="ticon">💎</span>ずかん</button>
+  <button data-scr="parent"><span class="ticon">👨‍👩‍👧</span>おうちのひと</button>
+</nav>
+
+<!-- せいかい／ざんねん オーバーレイ -->
+<div id="fb">
+  <div id="fbCard">
+    <div id="fbMark"></div>
+    <div id="fbMsg"></div>
+    <div id="fbAns"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ================= utils ================= */
+const $ = s => document.querySelector(s);
+const rnd = n => Math.floor(Math.random() * n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = rnd(i + 1); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+/* storage: 実運用はlocalStorage、使えない環境ではメモリで代替 */
+const store = {
+  _m: {},
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return this._m[k] ?? null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { this._m[k] = v; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { delete this._m[k]; } }
+};
+
+/* ================= sound (控えめ) ================= */
+let AC = null, soundOn = store.get('bk_sound') !== '0';
+function beep(seq) {
+  if (!soundOn) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    let t = AC.currentTime;
+    seq.forEach(([f, d]) => {
+      const o = AC.createOscillator(), g = AC.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.08, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + d);
+      o.connect(g); g.connect(AC.destination);
+      o.start(t); o.stop(t + d);
+      t += d * 0.9;
+    });
+  } catch (e) {}
+}
+const sndOK = () => beep([[660, .12], [880, .18]]);
+const sndNG = () => beep([[330, .25]]);
+const sndClear = () => beep([[523, .12], [659, .12], [784, .12], [1047, .3]]);
+
+$('#soundBtn').textContent = soundOn ? '🔊' : '🔇';
+$('#soundBtn').onclick = () => {
+  soundOn = !soundOn;
+  store.set('bk_sound', soundOn ? '1' : '0');
+  $('#soundBtn').textContent = soundOn ? '🔊' : '🔇';
+  if (soundOn) sndOK();
+};
+
+/* ================= 問題データ ================= */
+/* 漢字よみ（1年配当より） [漢字, よみ] */
+const KANJI_A = [
+  ['山','やま'],['川','かわ'],['火','ひ'],['水','みず'],['木','き'],['土','つち'],
+  ['月','つき'],['空','そら'],['雨','あめ'],['花','はな'],['草','くさ'],['竹','たけ'],
+  ['石','いし'],['貝','かい'],['犬','いぬ'],['虫','むし'],['林','はやし'],['森','もり'],
+  ['町','まち'],['村','むら'],['人','ひと'],['男','おとこ'],['女','おんな'],['子','こ'],
+  ['目','め'],['耳','みみ'],['口','くち'],['手','て'],['足','あし'],['力','ちから']
+];
+const KANJI_B = [
+  ['王','おう'],['玉','たま'],['糸','いと'],['車','くるま'],['学校','がっこう'],['先生','せんせい'],
+  ['青','あお'],['赤','あか'],['白','しろ'],['上','うえ'],['下','した'],['中','なか'],
+  ['左','ひだり'],['右','みぎ'],['大きい','おおきい'],['小さい','ちいさい'],['円','えん'],['年','とし'],
+  ['音','おと'],['字','じ'],['本','ほん'],['文','ぶん'],['名前','なまえ'],['天気','てんき'],
+  ['夕日','ゆうひ'],['花火','はなび'],['出る','でる'],['入る','はいる'],['見る','みる'],
+  ['立つ','たつ'],['休む','やすむ'],['早い','はやい'],['生きる','いきる'],['正しい','ただしい']
+];
+/* はんたいことば */
+const OPP = [
+  ['うえ','した'],['みぎ','ひだり'],['おおきい','ちいさい'],['ながい','みじかい'],
+  ['たかい','ひくい'],['はやい','おそい'],['あつい','さむい'],['あかるい','くらい'],
+  ['おもい','かるい'],['つよい','よわい'],['あたらしい','ふるい'],['ちかい','とおい'],
+  ['ひろい','せまい'],['ふとい','ほそい'],['まえ','うしろ'],['あさ','よる'],
+  ['いく','くる'],['かつ','まける'],['あける','しめる'],['たつ','すわる']
+];
+
+/* ================= 問題生成 ================= */
+const numQ = (text, ans) => ({ text, input: true, ans: String(ans) });
+
+function genCompare() {
+  let a = 1 + rnd(20), b = 1 + rnd(20);
+  if (a === b) b = (b % 20) + 1;
+  const big = rnd(2) === 0;
+  const ans = big ? (a > b ? 0 : 1) : (a < b ? 0 : 1);
+  return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans };
+}
+function genAdd10() { const a = 1 + rnd(9); const b = 1 + rnd(10 - a); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
+function genSub10() { const a = 2 + rnd(9); const b = 1 + rnd(a - 1); return numQ(`${a} − ${b} ＝ ？`, a - b); }
+function genAddCarry() { const a = 2 + rnd(8); const b = (11 - a) + rnd(a - 1); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
+function genSubBorrow() { const m = 11 + rnd(8); const lo = m - 10 + 1; const s = lo + rnd(9 - lo + 1); return numQ(`${m} − ${s} ＝ ？`, m - s); }
+function genKuku() { const a = 1 + rnd(9), b = 1 + rnd(9); return numQ(`${a} × ${b} ＝ ？`, a * b); }
+function genHissanAdd() { const a = 10 + rnd(90), b = 10 + rnd(90); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
+function genHissanSub() { const a = 20 + rnd(80), b = 10 + rnd(a - 10); return numQ(`${a} − ${b} ＝ ？`, a - b); }
+
+function makeKanjiGen(pool) {
+  return () => {
+    const e = pick(pool);
+    const wrong = shuffle(pool.filter(x => x[1] !== e[1])).slice(0, 3).map(x => x[1]);
+    const choices = shuffle([e[1], ...wrong]);
+    return { text: `よみかたは どれ？<span class="big">${e[0]}</span>`, choices, ans: choices.indexOf(e[1]), html: true };
+  };
+}
+function genOpp() {
+  const p = pick(OPP);
+  const dir = rnd(2);
+  const q = p[dir], a = p[1 - dir];
+  const others = shuffle(OPP.flat().filter(w => w !== q && w !== a)).slice(0, 3);
+  const choices = shuffle([a, ...others]);
+  return { text: `「${q}」の<br>はんたいの ことばは？`, choices, ans: choices.indexOf(a), html: true };
+}
+
+/* ================= ステージ定義（データ駆動） ================= */
+const STAGES = [
+  { id:'mori',   name:'すうじの もり',      icon:'🌳', color:'var(--ocean)',  gen:genCompare,            n:10, treasure:{i:'🌰', n:'もりの どんぐり'} },
+  { id:'hama',   name:'たしざんの はま',    icon:'🏖️', color:'var(--ocean)',  gen:genAdd10,              n:10, treasure:{i:'🐚', n:'ひかる かいがら'} },
+  { id:'kawa',   name:'ひきざんの かわ',    icon:'🏞️', color:'var(--ocean)',  gen:genSub10,              n:10, treasure:{i:'🐟', n:'きんの さかな'} },
+  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', gen:genAddCarry,          n:10, treasure:{i:'💎', n:'あおい ほうせき'} },
+  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  gen:genSubBorrow,          n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね'} },
+  { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  gen:makeKanjiGen(KANJI_A), n:10, treasure:{i:'📜', n:'ふるい まきもの'} },
+  { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  gen:genOpp,                n:10, treasure:{i:'🪶', n:'にじの はね'} },
+  { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  gen:makeKanjiGen(KANJI_B), n:10, treasure:{i:'🗝️', n:'こがねの かぎ'} },
+  { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  gen:genKuku,               n:10, treasure:{i:'🔥', n:'ほのおの たま'} },
+  { id:'shiro',  name:'けいさんの しろ',    icon:'🏰', color:'var(--ocean)',  gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10, treasure:{i:'👑', n:'おうさまの かんむり'} },
+  { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,makeKanjiGen(KANJI_A.concat(KANJI_B)),genOpp])(), n:12, treasure:{i:'🏆', n:'でんせつの トロフィー'} },
+];
+
+/* ================= 進捗（保存） ================= */
+let state = { stats:{}, treasures:[], days:{} };
+try { const raw = store.get('bk_state'); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+const save = () => store.set('bk_state', JSON.stringify(state));
+const stg = id => state.stats[id] || { plays:0, best:0, bestN:0, tq:0, tc:0, cleared:false, last:'' };
+const today = () => new Date().toISOString().slice(0, 10);
+
+function isUnlocked(i) { return i === 0 || stg(STAGES[i - 1].id).cleared; }
+
+/* ================= 画面切替 ================= */
+function show(name) {
+  ['map','quiz','result','zukan','parent'].forEach(s => $('#scr-' + s).hidden = (s !== name));
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.scr === name));
+  if (name === 'map') renderMap();
+  if (name === 'zukan') renderZukan();
+  if (name === 'parent') renderParent();
+}
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.scr));
+
+/* ================= マップ描画 ================= */
+const XS = [26, 68, 26, 68, 26, 68, 26, 68, 26, 68, 47]; /* ジグザグ配置(%) */
+const STEP = 132, TOPPAD = 90;
+
+function renderMap() {
+  const wrap = $('#mapWrap');
+  wrap.querySelectorAll('.stageNode').forEach(n => n.remove());
+  const H = TOPPAD + STAGES.length * STEP;
+  wrap.style.height = H + 'px';
+  const W = wrap.clientWidth || 360;
+
+  let currentSet = false;
+  const pts = [];
+  STAGES.forEach((s, i) => {
+    const x = XS[i] / 100 * W, y = TOPPAD + i * STEP - 40;
+    pts.push([x, y]);
+    const unlocked = isUnlocked(i);
+    const st = stg(s.id);
+    const node = document.createElement('button');
+    node.className = 'stageNode' + (unlocked ? '' : ' locked') + (st.cleared ? ' cleared' : '');
+    if (unlocked && !st.cleared && !currentSet) { node.classList.add('current'); currentSet = true; }
+    node.style.left = x + 'px'; node.style.top = y + 'px';
+    node.style.setProperty('--stagecolor', s.color);
+    const stars = st.cleared ? '★'.repeat(st.best) + '☆'.repeat(3 - st.best) : '';
+    node.innerHTML = `<span class="disc">${unlocked ? s.icon : '🔒'}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>`;
+    if (unlocked) node.onclick = () => startQuiz(i);
+    else node.onclick = () => { $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; flashFB(1100); };
+    wrap.appendChild(node);
+  });
+
+  /* 点線の みち */
+  const svg = $('#trail');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
+    d += ` C ${x1} ${y1 + 70}, ${x2} ${y2 - 70}, ${x2} ${y2}`;
+  }
+  svg.innerHTML = `<path d="${d}" fill="none" stroke="#D8C48E" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 18"/>`;
+}
+window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap(); });
+
+/* ================= クイズエンジン ================= */
+let Q = { stageIdx:0, list:[], pos:0, correct:0, busy:false };
+
+function buildQuestions(stage) {
+  const list = [], seen = new Set();
+  let guard = 0;
+  while (list.length < stage.n && guard++ < 300) {
+    const q = stage.gen();
+    const key = q.text + '|' + (q.choices ? q.choices.join(',') : q.ans);
+    if (seen.has(key)) continue;
+    seen.add(key); list.push(q);
+  }
+  return list;
+}
+
+function startQuiz(i) {
+  const s = STAGES[i];
+  Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
+  show('quiz');
+  renderQ();
+}
+$('#backBtn').onclick = () => show('map');
+
+function renderQ() {
+  const q = Q.list[Q.pos];
+  $('#dots').innerHTML = Q.list.map((_, i) => {
+    if (i < Q.pos) return `<i class="${Q.list[i]._ok ? 'ok' : 'ng'}"></i>`;
+    return `<i class="${i === Q.pos ? 'now' : ''}"></i>`;
+  }).join('');
+  $('#qText').innerHTML = q.html ? q.text : q.text.replace(/</g,'&lt;');
+  $('#qSub').textContent = q.input ? 'すうじを おして OK！' : 'こたえを えらんでね';
+
+  const ch = $('#choices'), pad = $('#pad');
+  if (q.input) {
+    ch.innerHTML = ''; ch.style.display = 'none';
+    pad.classList.add('show');
+    $('#ansBox').textContent = '';
+    renderKeys();
+  } else {
+    pad.classList.remove('show');
+    ch.style.display = 'grid';
+    ch.className = q.choices.length === 2 ? 'one' : '';
+    ch.id = 'choices';
+    ch.innerHTML = q.choices.map((c, i) => `<button class="chBtn" data-i="${i}">${c}</button>`).join('');
+    ch.querySelectorAll('button').forEach(b => b.onclick = () => answer(Number(b.dataset.i)));
+  }
+}
+
+function renderKeys() {
+  const keys = ['7','8','9','4','5','6','1','2','3','⌫','0','OK'];
+  $('#keys').innerHTML = keys.map(k => {
+    const cls = k === 'OK' ? 'key go' : (k === '⌫' ? 'key del' : 'key');
+    return `<button class="${cls}" data-k="${k}">${k}</button>`;
+  }).join('');
+  $('#keys').querySelectorAll('button').forEach(b => b.onclick = () => {
+    const k = b.dataset.k, box = $('#ansBox');
+    if (k === '⌫') box.textContent = box.textContent.slice(0, -1);
+    else if (k === 'OK') { if (box.textContent) answer(box.textContent); }
+    else if (box.textContent.length < 4) box.textContent += k;
+  });
+}
+
+const CHEER_OK = ['やったね！','すごい！','その ちょうし！','てんさい！','かんぺき！'];
+const CHEER_NG = ['おしい！','だいじょうぶ、つぎ いこう！','まちがえても へいき！'];
+
+function flashFB(ms, cb) {
+  $('#fb').classList.add('show');
+  setTimeout(() => { $('#fb').classList.remove('show'); if (cb) cb(); }, ms);
+}
+
+function answer(v) {
+  if (Q.busy) return;
+  Q.busy = true;
+  const q = Q.list[Q.pos];
+  const ok = q.input ? String(v) === q.ans : v === q.ans;
+  q._ok = ok;
+  if (ok) { Q.correct++; sndOK(); } else sndNG();
+  $('#fbMark').textContent = ok ? '⭕' : '❌';
+  $('#fbMsg').textContent = ok ? pick(CHEER_OK) : pick(CHEER_NG);
+  $('#fbAns').textContent = ok ? '' : 'こたえは 「' + (q.input ? q.ans : q.choices[q.ans]) + '」';
+  flashFB(ok ? 900 : 1800, () => {
+    Q.busy = false;
+    Q.pos++;
+    if (Q.pos < Q.list.length) renderQ(); else finish();
+  });
+}
+
+/* ================= けっか ================= */
+function finish() {
+  const s = STAGES[Q.stageIdx], n = Q.list.length, c = Q.correct;
+  const passLine = Math.ceil(n * 0.6);
+  const starLine = [n, n - 2, passLine];
+  const starN = c >= starLine[0] ? 3 : c >= starLine[1] ? 2 : c >= starLine[2] ? 1 : 0;
+  const cleared = c >= passLine;
+
+  const st = stg(s.id);
+  const firstClear = cleared && !st.cleared;
+  st.plays++; st.tq += n; st.tc += c; st.last = today();
+  if (cleared) { st.cleared = true; if (starN > st.best) st.best = starN; }
+  state.stats[s.id] = st;
+  const d = state.days[today()] || { q:0, c:0 };
+  d.q += n; d.c += c; state.days[today()] = d;
+  if (firstClear && !state.treasures.includes(s.id)) state.treasures.push(s.id);
+  save();
+
+  $('#resTitle').textContent = cleared ? s.name + ' クリア！' : 'あと すこし！';
+  $('#resStars').textContent = cleared ? '★'.repeat(starN) + '☆'.repeat(3 - starN) : '🔥';
+  $('#resScore').textContent = `${n}もんちゅう ${c}もん せいかい！`;
+  const tr = $('#resTreasure');
+  if (firstClear) {
+    tr.hidden = false;
+    tr.innerHTML = `たからばこを みつけた！<span class="tico">${s.treasure.i}</span>「${s.treasure.n}」を ずかんに とうろく！`;
+  } else tr.hidden = true;
+  if (cleared) sndClear();
+  show('result');
+}
+$('#retryBtn').onclick = () => startQuiz(Q.stageIdx);
+$('#mapBtn').onclick = () => show('map');
+
+/* ================= ずかん ================= */
+function renderZukan() {
+  $('#zkCount').textContent = `みつけた たから：${state.treasures.length} ／ ${STAGES.length}`;
+  $('#zkGrid').innerHTML = STAGES.map(s => {
+    const got = state.treasures.includes(s.id);
+    return `<div class="zkCard ${got ? 'yes' : 'no'}">
+      <div class="zi">${got ? s.treasure.i : '❓'}</div>
+      <div class="zn">${got ? s.treasure.n : '？？？'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ================= おうちのひと ================= */
+const PIN = '1234';
+let pinBuf = '';
+function renderParent() {
+  $('#dash').hidden = true; $('#pinPad').style.display = 'block';
+  pinBuf = ''; drawPin(); $('#pinMsg').textContent = '';
+  const keys = ['7','8','9','4','5','6','1','2','3','⌫','0','OK'];
+  $('#keys2').innerHTML = keys.map(k => `<button class="${k==='OK'?'key go':k==='⌫'?'key del':'key'}" data-k="${k}">${k}</button>`).join('');
+  $('#keys2').querySelectorAll('button').forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if (k === '⌫') pinBuf = pinBuf.slice(0, -1);
+    else if (k === 'OK') {
+      if (pinBuf === PIN) { openDash(); } else { $('#pinMsg').textContent = 'PINが ちがいます'; pinBuf = ''; }
+    } else if (pinBuf.length < 4) pinBuf += k;
+    drawPin();
+  });
+}
+function drawPin() { $('#pinDots').textContent = '●'.repeat(pinBuf.length) + '○'.repeat(4 - pinBuf.length); }
+
+function openDash() {
+  $('#pinPad').style.display = 'none';
+  const dash = $('#dash'); dash.hidden = false;
+  let tq = 0, tc = 0;
+  Object.values(state.stats).forEach(s => { tq += s.tq; tc += s.tc; });
+  const rate = tq ? Math.round(tc / tq * 100) : 0;
+
+  /* 直近7日 */
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const dt = new Date(); dt.setDate(dt.getDate() - i);
+    const key = dt.toISOString().slice(0, 10);
+    days.push({ label: (dt.getMonth()+1) + '/' + dt.getDate(), q: (state.days[key] || {q:0}).q });
+  }
+  const mx = Math.max(1, ...days.map(d => d.q));
+
+  const rows = STAGES.map(s => {
+    const st = stg(s.id);
+    const r = st.tq ? Math.round(st.tc / st.tq * 100) : '-';
+    return `<tr><td class="l">${s.icon} ${s.name}</td><td>${st.plays}</td><td>${st.cleared ? '★'.repeat(st.best) : '—'}</td><td>${r === '-' ? '—' : r + '%'}</td><td>${st.last || '—'}</td></tr>`;
+  }).join('');
+
+  dash.innerHTML = `
+    <div class="cards">
+      <div class="card"><b>${tq}</b><span>合計解答数</span></div>
+      <div class="card"><b>${rate}%</b><span>正答率</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--ink-soft)">直近7日の解答数</p>
+    <div id="week">${days.map(d => `<div class="bar"><i style="height:${Math.round(d.q / mx * 60)}px"></i>${d.label}</div>`).join('')}</div>
+    <table>
+      <tr><th>ステージ</th><th>回数</th><th>星</th><th>正答率</th><th>最終日</th></tr>
+      ${rows}
+    </table>
+    <button id="resetBtn">データをすべてリセット</button>
+    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※PINは v1 では「1234」固定です。</p>`;
+  $('#resetBtn').onclick = () => {
+    if (confirm('本当にすべての進捗を消しますか？')) {
+      state = { stats:{}, treasures:[], days:{} }; save(); show('map');
+    }
+  };
+}
+
+/* ================= init ================= */
+show('map');
+if ('serviceWorker' in navigator) {
+  try { navigator.serviceWorker.register('./sw.js'); } catch (e) {}
+}
+</script>
+</body>
+</html>
