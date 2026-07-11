@@ -316,6 +316,12 @@ td.l{text-align:left}
 #scr-quiz[data-stage-theme="yama"],
 #scr-quiz[data-stage-theme="shiro"]{ --card-bg:#E8EEF4; --card-frame:#5C6873; }
 #scr-quiz[data-stage-theme="tou"]{ --card-bg:#EFEBF5; --card-frame:#8E7BC4; }
+#scr-quiz[data-stage-theme="sora1"],
+#scr-quiz[data-stage-theme="sora2"],
+#scr-quiz[data-stage-theme="sora3"]{ --card-bg:#EDF4FA; --card-frame:#5B9FC4; }
+#scr-quiz[data-stage-theme="umi1"],
+#scr-quiz[data-stage-theme="umi2"],
+#scr-quiz[data-stage-theme="umi3"]{ --card-bg:#E4F0EE; --card-frame:#2E7D99; }
 /* テーマ適用時は共通してカードとコーナーとボタンを装飾 */
 #scr-quiz[data-stage-theme] #qCard{ background:var(--card-bg); border-color:var(--card-frame); border-width:3px; position:relative; overflow:visible; }
 #scr-quiz[data-stage-theme] .qcorner{ display:block; }
@@ -330,6 +336,16 @@ td.l{text-align:left}
 #scr-quiz[data-stage-theme="douk"] .qcorner,
 #scr-quiz[data-stage-theme="tani"] .qcorner{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%235A5478' stroke='%233D3323' stroke-width='2'/%3E%3Cpath d='M9 9 L12 6 L15 9 L12 15 Z' fill='%238FD0E8' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+#scr-quiz[data-stage-theme="sora1"] .qcorner,
+#scr-quiz[data-stage-theme="sora2"] .qcorner,
+#scr-quiz[data-stage-theme="sora3"] .qcorner{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%235B9FC4' stroke='%233D3323' stroke-width='2'/%3E%3Cellipse cx='12' cy='12' rx='5' ry='3.5' fill='%23F7F4EC' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+#scr-quiz[data-stage-theme="umi1"] .qcorner,
+#scr-quiz[data-stage-theme="umi2"] .qcorner,
+#scr-quiz[data-stage-theme="umi3"] .qcorner{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%232E7D99' stroke='%233D3323' stroke-width='2'/%3E%3Cpath d='M9 15 Q9 8 12 8 Q15 8 15 15' fill='none' stroke='%23F2A0B4' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 #scr-quiz[data-stage-theme="yama"] .qcorner,
 #scr-quiz[data-stage-theme="shiro"] .qcorner,
@@ -346,11 +362,9 @@ td.l{text-align:left}
 /* マップ：海の波タイルとエリアゾーン（§7） */
 #scr-map{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 40'%3E%3Cpath d='M0 20 Q10 14 20 20 T40 20 T60 20 T80 20' fill='none' stroke='%23FFFDF7' stroke-width='2.5' opacity='0.25' stroke-linecap='round'/%3E%3C/svg%3E"); background-size:80px 40px; background-repeat:repeat;}
 #island{border-width:8px; box-shadow:0 0 0 4px rgba(255,253,247,.5)}
-.zone{position:absolute; left:4%; right:4%; border-radius:40px; pointer-events:none; z-index:0}
-.zone.z1{top:0; height:28%; background:#7FB069; opacity:.16}
-.zone.z2{top:28%; height:18%; background:#5A5478; opacity:.14}
-.zone.z3{top:46%; height:27%; background:#A89A80; opacity:.16}
-.zone.z4{top:73%; height:27%; background:#5C6873; opacity:.14}
+.zone{position:absolute; left:4%; right:4%; border-radius:40px; pointer-events:none; z-index:0; opacity:.16}
+.zoneLabel{position:absolute; top:8px; left:12px; font-size:12px; font-weight:bold; color:var(--ink);
+  background:var(--white); border-radius:999px; padding:2px 10px; opacity:.85; white-space:nowrap}
 
 @media (prefers-reduced-motion:reduce){
   .bd-needle.spin,.bd-needle.shake,.bd-needle.super,#fbCard.shake,.chBtn.bounce,
@@ -371,10 +385,7 @@ td.l{text-align:left}
   <!-- ぼうけんマップ -->
   <section class="screen" id="scr-map">
     <div id="mapWrap">
-      <div id="island">
-        <div class="zone z1"></div><div class="zone z2"></div>
-        <div class="zone z3"></div><div class="zone z4"></div>
-      </div>
+      <div id="island"></div>
       <svg id="trail" aria-hidden="true"></svg>
     </div>
   </section>
@@ -519,34 +530,62 @@ $('#soundBtn').onclick = () => {
   if (soundOn) sndOK();
 };
 
-/* ================= 問題データ ================= */
-/* 漢字よみ（1年配当より） [漢字, よみ] */
-const KANJI_A = [
-  ['山','やま'],['川','かわ'],['火','ひ'],['水','みず'],['木','き'],['土','つち'],
-  ['月','つき'],['空','そら'],['雨','あめ'],['花','はな'],['草','くさ'],['竹','たけ'],
-  ['石','いし'],['貝','かい'],['犬','いぬ'],['虫','むし'],['林','はやし'],['森','もり'],
-  ['町','まち'],['村','むら'],['人','ひと'],['男','おとこ'],['女','おんな'],['子','こ'],
-  ['目','め'],['耳','みみ'],['口','くち'],['手','て'],['足','あし'],['力','ちから']
-];
-const KANJI_B = [
-  ['王','おう'],['玉','たま'],['糸','いと'],['車','くるま'],['学校','がっこう'],['先生','せんせい'],
-  ['青','あお'],['赤','あか'],['白','しろ'],['上','うえ'],['下','した'],['中','なか'],
-  ['左','ひだり'],['右','みぎ'],['大きい','おおきい'],['小さい','ちいさい'],['円','えん'],['年','とし'],
-  ['音','おと'],['字','じ'],['本','ほん'],['文','ぶん'],['名前','なまえ'],['天気','てんき'],
-  ['夕日','ゆうひ'],['花火','はなび'],['出る','でる'],['入る','はいる'],['見る','みる'],
-  ['立つ','たつ'],['休む','やすむ'],['早い','はやい'],['生きる','いきる'],['正しい','ただしい']
-];
-/* はんたいことば */
-const OPP = [
-  ['うえ','した'],['みぎ','ひだり'],['おおきい','ちいさい'],['ながい','みじかい'],
-  ['たかい','ひくい'],['はやい','おそい'],['あつい','さむい'],['あかるい','くらい'],
-  ['おもい','かるい'],['つよい','よわい'],['あたらしい','ふるい'],['ちかい','とおい'],
-  ['ひろい','せまい'],['ふとい','ほそい'],['まえ','うしろ'],['あさ','よる'],
-  ['いく','くる'],['かつ','まける'],['あける','しめる'],['たつ','すわる']
-];
+/* ================= 層2: 素材データ（words.json） ================= */
+/* file:// では fetch が失敗するため、最小限の内蔵フォールバックを持つ（設計書 §1.4） */
+const WORDS_FALLBACK = {
+  kanji: {
+    g1a: [['山','やま'],['川','かわ'],['火','ひ'],['水','みず'],['木','き'],['土','つち'],
+      ['月','つき'],['空','そら'],['雨','あめ'],['花','はな'],['草','くさ'],['竹','たけ'],
+      ['石','いし'],['貝','かい'],['犬','いぬ'],['虫','むし'],['林','はやし'],['森','もり'],
+      ['町','まち'],['村','むら'],['人','ひと'],['男','おとこ'],['女','おんな'],['子','こ'],
+      ['目','め'],['耳','みみ'],['口','くち'],['手','て'],['足','あし'],['力','ちから']],
+    g1b: [['王','おう'],['玉','たま'],['糸','いと'],['車','くるま'],['学校','がっこう'],['先生','せんせい'],
+      ['青','あお'],['赤','あか'],['白','しろ'],['上','うえ'],['下','した'],['中','なか'],
+      ['左','ひだり'],['右','みぎ'],['大きい','おおきい'],['小さい','ちいさい'],['円','えん'],['年','とし'],
+      ['音','おと'],['字','じ'],['本','ほん'],['文','ぶん'],['名前','なまえ'],['天気','てんき'],
+      ['夕日','ゆうひ'],['花火','はなび'],['出る','でる'],['入る','はいる'],['見る','みる'],
+      ['立つ','たつ'],['休む','やすむ'],['早い','はやい'],['生きる','いきる'],['正しい','ただしい']],
+    kana: [['ぱん','パン'],['けーき','ケーキ'],['ぷりん','プリン'],['あいす','アイス'],
+      ['じゅーす','ジュース'],['ばす','バス'],['ろけっと','ロケット'],['らいおん','ライオン'],
+      ['ぱんだ','パンダ'],['ぺんぎん','ペンギン'],['のーと','ノート'],['ぼーる','ボール'],
+      ['こっぷ','コップ'],['ぴあの','ピアノ'],['ぷーる','プール'],['とまと','トマト']]
+  },
+  opposites: [['うえ','した'],['みぎ','ひだり'],['おおきい','ちいさい'],['ながい','みじかい'],
+    ['たかい','ひくい'],['はやい','おそい'],['あつい','さむい'],['あかるい','くらい'],
+    ['おもい','かるい'],['つよい','よわい'],['あたらしい','ふるい'],['ちかい','とおい'],
+    ['ひろい','せまい'],['ふとい','ほそい'],['まえ','うしろ'],['あさ','よる'],
+    ['いく','くる'],['かつ','まける'],['あける','しめる'],['たつ','すわる']],
+  storyProblems: [
+    { id:'apple-add', pattern:'add', text:'りんごが {a}こ あります。{b}こ もらいました。ぜんぶで なんこ？',
+      vars:{ a:[2,9], b:[1,8] }, unit:'こ' },
+    { id:'bird-sub', pattern:'sub', text:'とりが {a}わ います。{b}わ とんで いきました。のこりは なんわ？',
+      vars:{ a:[5,15], b:[1,'a-1'] }, unit:'わ' }
+  ]
+};
+let WORDS = WORDS_FALLBACK;
+let wordsReady = Promise.resolve();
 
-/* ================= 問題生成 ================= */
-const numQ = (text, ans) => ({ text, input: true, ans: String(ans) });
+function loadWords() {
+  try {
+    if (typeof fetch !== 'function') { wordsReady = Promise.resolve(); return wordsReady; }
+    wordsReady = fetch('./words.json')
+      .then(r => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(j => {
+        if (j && j.kanji && j.opposites) WORDS = j;
+      })
+      .catch(() => { /* file:// 等。フォールバックのまま動作 */ });
+  } catch (e) {
+    wordsReady = Promise.resolve(); /* フォールバックのまま動作 */
+  }
+  return wordsReady;
+}
+/* プールはロード後に解決するため、名前で遅延参照する */
+const poolOf = name => (WORDS.kanji && WORDS.kanji[name]) || WORDS_FALLBACK.kanji[name] || [];
+const oppPool = () => (WORDS.opposites && WORDS.opposites.length) ? WORDS.opposites : WORDS_FALLBACK.opposites;
+const storyPool = () => (WORDS.storyProblems && WORDS.storyProblems.length) ? WORDS.storyProblems : WORDS_FALLBACK.storyProblems;
+
+/* ================= 問題生成（層1: ロジック） ================= */
+const numQ = (text, ans, extra) => Object.assign({ text, input: true, ans: String(ans) }, extra || {});
 
 function genCompare() {
   let a = 1 + rnd(20), b = 1 + rnd(20);
@@ -563,8 +602,66 @@ function genKuku() { const a = 1 + rnd(9), b = 1 + rnd(9); return numQ(`${a} × 
 function genHissanAdd() { const a = 10 + rnd(90), b = 10 + rnd(90); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
 function genHissanSub() { const a = 20 + rnd(80), b = 10 + rnd(a - 10); return numQ(`${a} − ${b} ＝ ？`, a - b); }
 
-function makeKanjiGen(pool, prompt) {
+/* --- 新: わりざん（九九の逆・あまりなし） --- */
+function genDiv() {
+  const a = 2 + rnd(8);            /* わる数 2..9 */
+  const b = 2 + rnd(8);            /* 商 2..9 */
+  return numQ(`${a * b} ÷ ${a} ＝ ？`, b);
+}
+
+/* --- 新: おおきな かず（100〜1000） --- */
+function genBigNum() {
+  if (rnd(2) === 0) {
+    let a = 100 + rnd(900), b = 100 + rnd(900);
+    if (a === b) b = b === 999 ? 998 : b + 1;
+    const big = rnd(2) === 0;
+    const ans = big ? (a > b ? 0 : 1) : (a < b ? 0 : 1);
+    return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans };
+  }
+  const h = 1 + rnd(9), t = rnd(10), o = rnd(10);
+  return numQ(`100が ${h}こ、10が ${t}こ、1が ${o}こ。<br>あわせて いくつ？`, h * 100 + t * 10 + o, { html: true });
+}
+
+/* --- 新: とけい よみ（なんじ／なんじはん） --- */
+function clockSVG(hour, half) {
+  const hAng = (hour % 12) * 30 + (half ? 15 : 0);
+  const mAng = half ? 180 : 0;
+  const hand = (ang, len, w, col) => {
+    const r = (ang - 90) * Math.PI / 180;
+    return `<line x1="50" y1="50" x2="${(50 + len * Math.cos(r)).toFixed(1)}" y2="${(50 + len * Math.sin(r)).toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+  };
+  let ticks = '';
+  for (let i = 0; i < 12; i++) {
+    const r = (i * 30 - 90) * Math.PI / 180;
+    ticks += `<line x1="${(50 + 38 * Math.cos(r)).toFixed(1)}" y1="${(50 + 38 * Math.sin(r)).toFixed(1)}" x2="${(50 + 43 * Math.cos(r)).toFixed(1)}" y2="${(50 + 43 * Math.sin(r)).toFixed(1)}" stroke="#6B5D48" stroke-width="${i % 3 === 0 ? 3 : 2}" stroke-linecap="round"/>`;
+  }
+  return `<svg viewBox="0 0 100 100" width="150" height="150" aria-hidden="true" style="display:block;margin:6px auto">
+    <circle cx="50" cy="50" r="47" fill="#FFFDF7" stroke="#3D3323" stroke-width="3"/>
+    ${ticks}
+    ${hand(hAng, 26, 5, '#3D3323')}
+    ${hand(mAng, 38, 3.5, '#C9622E')}
+    <circle cx="50" cy="50" r="4" fill="#3D3323"/>
+  </svg>`;
+}
+const clockLabel = (h, half) => `${h}じ${half ? 'はん' : ''}`;
+function genClock() {
+  const h = 1 + rnd(12), half = rnd(2) === 0;
+  const correct = clockLabel(h, half);
+  const cand = new Set([correct, clockLabel(h, !half)]);
+  const mis = ((h + 5) % 12) + 1;            /* 短針を読み違えた時刻 */
+  cand.add(clockLabel(mis, half));
+  let guard = 0;
+  while (cand.size < 4 && guard++ < 40) {
+    cand.add(clockLabel(1 + rnd(12), rnd(2) === 0));
+  }
+  const choices = shuffle([...cand].slice(0, 4));
+  return { text: `とけいは いま なんじ？${clockSVG(h, half)}`, choices, ans: choices.indexOf(correct), html: true };
+}
+
+/* --- 漢字／カタカナ（プール名で遅延参照） --- */
+function makeKanjiGen(poolName, prompt) {
   return () => {
+    const pool = typeof poolName === 'string' ? poolOf(poolName) : poolName;
     const e = pick(pool);
     const wrong = shuffle(pool.filter(x => x[1] !== e[1])).slice(0, 3).map(x => x[1]);
     const choices = shuffle([e[1], ...wrong]);
@@ -573,6 +670,7 @@ function makeKanjiGen(pool, prompt) {
 }
 function makeOppGen(prompt) {
   return () => {
+    const OPP = oppPool();
     const p = pick(OPP);
     const dir = rnd(2);
     const q = p[dir], a = p[1 - dir];
@@ -583,6 +681,58 @@ function makeOppGen(prompt) {
   };
 }
 const genOpp = makeOppGen();
+
+/* ================= 文章題エンジン（設計書 §2） ================= */
+/* 計算パターン。ここにエントリを足せば新パターンを追加できる（将来: mul / div / diff 等） */
+const PATTERNS = {
+  add: v => v.a + v.b,
+  sub: v => v.a - v.b
+};
+
+/* "a-1" 形式の簡易参照のみ解決する（任意の式評価はしない） */
+function resolveBound(bound, vals) {
+  if (typeof bound === 'number') return bound;
+  if (typeof bound === 'string') {
+    const m = /^([a-z])(?:\s*-\s*(\d+))?$/.exec(bound.trim());
+    if (m && vals[m[1]] !== undefined) return vals[m[1]] - (m[2] ? Number(m[2]) : 0);
+  }
+  return NaN;
+}
+
+function buildStoryQuestion(tpl) {
+  if (!PATTERNS[tpl.pattern]) { console.warn('unknown pattern:', tpl.pattern, tpl.id); return null; }
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const vals = {};
+    let bad = false;
+    for (const key of Object.keys(tpl.vars)) {
+      const lo = resolveBound(tpl.vars[key][0], vals);
+      const hi = resolveBound(tpl.vars[key][1], vals);
+      if (!Number.isFinite(lo) || !Number.isFinite(hi) || hi < lo) { bad = true; break; }
+      vals[key] = lo + rnd(hi - lo + 1);
+    }
+    if (bad) continue;
+    const ans = PATTERNS[tpl.pattern](vals);
+    if (!Number.isFinite(ans) || ans < 0 || ans > 999) continue;
+    let text = tpl.text;
+    for (const key of Object.keys(vals)) text = text.split('{' + key + '}').join(String(vals[key]));
+    if (/\{[a-z]\}/.test(text)) { console.warn('unresolved placeholder:', tpl.id); return null; }
+    return numQ(text, ans, { html: true, unit: tpl.unit || '', tplId: tpl.id });
+  }
+  return null;
+}
+
+function makeStoryGen(filter) {
+  return () => {
+    let pool = storyPool();
+    if (filter && filter.pattern) pool = pool.filter(t => t.pattern === filter.pattern);
+    if (!pool.length) pool = storyPool();
+    for (let i = 0; i < 30; i++) {
+      const q = buildStoryQuestion(pick(pool));
+      if (q) return q;
+    }
+    return genAdd10(); /* 最終フォールバック（データ不正時も出題が止まらないように） */
+  };
+}
 
 /* ================= ステージ定義（データ駆動） ================= */
 /* ================= SVGアセット（rev v2） ================= */
@@ -831,13 +981,122 @@ const TROPHY_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80"
   </g>
 </svg>`;
 
+/* ---- Phase E: そらの しま シーン ---- */
+const SORA1_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <ellipse cx="60" cy="104" rx="52" ry="14" fill="#F7F4EC" stroke="#3D3323" stroke-width="2"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <rect x="34" y="46" width="52" height="52" fill="#F7F4EC"/>
+    <rect x="34" y="46" width="8" height="52" fill="#D8D2C0"/>
+    <path d="M28 46 L60 24 L92 46 Z" fill="#5B9FC4"/>
+  </g>
+  <circle class="bd-arch" cx="60" cy="68" r="17" fill="#F2C14E" opacity="0"/>
+  <circle cx="60" cy="68" r="14" fill="#FFFDF7" stroke="#3D3323" stroke-width="2"/>
+  <path d="M60 68 L60 58 M60 68 L67 68" stroke="#C9622E" stroke-width="2.5" stroke-linecap="round"/>
+  <ellipse cx="20" cy="30" rx="11" ry="5" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/>
+  <ellipse cx="100" cy="20" rx="9" ry="4" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const SORA2_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <path d="M8 96 Q60 84 112 96 L104 112 Q60 120 16 112 Z" fill="#8CC08C" stroke="#3D3323" stroke-width="2"/>
+  <path d="M16 112 Q60 120 104 112 L100 118 Q60 124 20 118 Z" fill="#B8A98A"/>
+  <ellipse class="bd-arch" cx="60" cy="86" rx="12" ry="12" fill="#F2C14E" opacity="0"/>
+  <path d="M44 96 Q44 66 60 66 Q76 66 76 96" fill="none" stroke="#7A9B5C" stroke-width="5"/>
+  <g stroke="#3D3323" stroke-width="1.5">
+    <circle cx="26" cy="92" r="5" fill="#F2A0B4"/><circle cx="36" cy="96" r="5" fill="#F2C14E"/>
+    <circle cx="92" cy="94" r="5" fill="#8E7BC4"/><circle cx="100" cy="90" r="5" fill="#F2A0B4"/>
+  </g>
+  <path d="M22 88 L26 92 M36 92 L36 96 M92 90 L92 94 M100 86 L100 90" stroke="#4E6E3B" stroke-width="2"/>
+  <ellipse cx="104" cy="24" rx="10" ry="4.5" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const SORA3_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <ellipse class="bd-arch" cx="72" cy="34" rx="20" ry="14" fill="#F2C14E" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <ellipse cx="30" cy="98" rx="24" ry="11" fill="#F7F4EC"/>
+    <ellipse cx="58" cy="76" rx="27" ry="12" fill="#F7F4EC"/>
+    <ellipse cx="80" cy="52" rx="30" ry="13" fill="#F7F4EC"/>
+  </g>
+  <path d="M6 98 A24 11 0 0 0 30 109 L30 87 A24 11 0 0 0 6 98Z" fill="#DDE6EE"/>
+  <path d="M31 76 A27 12 0 0 0 58 88 L58 64 A27 12 0 0 0 31 76Z" fill="#DDE6EE"/>
+  <path d="M50 52 A30 13 0 0 0 80 65 L80 39 A30 13 0 0 0 50 52Z" fill="#DDE6EE"/>
+  <path d="M92 40 L92 22 L106 26 L92 30" fill="#E8763D" stroke="#3D3323" stroke-width="1.5"/>
+  <text x="80" y="56" font-size="12" font-weight="bold" fill="#3D3323" text-anchor="middle">100</text>
+</svg>`;
+/* ---- Phase F: うみの そこ シーン ---- */
+const UMI1_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#1F4E66"/>
+  <path d="M50 0 L36 120 L58 120 L64 0 Z" fill="#2E7D99" opacity="0.6"/>
+  <ellipse class="bd-arch" cx="52" cy="52" rx="16" ry="24" fill="#7EE0D0" opacity="0"/>
+  <g fill="#F2C14E" stroke="#3D3323" stroke-width="1.5">
+    <path d="M24 40 L36 44 L24 48 L28 44 Z"/><path d="M24 58 L36 62 L24 66 L28 62 Z"/>
+    <path d="M78 46 L90 50 L78 54 L82 50 Z"/><path d="M78 64 L90 68 L78 72 L82 68 Z"/>
+  </g>
+  <path d="M0 108 Q20 100 34 108 T70 108 T120 106 L120 120 L0 120 Z" fill="#173B4E" stroke="#3D3323" stroke-width="2"/>
+  <path d="M20 108 Q18 94 24 86 M28 108 Q30 96 26 90" fill="none" stroke="#4E6E3B" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="98" cy="30" r="2.5" fill="#7EE0D0"/><circle cx="104" cy="20" r="2" fill="#7EE0D0"/>
+</svg>`;
+const UMI2_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#1F4E66"/>
+  <g stroke="#3D3323" stroke-width="2" transform="rotate(-8 60 78)">
+    <path d="M22 70 L98 70 L88 96 L34 96 Z" fill="#8A6543"/>
+    <path d="M22 70 L34 96 L42 96 L32 70 Z" fill="#6E4A28"/>
+    <rect x="56" y="34" width="6" height="36" fill="#6E4A28"/>
+    <path d="M62 38 L86 50 L62 56 Z" fill="#EFE6D0"/>
+  </g>
+  <circle class="bd-arch" cx="48" cy="82" r="9" fill="#F2C14E" opacity="0"/>
+  <circle cx="48" cy="82" r="5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="70" cy="84" r="5" fill="#173B4E" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M8 112 Q8 98 14 92 M16 112 Q18 100 14 96 M104 112 Q104 100 110 94" fill="none" stroke="#F2A0B4" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="30" cy="40" r="2" fill="#7EE0D0"/><circle cx="36" cy="30" r="2.5" fill="#7EE0D0"/>
+</svg>`;
+const UMI3_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#173B4E"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M24 58 Q60 40 96 58 L88 66 L32 66 Z" fill="#F2A0B4"/>
+    <path d="M24 58 Q42 49 60 47 L60 66 L32 66 Z" fill="#E07A94"/>
+    <path d="M34 86 Q60 72 86 86 L80 92 L40 92 Z" fill="#F2A0B4"/>
+    <rect x="40" y="66" width="40" height="8" fill="#7EE0D0"/>
+    <rect x="36" y="92" width="48" height="20" fill="#EFE6D0"/>
+  </g>
+  <path d="M54 112 L54 98 Q60 92 66 98 L66 112 Z" fill="#1F4E66"/>
+  <ellipse class="bd-arch" cx="60" cy="104" rx="7" ry="9" fill="#7EE0D0" opacity="0"/>
+  <circle cx="20" cy="30" r="2.5" fill="#7EE0D0"/><circle cx="26" cy="20" r="2" fill="#7EE0D0"/>
+  <path d="M98 34 L108 37 L98 40 L101 37 Z" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+
+/* ---- 新エリアの宝物SVG ---- */
+const PENDULUM_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M50 10 L50 46" stroke="#D4A63C" stroke-width="4"/><rect x="46" y="6" width="8" height="8" rx="2" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="56" r="14" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/><path d="M38 52 A14 14 0 0 0 50 70 L50 42 A14 14 0 0 0 38 52Z" fill="#D4A63C"/><circle cx="50" cy="56" r="5" fill="#FFFDF7" stroke="#3D3323" stroke-width="1.5"/></svg>`;
+const WATERINGCAN_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M66 36 L82 24 L84 30 L68 44" fill="#7EC8DE" stroke="#3D3323" stroke-width="2"/><path d="M26 34 Q14 40 26 50" fill="none" stroke="#4A93B8" stroke-width="4"/><path d="M30 30 L66 30 L62 62 L34 62 Z" fill="#7EC8DE" stroke="#3D3323" stroke-width="2"/><path d="M30 30 L34 62 L40 62 L38 30 Z" fill="#4A93B8"/><circle cx="84" cy="26" r="5" fill="#4A93B8" stroke="#3D3323" stroke-width="2"/><path d="M88 18 L90 14 M92 24 L96 22 M90 32 L94 34" stroke="#7EE0D0" stroke-width="2" stroke-linecap="round"/></svg>`;
+const TELESCOPE_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M18 56 L66 26 L74 38 L26 68 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><path d="M64 22 L80 32 L74 42 L58 32 Z" fill="#4A6FA8" stroke="#3D3323" stroke-width="2"/><circle cx="78" cy="30" r="4" fill="#7EE0D0" stroke="#3D3323" stroke-width="1.5"/><path d="M30 66 L26 76 M38 62 L42 74" stroke="#8C7B66" stroke-width="3" stroke-linecap="round"/></svg>`;
+const PEARL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M22 52 Q50 20 78 52 Q64 66 50 66 Q36 66 22 52Z" fill="#F2A0B4" stroke="#3D3323" stroke-width="2"/><path d="M22 52 Q50 20 78 52 Q64 44 50 44 Q36 44 22 52Z" fill="#E07A94"/><circle cx="50" cy="48" r="11" fill="#FFFDF7" stroke="#3D3323" stroke-width="2"/><circle cx="46" cy="44" r="3.5" fill="#7EE0D0" opacity="0.7"/></svg>`;
+const CAPTAINHAT_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M22 50 Q50 22 78 50 L78 56 Q50 48 22 56 Z" fill="#2E4A6E" stroke="#3D3323" stroke-width="2"/><path d="M22 50 Q36 36 50 32 L50 52 Q36 52 22 56 Z" fill="#1F3852"/><path d="M14 56 Q50 46 86 56 Q50 64 14 56Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="42" r="6" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/></svg>`;
+const TAMATEBAKO_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+  <g class="tr-a">
+    <rect x="28" y="34" width="44" height="28" rx="4" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
+    <path d="M28 34 Q50 22 72 34 L72 42 L28 42 Z" fill="#A84A20" stroke="#3D3323" stroke-width="2"/>
+    <rect x="46" y="38" width="8" height="10" rx="2" fill="#D4A63C" stroke="#3D3323" stroke-width="1.5"/>
+  </g>
+  <g class="tr-b" style="display:none;opacity:0">
+    <path d="M28 40 Q50 14 72 40" fill="none" stroke="#A84A20" stroke-width="5"/>
+    <ellipse cx="50" cy="36" rx="16" ry="12" fill="#7EE0D0" opacity="0.8"/>
+    <path d="M42 26 L40 18 M50 24 L50 14 M58 26 L60 18" stroke="#7EE0D0" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="28" y="40" width="44" height="24" rx="4" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
+    <circle cx="50" cy="38" r="4" fill="#FFFDF7"/>
+  </g>
+</svg>`;
+
 /* シーン/宝レジストリ（scene名 → SVG。§2.1 ハードコード解消） */
 const SCENE_SVGS = { iseki:ISEKI_NODE_SVG, mori:MORI_NODE_SVG, hama:HAMA_NODE_SVG, kawa:KAWA_NODE_SVG,
   douk:DOUK_NODE_SVG, tani:TANI_NODE_SVG, hashi:HASHI_NODE_SVG, shinden:SHINDEN_NODE_SVG,
-  yama:YAMA_NODE_SVG, shiro:SHIRO_NODE_SVG, tou:TOU_NODE_SVG };
+  yama:YAMA_NODE_SVG, shiro:SHIRO_NODE_SVG, tou:TOU_NODE_SVG,
+  sora1:SORA1_NODE_SVG, sora2:SORA2_NODE_SVG, sora3:SORA3_NODE_SVG,
+  umi1:UMI1_NODE_SVG, umi2:UMI2_NODE_SVG, umi3:UMI3_NODE_SVG };
 const TREASURE_SVGS = { scroll:SCROLL_SVG, acorn:ACORN_SVG, shell:SHELL_SVG, goldfish:GOLDFISH_SVG,
   bluegem:BLUEGEM_SVG, dinobone:DINOBONE_SVG, rainbowfeather:RAINBOWFEATHER_SVG, goldkey:GOLDKEY_SVG,
-  flameorb:FLAMEORB_SVG, crown:CROWN_SVG, trophy:TROPHY_SVG };
+  flameorb:FLAMEORB_SVG, crown:CROWN_SVG, trophy:TROPHY_SVG,
+  pendulum:PENDULUM_SVG, wateringcan:WATERINGCAN_SVG, telescope:TELESCOPE_SVG,
+  pearl:PEARL_SVG, captainhat:CAPTAINHAT_SVG, tamatebako:TAMATEBAKO_SVG };
 
 /* ナビキャラ制御 */
 function mountBuddy(el){ if (el && el.dataset.mounted !== '1'){ el.innerHTML = BUDDY_SVG; el.dataset.mounted = '1'; } }
@@ -896,7 +1155,7 @@ const STAGES = [
     gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい'} },
   { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  scene:'iseki', theme:'iseki',
     intro:'この さきに ふるい かんじの いせきが あるよ。かべに ほられた もじを よみとけば、かくされた たからが みつかるはずさ！',
-    gen:makeKanjiGen(KANJI_A, 'かべに ほられた この もじ、なんて よむ？'), n:10,
+    gen:makeKanjiGen('g1a', 'かべに ほられた この もじ、なんて よむ？'), n:10,
     treasure:{i:'📜', n:'ふるい まきもの', scene:'scroll', memo:'これには むかしの ひとの ちえが かかれて いるらしい'} },
   { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  scene:'hashi', theme:'hashi',
     intro:'ことばと ことばを つなぐ はしだよ。「はんたいの ことば」が わかれば、わたって いけるさ！',
@@ -904,7 +1163,7 @@ const STAGES = [
     treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね'} },
   { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  scene:'shinden', theme:'iseki2',
     intro:'いせきの おくに あった、かんじの しんでんだ！むずかしい もじも あるけど、きみなら よめるはず',
-    gen:makeKanjiGen(KANJI_B, 'しんでんの とびらに かかれた もじは？'), n:10,
+    gen:makeKanjiGen('g1b', 'しんでんの とびらに かかれた もじは？'), n:10,
     treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？'} },
   { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  scene:'yama', theme:'yama',
     intro:'たかい やまの ちょうじょうには「ほのおの たま」が ある。九九を となえて のぼって いこう！',
@@ -917,9 +1176,41 @@ const STAGES = [
     treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？'} },
   { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
     intro:'ついに さいごの とうに きたね。いままでの ちからを ぜんぶ つかって、てっぺんを めざそう！',
-    clearTitle:'🎉 でんせつの たんけんか に なった！',
-    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,makeKanjiGen(KANJI_A.concat(KANJI_B)),genOpp])(), n:12,
+    clearTitle:'🎉 でんせつの たんけんか に なった！', boss:true,
+    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp])(), n:12,
     treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる'} },
+
+  /* ===== そらの しま（Phase E） ===== */
+  { id:'sora1',  name:'とけいの きゅうでん', icon:'🕰️', color:'var(--ocean)', scene:'sora1', theme:'sora1',
+    intro:'くもの うえに おしろが みえる！ここは とけいの きゅうでん。はりが よめたら なかに はいれるよ',
+    gen:genClock, n:10,
+    treasure:{i:'🕰️', n:'とけいの ふりこ', scene:'pendulum', memo:'ちくたく ちくたく。きゅうでんの じかんを きざんで いた ふりこ'} },
+  { id:'sora2',  name:'ぶんしょうだいの にわ', icon:'🌷', color:'var(--ocean)', scene:'sora2', theme:'sora2',
+    intro:'そらの にわに ついたよ。おはなの せわを しながら、おはなしの もんだいを といて みよう！',
+    subFlavor:'おはなしを よく よんでね',
+    gen:makeStoryGen(), n:10,
+    treasure:{i:'🪣', n:'まほうの じょうろ', scene:'wateringcan', memo:'みずを あげると おはなが ちょっと うれしそうに ゆれる'} },
+  { id:'sora3',  name:'おおきなかずの くも', icon:'☁️', color:'var(--ocean)', scene:'sora3', theme:'sora3',
+    intro:'くもの かいだんを のぼると、とおくまで みわたせるよ。100より おおきい かずの せかいだ！',
+    subFlavor:'100の まとまりで かんがえよう',
+    gen:genBigNum, n:10,
+    treasure:{i:'🔭', n:'かずの ぼうえんきょう', scene:'telescope', memo:'のぞくと とおくの かずまで はっきり みえるんだって'} },
+
+  /* ===== うみの そこ（Phase F） ===== */
+  { id:'umi1',   name:'わりざんの しんかい', icon:'🌊', color:'var(--ocean)', scene:'umi1', theme:'umi1',
+    intro:'ざぶーん！うみの そこに もぐるよ。おさかなを おなじ かずずつ わけて あげよう',
+    subFlavor:'九九を さかさに つかうと とけるよ',
+    gen:genDiv, n:10,
+    treasure:{i:'🦪', n:'しんじゅの たま', scene:'pearl', memo:'かいの なかで ながい あいだ そだった たからもの'} },
+  { id:'umi2',   name:'カタカナの ちんぼつせん', icon:'🚢', color:'var(--coral)', scene:'umi2', theme:'umi2',
+    intro:'ふるい ふねが しずんで いる…！つみにの なまえは ぜんぶ カタカナで かかれて いるみたい',
+    gen:makeKanjiGen('kana', 'カタカナで かくと どれ？'), n:10,
+    treasure:{i:'🧢', n:'せんちょうの ぼうし', scene:'captainhat', memo:'かぶると きぶんは おおうなばらの せんちょう！'} },
+  { id:'umi3',   name:'でんせつの りゅうぐう', icon:'🐉', color:'var(--purple)', scene:'umi3', theme:'umi3',
+    intro:'うみの いちばん ふかい ばしょに、でんせつの りゅうぐうじょうが…！ぜんぶの ちからを あわせて とびらを あけよう！',
+    clearTitle:'🌊 うみの でんせつに なった！', boss:true,
+    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genDiv,genBigNum,genClock,makeStoryGen(),()=>makeKanjiGen('kana','カタカナで かくと どれ？')()])(), n:14,
+    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった'} },
 ];
 
 /* ================= 進捗（保存） ================= */
@@ -943,8 +1234,18 @@ function show(name) {
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.scr));
 
 /* ================= マップ描画 ================= */
-const XS = [26, 68, 26, 68, 26, 68, 26, 68, 26, 68, 47]; /* ジグザグ配置(%) */
+const XS = [26, 68, 26, 68, 26, 68, 26, 68, 26, 68, 47, 26, 68, 26, 68, 26, 47]; /* ジグザグ配置(%) */
 const STEP = 132, TOPPAD = 90;
+
+/* エリア定義（ゾーン帯はここから動的生成。ステージ追加に自動追従） */
+const AREAS = [
+  { name:'みずべ',     from:0,  to:2,  color:'#7FB069' },
+  { name:'ちてい',     from:3,  to:4,  color:'#5A5478' },
+  { name:'ことば',     from:5,  to:7,  color:'#A89A80' },
+  { name:'さんちょう', from:8,  to:10, color:'#5C6873' },
+  { name:'そらの しま', from:11, to:13, color:'#5B9FC4' },
+  { name:'うみの そこ', from:14, to:16, color:'#2E7D99' }
+];
 
 function renderMap() {
   const wrap = $('#mapWrap');
@@ -952,6 +1253,23 @@ function renderMap() {
   const H = TOPPAD + STAGES.length * STEP;
   wrap.style.height = H + 'px';
   const W = wrap.clientWidth || 360;
+
+  /* エリアゾーン帯を動的生成（ノードY座標から導出） */
+  const island = $('#island');
+  island.querySelectorAll('.zone').forEach(z => z.remove());
+  AREAS.forEach(a => {
+    if (a.from >= STAGES.length) return;
+    const to = Math.min(a.to, STAGES.length - 1);
+    const top = Math.max(0, (TOPPAD + a.from * STEP - 100) / H * 100);
+    const bottom = Math.min(100, (TOPPAD + to * STEP + 40) / H * 100);
+    const z = document.createElement('div');
+    z.className = 'zone';
+    z.style.top = top + '%';
+    z.style.height = (bottom - top) + '%';
+    z.style.background = a.color;
+    z.innerHTML = `<span class="zoneLabel">${a.name}</span>`;
+    island.appendChild(z);
+  });
 
   let currentSet = false;
   const pts = [];
@@ -1004,11 +1322,13 @@ function buildQuestions(stage) {
 function startQuiz(i) {
   const s = STAGES[i];
   const openQuiz = () => {
-    Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
     const scr = $('#scr-quiz');
-    if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
-    show('quiz');
-    renderQ();
+    wordsReady.then(() => {
+      Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
+      if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
+      show('quiz');
+      renderQ();
+    });
   };
   if (s.intro && state.introSeen[s.id] !== today()) {
     setBuddyFace($('#introBuddy'), 'normal');
@@ -1091,7 +1411,7 @@ function answer(v) {
   const ansEl = $('#fbAns');
   ansEl.classList.remove('fade');
   if (ok) { ansEl.textContent = ''; }
-  else { ansEl.textContent = 'こたえは 「' + (q.input ? q.ans : q.choices[q.ans]) + '」'; void ansEl.offsetWidth; ansEl.classList.add('fade'); }
+  else { ansEl.textContent = 'こたえは 「' + (q.input ? (q.ans + (q.unit || '')) : q.choices[q.ans]) + '」'; void ansEl.offsetWidth; ansEl.classList.add('fade'); }
 
   if (ok) {
     if (!q.input && typeof v === 'number') {
@@ -1154,7 +1474,7 @@ function finish() {
     } else {
       ico.innerHTML = `<span class="tico">${s.treasure.i}</span>`;
     }
-    if (s.id === 'tou' && cleared) fireBossParticles();
+    if (s.boss && cleared) fireBossParticles();
     const rb = $('#resBuddy'); rb.dataset.mounted = '0';
     setTimeout(() => { setBuddyFace(rb, 'super'); rbWrap.classList.add('in'); }, 1000);
   } else tr.hidden = true;
@@ -1311,6 +1631,7 @@ function askBuddyName() {
 
 /* ================= init ================= */
 initParticles();
+loadWords();
 show('map');
 if (!state.buddyName) askBuddyName();
 if ('serviceWorker' in navigator) {
