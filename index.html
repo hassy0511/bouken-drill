@@ -202,8 +202,162 @@ table{width:100%; border-collapse:collapse; background:var(--white); border-radi
 th,td{padding:8px 6px; text-align:center; border-bottom:1px solid var(--sand2)}
 th{background:var(--sand2); font-size:12px}
 td.l{text-align:left}
-#resetBtn{margin-top:18px; width:100%; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--coral); color:var(--coral-d); font-weight:bold; font-size:15px}
+#backupRow{display:flex; gap:10px; margin-top:18px}
+#backupRow button{flex:1; min-height:52px; border-radius:14px; font-weight:bold; font-size:14px}
+#exportBtn{background:var(--ocean); color:#fff; box-shadow:0 4px 0 var(--ocean-d)}
+#importBtn{background:#fff; border:2px solid var(--ocean); color:var(--ocean-d)}
+#exportBtn:active, #importBtn:active{transform:translateY(3px)}
+#importBtn:active{box-shadow:none}
+#backupMsg{font-size:13px; text-align:center; margin-top:8px; min-height:18px; color:var(--jungle-d); font-weight:bold}
+#resetBtn{margin-top:10px; width:100%; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--coral); color:var(--coral-d); font-weight:bold; font-size:15px}
 .note{font-size:12px; color:var(--ink-soft); margin-top:10px; line-height:1.7}
+
+/* ============ 遺跡テーマ & ナビキャラ (rev v2) ============ */
+:root{
+  --stone-l:#A89A80; --stone-d:#6B5D48; --moss-l:#7A9B5C; --moss-d:#4E6E3B;
+  --torch:#E8934A; --torch-c:#F5C56B; --relic:#D4A63C; --mystic:#8E7BC4;
+  --ruin-sky:#E9DFC4; --ruin-gr:#C7B78E; --inkline:#3D3323;
+}
+/* クイズカードの石×金フレーム（テーマ時のみ） */
+.qcorner{position:absolute; width:34px; height:34px; background:no-repeat center/contain;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%23A89A80' stroke='%233D3323' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%23D4A63C' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+  display:none; z-index:2}
+.qcorner.tl{top:-6px; left:-6px}
+.qcorner.tr{top:-6px; right:-6px; transform:rotate(90deg)}
+.qcorner.br{bottom:-6px; right:-6px; transform:rotate(180deg)}
+.qcorner.bl{bottom:-6px; left:-6px; transform:rotate(270deg)}
+#scr-quiz[data-stage-theme="iseki"]{ --card-bg:#EFE7D2; --card-frame:var(--relic); }
+#scr-quiz[data-stage-theme="iseki"] #qCard{
+  background:var(--card-bg); border-color:var(--card-frame); border-width:3px; position:relative; overflow:visible;
+}
+#scr-quiz[data-stage-theme="iseki"] .qcorner{display:block}
+#scr-quiz[data-stage-theme="iseki"] .chBtn{border-color:var(--stone-d); box-shadow:0 5px 0 var(--inkline)}
+#scr-quiz[data-stage-theme="iseki"] .chBtn:active{box-shadow:0 1px 0 var(--inkline)}
+.qmoss{position:absolute; bottom:0; width:60px; height:70px; pointer-events:none; opacity:.14; z-index:0}
+.qmoss.l{left:0} .qmoss.r{right:0; transform:scaleX(-1)}
+#scr-quiz:not([data-stage-theme]) .qmoss{display:none}
+
+/* ナビキャラ（コンパス） */
+.buddy{display:inline-block; line-height:0}
+.buddy svg{display:block}
+.bd-needle{transform-origin:50px 50px}
+.bd-needle.spin{animation:ndl-spin .5s cubic-bezier(0.34,1.56,0.64,1)}
+.bd-needle.shake{animation:ndl-shake .4s ease-in-out}
+.bd-needle.super{animation:ndl-super .8s ease-out}
+@keyframes ndl-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes ndl-shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+@keyframes ndl-super{to{transform:rotate(720deg)}}
+
+/* フィードバックオーバーレイ改修：フェードイン/アウト */
+#fb{opacity:0; visibility:hidden; transition:opacity .12s ease, visibility .12s ease}
+#fb.show{opacity:1; visibility:visible}
+#fbBuddy{margin-bottom:6px}
+#fbBuddy[hidden]{display:none}
+#fbCard.shake{animation:card-shake .3s ease-in-out}
+@keyframes card-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+#fbAns.fade{animation:ans-fade .3s ease}
+@keyframes ans-fade{from{opacity:0}to{opacity:1}}
+.chBtn.bounce{animation:btn-bounce .3s ease}
+@keyframes btn-bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* パーティクル */
+.particles{position:absolute; top:38%; left:50%; width:0; height:0; pointer-events:none}
+.particles span{position:absolute; width:8px; height:8px; border-radius:2px; opacity:0}
+.particles.go span{animation:rise .6s ease-out forwards}
+@keyframes rise{from{opacity:1; transform:translate(0,0) rotate(45deg)} to{opacity:0; transform:translate(var(--dx),-44px) rotate(45deg)}}
+
+/* 汎用モーダル（導入・命名） */
+.modal{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:rgba(61,51,35,.45); opacity:0; visibility:hidden; transition:opacity .25s, visibility .25s}
+.modal.show{opacity:1; visibility:visible}
+.mCard{background:#EFE7D2; border:4px solid var(--relic); border-radius:22px; padding:24px 20px; max-width:400px; width:100%;
+  text-align:center; transform:scale(.9); transition:transform .25s cubic-bezier(0.34,1.56,0.64,1); position:relative}
+.modal.show .mCard{transform:scale(1)}
+.mCard .mMsg{font-size:18px; font-weight:bold; line-height:1.6; margin:12px 4px 18px; color:var(--inkline)}
+.mCard .mBtn{width:100%; min-height:56px; font-size:18px; font-weight:bold; border-radius:16px; color:#fff;
+  background:var(--torch); box-shadow:0 5px 0 #C06A2E}
+.mCard .mBtn:active{transform:translateY(4px); box-shadow:0 1px 0 #C06A2E}
+#nameInput{width:100%; min-height:52px; font-size:22px; text-align:center; border:3px solid var(--stone-d);
+  border-radius:14px; background:#fff; margin:10px 0 16px; font-family:inherit; color:var(--inkline)}
+
+/* 宝物演出（結果画面の巻物） */
+#resScroll{margin:8px auto 0; width:120px; height:96px}
+#resScroll.pop{animation:scroll-pop .5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes scroll-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+#resBuddyWrap{margin-top:6px; opacity:0}
+#resBuddyWrap.in{animation:ans-fade .3s ease forwards}
+.zkCard .zm{font-size:11px; color:var(--ink-soft); margin-top:5px; line-height:1.5}
+
+/* マップノードのシーン表示（iseki） */
+.stageNode .disc.disc-scene{padding:0; overflow:hidden; background:transparent}
+.stageNode .disc.disc-scene svg{width:100%; height:100%; display:block}
+.stageNode.locked .disc.disc-scene{filter:grayscale(.75) brightness(.92)}
+.stageNode.current .disc.disc-scene .bd-arch{animation:arch-glow 2s ease-in-out infinite}
+.stageNode.cleared .disc.disc-scene .bd-arch{opacity:.7; fill:#D4A63C}
+@keyframes arch-glow{0%,100%{opacity:.4}50%{opacity:.8}}
+
+/* ナビキャラの各所サイズ */
+#fbBuddy svg{width:110px; height:110px}
+.mCard .buddy svg{width:64px; height:64px}
+#resBuddy svg{width:80px; height:80px}
+#fbMark:empty{display:none}
+#resTreasureText{font-size:16px; font-weight:bold; margin-bottom:2px}
+#resScroll{display:inline-block; overflow:visible}
+
+/* ---- エリア別テーマ配色（rev v3） ---- */
+#scr-quiz[data-stage-theme="mori"],
+#scr-quiz[data-stage-theme="hama"],
+#scr-quiz[data-stage-theme="kawa"]{ --card-bg:#ECF2E0; --card-frame:#4E7E3F; }
+#scr-quiz[data-stage-theme="douk"],
+#scr-quiz[data-stage-theme="tani"]{ --card-bg:#E6E4EE; --card-frame:#5A5478; }
+#scr-quiz[data-stage-theme="iseki"],
+#scr-quiz[data-stage-theme="iseki2"],
+#scr-quiz[data-stage-theme="hashi"]{ --card-bg:#EFE7D2; --card-frame:#D4A63C; }
+#scr-quiz[data-stage-theme="yama"],
+#scr-quiz[data-stage-theme="shiro"]{ --card-bg:#E8EEF4; --card-frame:#5C6873; }
+#scr-quiz[data-stage-theme="tou"]{ --card-bg:#EFEBF5; --card-frame:#8E7BC4; }
+/* テーマ適用時は共通してカードとコーナーとボタンを装飾 */
+#scr-quiz[data-stage-theme] #qCard{ background:var(--card-bg); border-color:var(--card-frame); border-width:3px; position:relative; overflow:visible; }
+#scr-quiz[data-stage-theme] .qcorner{ display:block; }
+#scr-quiz[data-stage-theme] .chBtn{ border-color:var(--card-frame); box-shadow:0 5px 0 var(--inkline); }
+#scr-quiz[data-stage-theme] .chBtn:active{ box-shadow:0 1px 0 var(--inkline); }
+/* エリア別コーナー装飾（背景SVGの差し替え） */
+#scr-quiz[data-stage-theme="mori"] .qcorner,
+#scr-quiz[data-stage-theme="hama"] .qcorner,
+#scr-quiz[data-stage-theme="kawa"] .qcorner{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%238A6543' stroke='%233D3323' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='4' fill='%237FB069' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+#scr-quiz[data-stage-theme="douk"] .qcorner,
+#scr-quiz[data-stage-theme="tani"] .qcorner{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%235A5478' stroke='%233D3323' stroke-width='2'/%3E%3Cpath d='M9 9 L12 6 L15 9 L12 15 Z' fill='%238FD0E8' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+#scr-quiz[data-stage-theme="yama"] .qcorner,
+#scr-quiz[data-stage-theme="shiro"] .qcorner,
+#scr-quiz[data-stage-theme="tou"] .qcorner{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%235C6873' stroke='%233D3323' stroke-width='2'/%3E%3Cpath d='M8 12 L12 6 L16 12 Z' fill='%23F7F4EC' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+/* ボス花火（§6.3） */
+.particles.boss{top:30%; left:50%}
+.particles.boss span{width:10px; height:10px; border-radius:2px}
+.particles.boss.go span{animation:rise-boss .9s ease-out forwards}
+@keyframes rise-boss{from{opacity:1; transform:translate(0,0) rotate(45deg)} to{opacity:0; transform:translate(var(--dx),-70px) rotate(225deg)}}
+
+/* マップ：海の波タイルとエリアゾーン（§7） */
+#scr-map{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 40'%3E%3Cpath d='M0 20 Q10 14 20 20 T40 20 T60 20 T80 20' fill='none' stroke='%23FFFDF7' stroke-width='2.5' opacity='0.25' stroke-linecap='round'/%3E%3C/svg%3E"); background-size:80px 40px; background-repeat:repeat;}
+#island{border-width:8px; box-shadow:0 0 0 4px rgba(255,253,247,.5)}
+.zone{position:absolute; left:4%; right:4%; border-radius:40px; pointer-events:none; z-index:0}
+.zone.z1{top:0; height:28%; background:#7FB069; opacity:.16}
+.zone.z2{top:28%; height:18%; background:#5A5478; opacity:.14}
+.zone.z3{top:46%; height:27%; background:#A89A80; opacity:.16}
+.zone.z4{top:73%; height:27%; background:#5C6873; opacity:.14}
+
+@media (prefers-reduced-motion:reduce){
+  .bd-needle.spin,.bd-needle.shake,.bd-needle.super,#fbCard.shake,.chBtn.bounce,
+  .particles.go span,#resScroll.pop,#resBuddyWrap.in,.mCard,
+  .stageNode.current .disc.disc-scene .bd-arch,.particles.boss.go span{animation:none; transition:none}
+  .stageNode.current .disc.disc-scene .bd-arch{opacity:.7}
+}
 </style>
 </head>
 <body>
@@ -217,7 +371,10 @@ td.l{text-align:left}
   <!-- ぼうけんマップ -->
   <section class="screen" id="scr-map">
     <div id="mapWrap">
-      <div id="island"></div>
+      <div id="island">
+        <div class="zone z1"></div><div class="zone z2"></div>
+        <div class="zone z3"></div><div class="zone z4"></div>
+      </div>
       <svg id="trail" aria-hidden="true"></svg>
     </div>
   </section>
@@ -229,6 +386,10 @@ td.l{text-align:left}
       <div id="dots"></div>
     </div>
     <div id="qCard">
+      <span class="qcorner tl"></span><span class="qcorner tr"></span>
+      <span class="qcorner bl"></span><span class="qcorner br"></span>
+      <svg class="qmoss l" viewBox="0 0 60 70"><path d="M0 70 C6 50,0 40,10 26 C18 16,24 22,20 34 C30 24,34 36,26 46 C22 58,12 60,8 70Z" fill="#4E6E3B"/></svg>
+      <svg class="qmoss r" viewBox="0 0 60 70"><path d="M0 70 C6 50,0 40,10 26 C18 16,24 22,20 34 C30 24,34 36,26 46 C22 58,12 60,8 70Z" fill="#4E6E3B"/></svg>
       <div id="qText"></div>
       <div id="qSub"></div>
     </div>
@@ -245,7 +406,11 @@ td.l{text-align:left}
       <div id="resTitle"></div>
       <div id="resStars"></div>
       <div id="resScore"></div>
-      <div id="resTreasure" hidden></div>
+      <div id="resTreasure" hidden>
+        <div id="resTreasureText"></div>
+        <div id="resTreasureIco"></div>
+        <div id="resBuddyWrap"><span class="buddy" id="resBuddy"></span></div>
+      </div>
       <button class="bigBtn" id="retryBtn">もういちど やる</button>
       <button class="bigBtn alt" id="mapBtn">マップに もどる</button>
     </div>
@@ -280,9 +445,30 @@ td.l{text-align:left}
 <!-- せいかい／ざんねん オーバーレイ -->
 <div id="fb">
   <div id="fbCard">
+    <div class="particles" id="fbParticles"><span></span><span></span><span></span><span></span><span></span></div>
+    <div id="fbBuddy" class="buddy" hidden></div>
     <div id="fbMark"></div>
     <div id="fbMsg"></div>
     <div id="fbAns"></div>
+  </div>
+</div>
+
+<!-- ステージ導入モーダル -->
+<div class="modal" id="introModal">
+  <div class="mCard">
+    <div class="buddy" id="introBuddy" style="display:inline-block"></div>
+    <div class="mMsg" id="introMsg"></div>
+    <button class="mBtn" id="introGo">ぼうけんに でる！</button>
+  </div>
+</div>
+
+<!-- なまえつけ ダイアログ -->
+<div class="modal" id="nameModal">
+  <div class="mCard">
+    <div class="buddy" id="nameBuddy" style="display:inline-block"></div>
+    <div class="mMsg">この コンパスに なまえを つけてね</div>
+    <input id="nameInput" maxlength="6" placeholder="れい：ピカリ" inputmode="text">
+    <button class="mBtn" id="nameGo">これで いい！</button>
   </div>
 </div>
 
@@ -377,41 +563,369 @@ function genKuku() { const a = 1 + rnd(9), b = 1 + rnd(9); return numQ(`${a} × 
 function genHissanAdd() { const a = 10 + rnd(90), b = 10 + rnd(90); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
 function genHissanSub() { const a = 20 + rnd(80), b = 10 + rnd(a - 10); return numQ(`${a} − ${b} ＝ ？`, a - b); }
 
-function makeKanjiGen(pool) {
+function makeKanjiGen(pool, prompt) {
   return () => {
     const e = pick(pool);
     const wrong = shuffle(pool.filter(x => x[1] !== e[1])).slice(0, 3).map(x => x[1]);
     const choices = shuffle([e[1], ...wrong]);
-    return { text: `よみかたは どれ？<span class="big">${e[0]}</span>`, choices, ans: choices.indexOf(e[1]), html: true };
+    return { text: `${prompt || 'よみかたは どれ？'}<span class="big">${e[0]}</span>`, choices, ans: choices.indexOf(e[1]), html: true };
   };
 }
-function genOpp() {
-  const p = pick(OPP);
-  const dir = rnd(2);
-  const q = p[dir], a = p[1 - dir];
-  const others = shuffle(OPP.flat().filter(w => w !== q && w !== a)).slice(0, 3);
-  const choices = shuffle([a, ...others]);
-  return { text: `「${q}」の<br>はんたいの ことばは？`, choices, ans: choices.indexOf(a), html: true };
+function makeOppGen(prompt) {
+  return () => {
+    const p = pick(OPP);
+    const dir = rnd(2);
+    const q = p[dir], a = p[1 - dir];
+    const others = shuffle(OPP.flat().filter(w => w !== q && w !== a)).slice(0, 3);
+    const choices = shuffle([a, ...others]);
+    const text = prompt ? `${prompt}<span class="big">${q}</span>` : `「${q}」の<br>はんたいの ことばは？`;
+    return { text, choices, ans: choices.indexOf(a), html: true };
+  };
+}
+const genOpp = makeOppGen();
+
+/* ================= ステージ定義（データ駆動） ================= */
+/* ================= SVGアセット（rev v2） ================= */
+const BUDDY_SVG = `<svg viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
+  <circle cx="50" cy="50" r="46" fill="#D4A63C" stroke="#3D3323" stroke-width="2.5"/>
+  <circle cx="50" cy="50" r="38" fill="#F5EEDC" stroke="#3D3323" stroke-width="1.5"/>
+  <g stroke="#6B5D48" stroke-width="2" stroke-linecap="round">
+    <line x1="50" y1="14" x2="50" y2="20"/><line x1="86" y1="50" x2="80" y2="50"/>
+    <line x1="50" y1="86" x2="50" y2="80"/><line x1="14" y1="50" x2="20" y2="50"/>
+  </g>
+  <g class="bd-needle"><path d="M50 22 L56 50 L50 58 L44 50 Z" fill="#C9622E" stroke="#3D3323" stroke-width="1.5"/></g>
+  <g class="bd-face bd-face-normal"><circle cx="42" cy="64" r="3" fill="#3D3323"/><circle cx="58" cy="64" r="3" fill="#3D3323"/></g>
+  <g class="bd-face bd-face-happy" style="display:none">
+    <path d="M38 63 Q42 67 46 63" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M54 63 Q58 67 62 63" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/></g>
+  <g class="bd-face bd-face-oops" style="display:none">
+    <path d="M38 65 L46 62" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M62 65 L54 62" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/></g>
+  <g class="bd-face bd-face-super" style="display:none">
+    <path d="M42 60 l1.8 3.6 4 .6 -2.9 2.8 .7 4 -3.6 -1.9 -3.6 1.9 .7 -4 -2.9 -2.8 4 -.6z" fill="#E8934A"/>
+    <path d="M58 60 l1.8 3.6 4 .6 -2.9 2.8 .7 4 -3.6 -1.9 -3.6 1.9 .7 -4 -2.9 -2.8 4 -.6z" fill="#E8934A"/></g>
+</svg>`;
+
+const ISEKI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E9DFC4"/>
+  <rect x="0" y="88" width="120" height="32" fill="#C7B78E"/>
+  <path d="M18 40 L40 38 L41 90 L17 91 Z" fill="#A89A80" stroke="#3D3323" stroke-width="2"/>
+  <path d="M34 39 L40 38 L41 90 L35 90 Z" fill="#6B5D48"/>
+  <path d="M80 32 L102 34 L103 90 L79 91 Z" fill="#A89A80" stroke="#3D3323" stroke-width="2"/>
+  <path d="M96 33 L102 34 L103 90 L97 90 Z" fill="#6B5D48"/>
+  <path d="M44 90 L44 58 Q60 42 76 58 L76 90 Z" fill="#3D3323"/>
+  <ellipse class="bd-arch" cx="60" cy="72" rx="10" ry="16" fill="#E8934A" opacity="0"/>
+  <path d="M20 88 C24 70,16 58,26 44" fill="none" stroke="#4E6E3B" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="24" cy="60" r="4" fill="#7A9B5C"/><circle cx="22" cy="76" r="3.5" fill="#7A9B5C"/>
+  <path d="M60 26 l4 6 -4 6 -4 -6 z" fill="#8E7BC4" opacity="0.8"/>
+  <path d="M74 20 l3 4.5 -3 4.5 -3 -4.5 z" fill="#8E7BC4" opacity="0.5"/>
+</svg>`;
+
+const SCROLL_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+  <g class="tr-a">
+    <rect x="30" y="14" width="40" height="52" rx="8" fill="#EFE0B8" stroke="#3D3323" stroke-width="2"/>
+    <rect x="26" y="10" width="48" height="10" rx="5" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <rect x="26" y="60" width="48" height="10" rx="5" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <rect x="44" y="30" width="12" height="20" rx="2" fill="#C9622E"/>
+  </g>
+  <g class="tr-b" style="display:none;opacity:0">
+    <rect x="10" y="20" width="80" height="44" rx="4" fill="#EFE0B8" stroke="#3D3323" stroke-width="2"/>
+    <rect x="4" y="16" width="10" height="52" rx="5" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <rect x="86" y="16" width="10" height="52" rx="5" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <g stroke="#6B5D48" stroke-width="2" stroke-linecap="round">
+      <line x1="24" y1="32" x2="76" y2="32"/><line x1="24" y1="42" x2="76" y2="42"/><line x1="24" y1="52" x2="60" y2="52"/>
+    </g>
+  </g>
+</svg>`;
+
+/* ---- Phase A: みずべ シーン ---- */
+const MORI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E4F0DC"/>
+  <rect x="0" y="92" width="120" height="28" fill="#9DBB7E"/>
+  <ellipse class="bd-arch" cx="60" cy="70" rx="14" ry="20" fill="#F5C56B" opacity="0"/>
+  <path d="M24 92 L30 52 L36 92 Z" fill="#8A6543" stroke="#3D3323" stroke-width="2"/>
+  <ellipse cx="30" cy="42" rx="22" ry="18" fill="#7FB069" stroke="#3D3323" stroke-width="2"/>
+  <path d="M14 46 A22 18 0 0 0 30 60 L30 24 A22 18 0 0 0 14 46Z" fill="#4E7E3F"/>
+  <path d="M84 92 L90 46 L96 92 Z" fill="#8A6543" stroke="#3D3323" stroke-width="2"/>
+  <ellipse cx="90" cy="36" rx="24" ry="20" fill="#7FB069" stroke="#3D3323" stroke-width="2"/>
+  <path d="M72 40 A24 20 0 0 0 90 56 L90 16 A24 20 0 0 0 72 40Z" fill="#4E7E3F"/>
+  <ellipse cx="48" cy="100" rx="5" ry="6" fill="#B07B4A" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M43 97 Q48 92 53 97" fill="#8A6543" stroke="#3D3323" stroke-width="1.5"/>
+  <ellipse cx="70" cy="102" rx="6" ry="4" fill="#D96A52" stroke="#3D3323" stroke-width="1.5"/>
+  <rect x="68" y="102" width="4" height="6" fill="#F1E6C8" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const HAMA_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E4F0DC"/>
+  <rect x="0" y="42" width="120" height="40" fill="#7EC8DE"/>
+  <path d="M0 50 Q15 46 30 50 T60 50 T90 50 T120 50" fill="none" stroke="#FFFDF7" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M0 66 Q15 62 30 66 T60 66 T90 66 T120 66" fill="none" stroke="#3E8FAD" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M0 82 Q30 76 60 82 T120 82 L120 120 L0 120 Z" fill="#EEDFB0"/>
+  <ellipse class="bd-arch" cx="82" cy="54" rx="14" ry="8" fill="#F5C56B" opacity="0"/>
+  <path d="M26 88 C24 66,28 52,24 40" fill="none" stroke="#8A6543" stroke-width="5" stroke-linecap="round"/>
+  <g stroke="#3D3323" stroke-width="1.5">
+    <path d="M24 40 Q10 34 6 42 Q16 44 24 40" fill="#7FB069"/>
+    <path d="M24 40 Q38 34 42 42 Q32 44 24 40" fill="#7FB069"/>
+    <path d="M24 40 Q14 26 20 22 Q26 32 24 40" fill="#4E7E3F"/>
+    <path d="M24 40 Q34 26 28 22 Q22 32 24 40" fill="#4E7E3F"/>
+  </g>
+  <path d="M64 100 L76 100 Q70 88 64 100Z" fill="#F2C4B0" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M66 98 L70 92 M70 98 L72 93" stroke="#C9622E" stroke-width="1"/>
+</svg>`;
+const KAWA_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#9DBB7E"/>
+  <path d="M42 0 Q36 30 46 60 Q56 90 44 120 L78 120 Q88 88 78 58 Q70 28 76 0 Z" fill="#7EC8DE" stroke="#3D3323" stroke-width="2"/>
+  <path d="M54 8 Q50 34 58 62 Q64 86 56 112" fill="none" stroke="#3E8FAD" stroke-width="3" stroke-linecap="round"/>
+  <ellipse class="bd-arch" cx="62" cy="58" rx="10" ry="7" fill="#F5C56B" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <ellipse cx="52" cy="30" rx="9" ry="6" fill="#A89A80"/>
+    <ellipse cx="64" cy="62" rx="9" ry="6" fill="#A89A80"/>
+    <ellipse cx="54" cy="94" rx="9" ry="6" fill="#A89A80"/>
+  </g>
+  <path d="M8 20 Q14 12 20 20 M92 40 Q98 32 104 40 M12 78 Q18 70 24 78" fill="none" stroke="#4E7E3F" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="18" cy="46" r="4" fill="#7FB069" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="100" cy="86" r="4" fill="#7FB069" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+/* ---- Phase B: ちてい シーン ---- */
+const DOUK_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#3A3654"/>
+  <path d="M0 0 L120 0 L120 26 Q90 34 60 26 Q30 20 0 30 Z" fill="#5A5478" stroke="#3D3323" stroke-width="2"/>
+  <path d="M34 26 L40 48 L46 26 Z" fill="#5A5478" stroke="#3D3323" stroke-width="2"/>
+  <path d="M74 24 L79 40 L84 24 Z" fill="#5A5478" stroke="#3D3323" stroke-width="2"/>
+  <path d="M0 120 L0 84 Q22 92 30 120 Z" fill="#5A5478" stroke="#3D3323" stroke-width="2"/>
+  <path d="M120 120 L120 80 Q98 90 92 120 Z" fill="#5A5478" stroke="#3D3323" stroke-width="2"/>
+  <ellipse class="bd-arch" cx="60" cy="78" rx="18" ry="14" fill="#8FD0E8" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M50 108 L54 70 L62 62 L66 108 Z" fill="#8FD0E8"/>
+    <path d="M62 62 L66 108 L58 108 Z" fill="#4A93B8"/>
+    <path d="M40 108 L44 84 L50 80 L52 108 Z" fill="#4A93B8"/>
+    <path d="M68 108 L72 82 L78 86 L78 108 Z" fill="#8FD0E8"/>
+  </g>
+  <circle cx="24" cy="56" r="2" fill="#8FD0E8"/><circle cx="96" cy="50" r="2" fill="#8FD0E8"/>
+</svg>`;
+const TANI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#5A5478"/>
+  <path d="M0 0 L46 0 L60 96 L74 0 L120 0 L120 120 L0 120 Z" fill="#3A3654" stroke="#3D3323" stroke-width="2"/>
+  <path d="M46 0 L60 96 L52 96 L38 0 Z" fill="#4A4566"/>
+  <path d="M48 120 L60 96 L72 120 Z" fill="#E86A3D" stroke="#3D3323" stroke-width="2"/>
+  <ellipse class="bd-arch" cx="60" cy="106" rx="14" ry="8" fill="#F5A55B" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="1.5">
+    <path d="M14 44 Q22 38 30 44" fill="none" stroke="#EFE6D0" stroke-width="3"/>
+    <path d="M16 52 Q23 46 30 52" fill="none" stroke="#EFE6D0" stroke-width="3"/>
+    <path d="M18 60 Q24 54 30 60" fill="none" stroke="#EFE6D0" stroke-width="3"/>
+    <circle cx="12" cy="38" r="4" fill="#EFE6D0"/>
+  </g>
+  <circle cx="96" cy="70" r="3" fill="#E86A3D"/><circle cx="88" cy="84" r="2" fill="#F5A55B"/>
+</svg>`;
+/* ---- Phase C: ことば シーン ---- */
+const HASHI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E9DFC4"/>
+  <path d="M0 120 L0 66 Q16 60 24 66 L24 120 Z" fill="#A89A80" stroke="#3D3323" stroke-width="2"/>
+  <path d="M120 120 L120 66 Q104 60 96 66 L96 120 Z" fill="#A89A80" stroke="#3D3323" stroke-width="2"/>
+  <path d="M10 26 A50 50 0 0 1 110 26" fill="none" stroke="#E8705A" stroke-width="6"/>
+  <path d="M16 32 A44 44 0 0 1 104 32" fill="none" stroke="#F2C14E" stroke-width="6"/>
+  <path d="M22 38 A38 38 0 0 1 98 38" fill="none" stroke="#5B9FC4" stroke-width="6"/>
+  <path d="M24 70 Q60 84 96 70" fill="none" stroke="#8A6543" stroke-width="3"/>
+  <g fill="#B07B4A" stroke="#3D3323" stroke-width="1.5">
+    <rect x="30" y="72" width="10" height="6" rx="1" transform="rotate(6 35 75)"/>
+    <rect x="44" y="76" width="10" height="6" rx="1" transform="rotate(3 49 79)"/>
+    <rect x="58" y="77" width="10" height="6" rx="1"/>
+    <rect x="72" y="75" width="10" height="6" rx="1" transform="rotate(-4 77 78)"/>
+    <rect x="84" y="72" width="10" height="6" rx="1" transform="rotate(-7 89 75)"/>
+  </g>
+  <path d="M24 66 Q60 78 96 66" fill="none" stroke="#6E4A28" stroke-width="2"/>
+  <ellipse class="bd-arch" cx="60" cy="76" rx="14" ry="8" fill="#F5C56B" opacity="0"/>
+  <path d="M70 46 Q78 42 80 34 Q72 36 70 46Z" fill="#8E7BC4" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const SHINDEN_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E9DFC4"/>
+  <rect x="0" y="92" width="120" height="28" fill="#C7B78E"/>
+  <path d="M14 44 L60 18 L106 44 L102 52 L18 52 Z" fill="#A89A80" stroke="#3D3323" stroke-width="2"/>
+  <path d="M60 18 L106 44 L102 52 L60 26 Z" fill="#6B5D48"/>
+  <circle cx="60" cy="38" r="6" fill="#D4A63C" stroke="#3D3323" stroke-width="1.5"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M22 52 L30 52 L31 92 L21 92 Z" fill="#A89A80"/>
+    <path d="M55 52 L65 52 L66 92 L54 92 Z" fill="#A89A80"/>
+    <path d="M90 52 L98 52 L99 92 L89 92 Z" fill="#A89A80"/>
+  </g>
+  <path d="M28 52 L30 52 L31 92 L29 92 Z" fill="#6B5D48"/>
+  <path d="M63 52 L65 52 L66 92 L64 92 Z" fill="#6B5D48"/>
+  <path d="M96 52 L98 52 L99 92 L97 92 Z" fill="#6B5D48"/>
+  <rect x="72" y="64" width="14" height="28" rx="7" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+  <ellipse class="bd-arch" cx="79" cy="78" rx="7" ry="12" fill="#F5C56B" opacity="0"/>
+  <path d="M12 92 C16 78,10 70,18 60" fill="none" stroke="#4E6E3B" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="15" cy="74" r="3.5" fill="#7A9B5C"/>
+</svg>`;
+/* ---- Phase D: さんちょう シーン ---- */
+const YAMA_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#DCE8F0"/>
+  <path d="M8 104 L60 26 L112 104 Z" fill="#8C99A6" stroke="#3D3323" stroke-width="2"/>
+  <path d="M60 26 L112 104 L60 104 Z" fill="#5C6873"/>
+  <path d="M46 47 L60 26 L74 47 L66 42 L60 50 L52 42 Z" fill="#F7F4EC" stroke="#3D3323" stroke-width="2"/>
+  <circle class="bd-arch" cx="60" cy="18" r="9" fill="#E8763D" opacity="0"/>
+  <path d="M60 8 Q54 16 60 24 Q66 16 60 8Z" fill="#E8763D" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="60" cy="19" r="3" fill="#F5C56B"/>
+  <g fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5">
+    <ellipse cx="24" cy="36" rx="12" ry="6"/>
+    <ellipse cx="98" cy="52" rx="10" ry="5"/>
+  </g>
+  <rect x="0" y="104" width="120" height="16" fill="#9DBB7E"/>
+</svg>`;
+const SHIRO_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#DCE8F0"/>
+  <rect x="0" y="96" width="120" height="24" fill="#9DBB7E"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <rect x="18" y="42" width="20" height="54" fill="#E8DCC0"/>
+    <rect x="82" y="42" width="20" height="54" fill="#E8DCC0"/>
+    <rect x="34" y="56" width="52" height="40" fill="#E8DCC0"/>
+  </g>
+  <rect x="34" y="56" width="6" height="40" fill="#B8A98A"/>
+  <rect x="18" y="42" width="5" height="54" fill="#B8A98A"/>
+  <rect x="82" y="42" width="5" height="54" fill="#B8A98A"/>
+  <path d="M14 42 L28 24 L42 42 Z" fill="#4A6FA8" stroke="#3D3323" stroke-width="2"/>
+  <path d="M78 42 L92 24 L106 42 Z" fill="#4A6FA8" stroke="#3D3323" stroke-width="2"/>
+  <path d="M28 24 L28 12 L40 16 L28 20" fill="#E8763D" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M52 96 L52 74 Q60 64 68 74 L68 96 Z" fill="#3D3323"/>
+  <ellipse class="bd-arch" cx="60" cy="84" rx="6" ry="10" fill="#F5C56B" opacity="0"/>
+  <path d="M40 60 h6 M52 60 h6 M64 60 h6 M76 60 h6" stroke="#B8A98A" stroke-width="3"/>
+</svg>`;
+const TOU_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#333354"/>
+  <g fill="#F2C14E">
+    <circle cx="20" cy="20" r="2"/><circle cx="100" cy="14" r="1.6"/><circle cx="88" cy="38" r="2"/>
+    <circle cx="14" cy="56" r="1.6"/><circle cx="106" cy="66" r="1.6"/>
+  </g>
+  <path d="M96 20 A10 10 0 1 0 96 38 A8 8 0 1 1 96 20Z" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M46 108 L50 34 L70 34 L74 108 Z" fill="#5A5478"/>
+    <path d="M62 34 L70 34 L74 108 L66 108 Z" fill="#3A3654"/>
+    <path d="M44 34 L60 16 L76 34 Z" fill="#8E7BC4"/>
+  </g>
+  <circle class="bd-arch" cx="60" cy="24" r="8" fill="#8E7BC4" opacity="0"/>
+  <rect x="55" y="62" width="10" height="14" rx="5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <rect x="0" y="108" width="120" height="12" fill="#2A2A44"/>
+</svg>`;
+
+/* ---- 宝物SVG（1状態＝popのみ／トロフィーのみ2状態 tr-a→tr-b） ---- */
+const ACORN_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><ellipse cx="50" cy="48" rx="16" ry="20" fill="#B07B4A" stroke="#3D3323" stroke-width="2"/><path d="M38 44 A16 20 0 0 0 50 68 L50 28 A16 20 0 0 0 38 44Z" fill="#8A5A32"/><path d="M32 34 Q50 22 68 34 Q60 40 50 40 Q40 40 32 34Z" fill="#6E4A28" stroke="#3D3323" stroke-width="2"/><rect x="47" y="16" width="6" height="10" rx="3" fill="#6E4A28" stroke="#3D3323" stroke-width="2"/><path d="M44 50 Q47 54 44 58" fill="none" stroke="#F5C56B" stroke-width="2" stroke-linecap="round"/></svg>`;
+const SHELL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M50 66 L26 40 Q26 18 50 18 Q74 18 74 40 Z" fill="#F2C4B0" stroke="#3D3323" stroke-width="2"/><path d="M50 66 L26 40 Q26 18 50 18 Z" fill="#E09A80"/><g stroke="#3D3323" stroke-width="1.5"><path d="M50 66 L38 30" fill="none"/><path d="M50 66 L50 24" fill="none"/><path d="M50 66 L62 30" fill="none"/></g><circle cx="60" cy="34" r="4" fill="#F5C56B" stroke="#3D3323" stroke-width="1.5"/></svg>`;
+const GOLDFISH_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><ellipse cx="46" cy="40" rx="22" ry="13" fill="#F5C56B" stroke="#3D3323" stroke-width="2"/><path d="M46 27 A22 13 0 0 0 24 40 A22 13 0 0 0 46 53 Z" fill="#D4A63C"/><path d="M66 40 L84 28 L80 40 L84 52 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><path d="M42 27 Q46 18 54 20 Q50 26 48 28Z" fill="#D4A63C" stroke="#3D3323" stroke-width="1.5"/><circle cx="34" cy="37" r="2.5" fill="#3D3323"/><path d="M50 36 Q54 40 50 44 M57 35 Q61 40 57 45" fill="none" stroke="#C9622E" stroke-width="1.5"/></svg>`;
+const BLUEGEM_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M50 12 L72 30 L50 68 L28 30 Z" fill="#8FD0E8" stroke="#3D3323" stroke-width="2"/><path d="M50 12 L28 30 L50 68 Z" fill="#4A93B8"/><path d="M38 30 L62 30 L50 12 Z" fill="#BCE4F2" stroke="#3D3323" stroke-width="1"/><path d="M20 20 L24 24 M80 20 L76 24 M50 74 L50 78" stroke="#F5C56B" stroke-width="2" stroke-linecap="round"/></svg>`;
+const DINOBONE_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M24 54 Q50 30 76 54" fill="none" stroke="#3D3323" stroke-width="9" stroke-linecap="round" opacity="0.25"/><path d="M24 54 Q50 30 76 54" fill="none" stroke="#EFE6D0" stroke-width="7" stroke-linecap="round"/><path d="M30 60 Q50 42 70 60" fill="none" stroke="#EFE6D0" stroke-width="6" stroke-linecap="round"/><circle cx="20" cy="48" r="7" fill="#EFE6D0" stroke="#3D3323" stroke-width="2"/><circle cx="80" cy="48" r="7" fill="#EFE6D0" stroke="#3D3323" stroke-width="2"/></svg>`;
+const RAINBOWFEATHER_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M30 66 Q34 30 66 14 Q64 42 40 62 Z" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/><path d="M30 66 Q34 30 66 14 Q52 26 42 48 Z" fill="#E8705A"/><path d="M40 62 Q52 44 62 22" fill="none" stroke="#5B9FC4" stroke-width="2.5"/><path d="M30 66 Q34 58 40 52" fill="none" stroke="#3D3323" stroke-width="2" stroke-linecap="round"/></svg>`;
+const GOLDKEY_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><circle cx="34" cy="40" r="14" fill="none" stroke="#3D3323" stroke-width="10" opacity="0.25"/><circle cx="34" cy="40" r="14" fill="none" stroke="#D4A63C" stroke-width="7"/><path d="M48 40 L82 40" stroke="#D4A63C" stroke-width="7" stroke-linecap="round"/><path d="M70 40 L70 52 M80 40 L80 50" stroke="#D4A63C" stroke-width="6" stroke-linecap="round"/><circle cx="34" cy="40" r="4" fill="#F5C56B"/></svg>`;
+const FLAMEORB_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M50 8 Q34 28 40 44 Q44 54 50 54 Q56 54 60 44 Q66 28 50 8Z" fill="#E8763D" stroke="#3D3323" stroke-width="2"/><path d="M50 22 Q44 34 48 44 Q50 48 52 44 Q56 34 50 22Z" fill="#F5C56B"/><circle cx="50" cy="60" r="10" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="47" cy="57" r="3" fill="#F5C56B"/></svg>`;
+const CROWN_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M26 58 L22 26 L38 42 L50 20 L62 42 L78 26 L74 58 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><path d="M26 58 L22 26 L38 42 L44 32 L44 58 Z" fill="#B8892E"/><rect x="24" y="56" width="52" height="9" rx="4" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="47" r="5" fill="#E8705A" stroke="#3D3323" stroke-width="1.5"/><circle cx="34" cy="50" r="3" fill="#5B9FC4" stroke="#3D3323" stroke-width="1.5"/><circle cx="66" cy="50" r="3" fill="#5B9FC4" stroke="#3D3323" stroke-width="1.5"/></svg>`;
+const TROPHY_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+  <g class="tr-a">
+    <path d="M34 16 L66 16 L62 44 Q50 52 38 44 Z" fill="#8C8272" stroke="#3D3323" stroke-width="2"/>
+    <rect x="44" y="50" width="12" height="10" fill="#8C8272" stroke="#3D3323" stroke-width="2"/>
+    <rect x="36" y="60" width="28" height="8" rx="3" fill="#6B6456" stroke="#3D3323" stroke-width="2"/>
+  </g>
+  <g class="tr-b" style="display:none;opacity:0">
+    <path d="M34 16 L66 16 L62 44 Q50 52 38 44 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <path d="M34 16 L38 44 Q44 48 50 49 L50 16 Z" fill="#B8892E"/>
+    <path d="M34 22 Q22 24 26 34 Q30 40 38 38 M66 22 Q78 24 74 34 Q70 40 62 38" fill="none" stroke="#D4A63C" stroke-width="4"/>
+    <rect x="44" y="50" width="12" height="10" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
+    <rect x="36" y="60" width="28" height="8" rx="3" fill="#B8892E" stroke="#3D3323" stroke-width="2"/>
+    <path d="M50 6 l2 4 4 .6 -3 3 .8 4.4 -3.8 -2 -3.8 2 .8 -4.4 -3 -3 4 -.6z" fill="#F2C14E"/>
+  </g>
+</svg>`;
+
+/* シーン/宝レジストリ（scene名 → SVG。§2.1 ハードコード解消） */
+const SCENE_SVGS = { iseki:ISEKI_NODE_SVG, mori:MORI_NODE_SVG, hama:HAMA_NODE_SVG, kawa:KAWA_NODE_SVG,
+  douk:DOUK_NODE_SVG, tani:TANI_NODE_SVG, hashi:HASHI_NODE_SVG, shinden:SHINDEN_NODE_SVG,
+  yama:YAMA_NODE_SVG, shiro:SHIRO_NODE_SVG, tou:TOU_NODE_SVG };
+const TREASURE_SVGS = { scroll:SCROLL_SVG, acorn:ACORN_SVG, shell:SHELL_SVG, goldfish:GOLDFISH_SVG,
+  bluegem:BLUEGEM_SVG, dinobone:DINOBONE_SVG, rainbowfeather:RAINBOWFEATHER_SVG, goldkey:GOLDKEY_SVG,
+  flameorb:FLAMEORB_SVG, crown:CROWN_SVG, trophy:TROPHY_SVG };
+
+/* ナビキャラ制御 */
+function mountBuddy(el){ if (el && el.dataset.mounted !== '1'){ el.innerHTML = BUDDY_SVG; el.dataset.mounted = '1'; } }
+function setBuddyFace(el, face){
+  if (!el) return;
+  mountBuddy(el);
+  el.querySelectorAll('.bd-face').forEach(g => g.style.display = 'none');
+  const f = el.querySelector('.bd-face-' + face); if (f) f.style.display = '';
+  const ndl = el.querySelector('.bd-needle');
+  if (ndl){
+    ndl.classList.remove('spin','shake','super'); void ndl.offsetWidth;
+    if (face === 'happy') ndl.classList.add('spin');
+    else if (face === 'oops') ndl.classList.add('shake');
+    else if (face === 'super') ndl.classList.add('super');
+  }
+}
+const buddyName = () => state.buddyName || 'コンパスくん';
+const withName = msg => `【${buddyName()}】${msg}`;
+
+/* ボス「さいごのとう」クリア時の花火（§6.3） */
+function fireBossParticles() {
+  const host = document.createElement('div');
+  host.className = 'particles boss go';
+  const cols = ['#F2C14E', '#8E7BC4', '#E8763D'];
+  for (let i = 0; i < 10; i++) {
+    const sp = document.createElement('span');
+    sp.style.background = cols[i % 3]; sp.style.left = '0'; sp.style.top = '0';
+    sp.style.setProperty('--dx', (-60 + i * 13) + 'px'); sp.style.animationDelay = (i * 35) + 'ms';
+    host.appendChild(sp);
+  }
+  const card = $('#resCard'); card.appendChild(host);
+  setTimeout(() => host.remove(), 1200);
 }
 
 /* ================= ステージ定義（データ駆動） ================= */
 const STAGES = [
-  { id:'mori',   name:'すうじの もり',      icon:'🌳', color:'var(--ocean)',  gen:genCompare,            n:10, treasure:{i:'🌰', n:'もりの どんぐり'} },
-  { id:'hama',   name:'たしざんの はま',    icon:'🏖️', color:'var(--ocean)',  gen:genAdd10,              n:10, treasure:{i:'🐚', n:'ひかる かいがら'} },
-  { id:'kawa',   name:'ひきざんの かわ',    icon:'🏞️', color:'var(--ocean)',  gen:genSub10,              n:10, treasure:{i:'🐟', n:'きんの さかな'} },
-  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', gen:genAddCarry,          n:10, treasure:{i:'💎', n:'あおい ほうせき'} },
-  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  gen:genSubBorrow,          n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね'} },
-  { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  gen:makeKanjiGen(KANJI_A), n:10, treasure:{i:'📜', n:'ふるい まきもの'} },
-  { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  gen:genOpp,                n:10, treasure:{i:'🪶', n:'にじの はね'} },
-  { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  gen:makeKanjiGen(KANJI_B), n:10, treasure:{i:'🗝️', n:'こがねの かぎ'} },
-  { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  gen:genKuku,               n:10, treasure:{i:'🔥', n:'ほのおの たま'} },
-  { id:'shiro',  name:'けいさんの しろ',    icon:'🏰', color:'var(--ocean)',  gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10, treasure:{i:'👑', n:'おうさまの かんむり'} },
-  { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,makeKanjiGen(KANJI_A.concat(KANJI_B)),genOpp])(), n:12, treasure:{i:'🏆', n:'でんせつの トロフィー'} },
+  { id:'mori',   name:'すうじの もり',      icon:'🌳', color:'var(--ocean)',  scene:'mori', theme:'mori',
+    intro:'ようこそ、まなびの しまへ！この もりでは かずの おおきさが わかると みちが ひらけるんだ',
+    subFlavor:'どっちの きのみが おおい かな？',
+    gen:genCompare, n:10, treasure:{i:'🌰', n:'もりの どんぐり', scene:'acorn', memo:'もりの どうぶつたちの だいこうぶつ。ぴかぴかに みがいて ある'} },
+  { id:'hama',   name:'たしざんの はま',    icon:'🏖️', color:'var(--ocean)',  scene:'hama', theme:'hama',
+    intro:'なみの おとが きこえる はまべだ。かいがらを あつめるには、たしざんの ちからが いるみたい',
+    subFlavor:'かいがらを あわせると いくつ？',
+    gen:genAdd10, n:10, treasure:{i:'🐚', n:'ひかる かいがら', scene:'shell', memo:'みみに あてると うみの おとが きこえる…きが する'} },
+  { id:'kawa',   name:'ひきざんの かわ',    icon:'🏞️', color:'var(--ocean)',  scene:'kawa', theme:'kawa',
+    intro:'この かわには きんいろの さかなが すんでいる らしい。ひきざんで みずの ながれを よもう！',
+    subFlavor:'さかなは なんびき のこる かな？',
+    gen:genSub10, n:10, treasure:{i:'🐟', n:'きんの さかな', scene:'goldfish', memo:'つかまえても すぐ にがして あげた。また あえる かな'} },
+  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', scene:'douk', theme:'douk',
+    intro:'くらい どうくつに はいるよ。10の かたまりを つくれば、あおい ほうせきが ひかりだすんだ！',
+    subFlavor:'10の かたまりを つくって かんがえよう',
+    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり'} },
+  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  scene:'tani', theme:'tani',
+    intro:'ふかい たにの そこには、おおむかしの きょうりゅうが ねむって いるんだって。ひきざんで がけを おりよう！',
+    subFlavor:'10から かりてくると できるよ',
+    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい'} },
+  { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  scene:'iseki', theme:'iseki',
+    intro:'この さきに ふるい かんじの いせきが あるよ。かべに ほられた もじを よみとけば、かくされた たからが みつかるはずさ！',
+    gen:makeKanjiGen(KANJI_A, 'かべに ほられた この もじ、なんて よむ？'), n:10,
+    treasure:{i:'📜', n:'ふるい まきもの', scene:'scroll', memo:'これには むかしの ひとの ちえが かかれて いるらしい'} },
+  { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  scene:'hashi', theme:'hashi',
+    intro:'ことばと ことばを つなぐ はしだよ。「はんたいの ことば」が わかれば、わたって いけるさ！',
+    gen:makeOppGen('この ことばの はんたいがわに あるのは？'), n:10,
+    treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね'} },
+  { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  scene:'shinden', theme:'iseki2',
+    intro:'いせきの おくに あった、かんじの しんでんだ！むずかしい もじも あるけど、きみなら よめるはず',
+    gen:makeKanjiGen(KANJI_B, 'しんでんの とびらに かかれた もじは？'), n:10,
+    treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？'} },
+  { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  scene:'yama', theme:'yama',
+    intro:'たかい やまの ちょうじょうには「ほのおの たま」が ある。九九を となえて のぼって いこう！',
+    subFlavor:'九九を こえに だして いって みよう',
+    gen:genKuku, n:10, treasure:{i:'🔥', n:'ほのおの たま', scene:'flameorb', memo:'もっていると からだが ぽかぽか する。ふゆに べんり'} },
+  { id:'shiro',  name:'けいさんの しろ',    icon:'🏰', color:'var(--ocean)',  scene:'shiro', theme:'shiro',
+    intro:'りっぱな おしろに とうちゃく！おおきな かずの けいさんが できたら、おうさまが むかえて くれるよ',
+    subFlavor:'くらいごとに じゅんばんに けいさん しよう',
+    gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10,
+    treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？'} },
+  { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
+    intro:'ついに さいごの とうに きたね。いままでの ちからを ぜんぶ つかって、てっぺんを めざそう！',
+    clearTitle:'🎉 でんせつの たんけんか に なった！',
+    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,makeKanjiGen(KANJI_A.concat(KANJI_B)),genOpp])(), n:12,
+    treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる'} },
 ];
 
 /* ================= 進捗（保存） ================= */
-let state = { stats:{}, treasures:[], days:{} };
+let state = { stats:{}, treasures:[], days:{}, buddyName:'', introSeen:{} };
 try { const raw = store.get('bk_state'); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
+if (!state.introSeen) state.introSeen = {};
 const save = () => store.set('bk_state', JSON.stringify(state));
 const stg = id => state.stats[id] || { plays:0, best:0, bestN:0, tq:0, tc:0, cleared:false, last:'' };
 const today = () => new Date().toISOString().slice(0, 10);
@@ -452,9 +966,11 @@ function renderMap() {
     node.style.left = x + 'px'; node.style.top = y + 'px';
     node.style.setProperty('--stagecolor', s.color);
     const stars = st.cleared ? '★'.repeat(st.best) + '☆'.repeat(3 - st.best) : '';
-    node.innerHTML = `<span class="disc">${unlocked ? s.icon : '🔒'}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>`;
+    const discInner = SCENE_SVGS[s.scene] || (unlocked ? s.icon : '🔒');
+    const discClass = s.scene ? 'disc disc-scene' : 'disc';
+    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>`;
     if (unlocked) node.onclick = () => startQuiz(i);
-    else node.onclick = () => { $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; flashFB(1100); };
+    else node.onclick = () => { $('#fbBuddy').hidden = true; $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; $('#fbAns').classList.remove('fade'); flashFB(1100); };
     wrap.appendChild(node);
   });
 
@@ -466,7 +982,7 @@ function renderMap() {
     const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
     d += ` C ${x1} ${y1 + 70}, ${x2} ${y2 - 70}, ${x2} ${y2}`;
   }
-  svg.innerHTML = `<path d="${d}" fill="none" stroke="#D8C48E" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 18"/>`;
+  svg.innerHTML = `<path d="${d}" fill="none" stroke="#C9B482" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 18"/>`;
 }
 window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap(); });
 
@@ -487,9 +1003,27 @@ function buildQuestions(stage) {
 
 function startQuiz(i) {
   const s = STAGES[i];
-  Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
-  show('quiz');
-  renderQ();
+  const openQuiz = () => {
+    Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
+    const scr = $('#scr-quiz');
+    if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
+    show('quiz');
+    renderQ();
+  };
+  if (s.intro && state.introSeen[s.id] !== today()) {
+    setBuddyFace($('#introBuddy'), 'normal');
+    $('#introMsg').textContent = s.intro;
+    const modal = $('#introModal');
+    modal.classList.add('show');
+    const go = () => {
+      state.introSeen[s.id] = today(); save();
+      modal.classList.remove('show');
+      $('#introGo').onclick = null; modal.onclick = null;
+      openQuiz();
+    };
+    $('#introGo').onclick = go;
+    modal.onclick = e => { if (e.target === modal) go(); };
+  } else openQuiz();
 }
 $('#backBtn').onclick = () => show('map');
 
@@ -500,7 +1034,8 @@ function renderQ() {
     return `<i class="${i === Q.pos ? 'now' : ''}"></i>`;
   }).join('');
   $('#qText').innerHTML = q.html ? q.text : q.text.replace(/</g,'&lt;');
-  $('#qSub').textContent = q.input ? 'すうじを おして OK！' : 'こたえを えらんでね';
+  const curStage = STAGES[Q.stageIdx];
+  $('#qSub').textContent = curStage.subFlavor || (q.input ? 'すうじを おして OK！' : 'こたえを えらんでね');
 
   const ch = $('#choices'), pad = $('#pad');
   if (q.input) {
@@ -547,10 +1082,28 @@ function answer(v) {
   const ok = q.input ? String(v) === q.ans : v === q.ans;
   q._ok = ok;
   if (ok) { Q.correct++; sndOK(); } else sndNG();
-  $('#fbMark').textContent = ok ? '⭕' : '❌';
-  $('#fbMsg').textContent = ok ? pick(CHEER_OK) : pick(CHEER_NG);
-  $('#fbAns').textContent = ok ? '' : 'こたえは 「' + (q.input ? q.ans : q.choices[q.ans]) + '」';
-  flashFB(ok ? 900 : 1800, () => {
+
+  $('#fbMark').textContent = '';
+  $('#fbBuddy').hidden = false;
+  setBuddyFace($('#fbBuddy'), ok ? 'happy' : 'oops');
+  $('#fbMsg').textContent = withName(ok ? pick(CHEER_OK) : pick(CHEER_NG));
+
+  const ansEl = $('#fbAns');
+  ansEl.classList.remove('fade');
+  if (ok) { ansEl.textContent = ''; }
+  else { ansEl.textContent = 'こたえは 「' + (q.input ? q.ans : q.choices[q.ans]) + '」'; void ansEl.offsetWidth; ansEl.classList.add('fade'); }
+
+  if (ok) {
+    if (!q.input && typeof v === 'number') {
+      const btn = $('#choices').querySelector('[data-i="' + v + '"]');
+      if (btn) { btn.classList.add('bounce'); }
+    }
+    const p = $('#fbParticles'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go');
+  } else {
+    const card = $('#fbCard'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+  }
+
+  flashFB(ok ? 1020 : 1920, () => {
     Q.busy = false;
     Q.pos++;
     if (Q.pos < Q.list.length) renderQ(); else finish();
@@ -575,13 +1128,35 @@ function finish() {
   if (firstClear && !state.treasures.includes(s.id)) state.treasures.push(s.id);
   save();
 
-  $('#resTitle').textContent = cleared ? s.name + ' クリア！' : 'あと すこし！';
+  $('#resTitle').textContent = cleared ? (s.clearTitle || (s.name + ' クリア！')) : 'あと すこし！';
   $('#resStars').textContent = cleared ? '★'.repeat(starN) + '☆'.repeat(3 - starN) : '🔥';
   $('#resScore').textContent = `${n}もんちゅう ${c}もん せいかい！`;
   const tr = $('#resTreasure');
+  const rbWrap = $('#resBuddyWrap');
+  rbWrap.classList.remove('in');
   if (firstClear) {
     tr.hidden = false;
-    tr.innerHTML = `たからばこを みつけた！<span class="tico">${s.treasure.i}</span>「${s.treasure.n}」を ずかんに とうろく！`;
+    $('#resTreasureText').textContent = `「${s.treasure.n}」を みつけた！`;
+    const ico = $('#resTreasureIco');
+    const tsvg = TREASURE_SVGS[s.treasure.scene];
+    if (tsvg) {
+      ico.innerHTML = tsvg;
+      const wrap = ico.querySelector('.scroll-wrap');
+      if (wrap) { wrap.classList.remove('pop'); void wrap.offsetWidth; wrap.classList.add('pop'); }
+      const a = ico.querySelector('.tr-a'), b = ico.querySelector('.tr-b');
+      if (a && b) {
+        setTimeout(() => {
+          a.style.transition = 'opacity .4s'; b.style.transition = 'opacity .4s';
+          b.style.display = ''; void b.offsetWidth;
+          a.style.opacity = '0'; b.style.opacity = '1';
+        }, 600);
+      }
+    } else {
+      ico.innerHTML = `<span class="tico">${s.treasure.i}</span>`;
+    }
+    if (s.id === 'tou' && cleared) fireBossParticles();
+    const rb = $('#resBuddy'); rb.dataset.mounted = '0';
+    setTimeout(() => { setBuddyFace(rb, 'super'); rbWrap.classList.add('in'); }, 1000);
   } else tr.hidden = true;
   if (cleared) sndClear();
   show('result');
@@ -594,9 +1169,11 @@ function renderZukan() {
   $('#zkCount').textContent = `みつけた たから：${state.treasures.length} ／ ${STAGES.length}`;
   $('#zkGrid').innerHTML = STAGES.map(s => {
     const got = state.treasures.includes(s.id);
+    const memo = (got && s.treasure.memo) ? `<div class="zm">${s.treasure.memo}</div>` : '';
     return `<div class="zkCard ${got ? 'yes' : 'no'}">
       <div class="zi">${got ? s.treasure.i : '❓'}</div>
       <div class="zn">${got ? s.treasure.n : '？？？'}</div>
+      ${memo}
     </div>`;
   }).join('');
 }
@@ -653,17 +1230,89 @@ function openDash() {
       <tr><th>ステージ</th><th>回数</th><th>星</th><th>正答率</th><th>最終日</th></tr>
       ${rows}
     </table>
+    <div id="backupRow">
+      <button id="exportBtn">⬇️ バックアップを保存</button>
+      <button id="importBtn">⬆️ バックアップを読込</button>
+    </div>
+    <input type="file" id="importFile" accept="application/json" hidden>
+    <div id="backupMsg"></div>
+    <button id="renameBtn" style="margin-top:12px;width:100%;min-height:48px;border-radius:14px;background:#fff;border:2px solid var(--ocean);color:var(--ocean-d);font-weight:bold;font-size:15px">コンパスの なまえを かえる（いま：${buddyName()}）</button>
     <button id="resetBtn">データをすべてリセット</button>
-    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※PINは v1 では「1234」固定です。</p>`;
+    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※バックアップはファイルとして書き出し／読み込みできます（機種変更や消去対策）。<br>※PINは v1 では「1234」固定です。</p>`;
+  $('#renameBtn').onclick = () => { askBuddyName(); };
   $('#resetBtn').onclick = () => {
     if (confirm('本当にすべての進捗を消しますか？')) {
-      state = { stats:{}, treasures:[], days:{} }; save(); show('map');
+      state = { stats:{}, treasures:[], days:{}, buddyName:'', introSeen:{} }; save(); show('map'); askBuddyName();
     }
+  };
+
+  const msg = (t, ok=true) => { $('#backupMsg').style.color = ok ? 'var(--jungle-d)' : 'var(--coral-d)'; $('#backupMsg').textContent = t; };
+
+  $('#exportBtn').onclick = () => {
+    try {
+      const payload = { app:'bouken-drill', version:1, savedAt: new Date().toISOString(), state };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+      a.href = url; a.download = `bouken-drill-backup-${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+      msg('保存しました。「ファイル」アプリ等に届きます。');
+    } catch (e) { msg('保存に失敗しました。', false); }
+  };
+
+  $('#importBtn').onclick = () => $('#importFile').click();
+  $('#importFile').onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const payload = JSON.parse(reader.result);
+        const incoming = payload && payload.state ? payload.state : payload;
+        if (!incoming || typeof incoming !== 'object' || !incoming.stats) throw new Error('bad format');
+        if (!confirm('今の進捗を、読み込んだバックアップで上書きします。よろしいですか？')) { e.target.value=''; return; }
+        state = Object.assign({ stats:{}, treasures:[], days:{} }, incoming);
+        save();
+        msg('読み込みました！');
+        openDash();
+      } catch (err) {
+        msg('このファイルは読み込めませんでした。', false);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
   };
 }
 
+/* ================= 命名ダイアログ ================= */
+function initParticles() {
+  const cols = ['#F5C56B', '#D4A63C', '#8E7BC4', '#F5C56B', '#D4A63C'];
+  const dxs = [-24, -10, 4, 16, 24];
+  document.querySelectorAll('#fbParticles span').forEach((sp, i) => {
+    sp.style.background = cols[i]; sp.style.left = '0'; sp.style.top = '0';
+    sp.style.setProperty('--dx', dxs[i] + 'px'); sp.style.animationDelay = (i * 40) + 'ms';
+  });
+}
+function askBuddyName() {
+  setBuddyFace($('#nameBuddy'), 'normal');
+  const modal = $('#nameModal');
+  $('#nameInput').value = '';
+  modal.classList.add('show');
+  const done = () => {
+    const v = $('#nameInput').value.trim().replace(/\s+/g, '').slice(0, 6);
+    state.buddyName = v || 'コンパスくん'; save();
+    modal.classList.remove('show');
+  };
+  $('#nameGo').onclick = done;
+  $('#nameInput').onkeydown = e => { if (e.key === 'Enter') done(); };
+}
+
 /* ================= init ================= */
+initParticles();
 show('map');
+if (!state.buddyName) askBuddyName();
 if ('serviceWorker' in navigator) {
   try { navigator.serviceWorker.register('./sw.js'); } catch (e) {}
 }
