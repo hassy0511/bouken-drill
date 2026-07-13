@@ -312,16 +312,19 @@ td.l{text-align:left}
 #scr-quiz[data-stage-theme="tani"]{ --card-bg:#E6E4EE; --card-frame:#5A5478; }
 #scr-quiz[data-stage-theme="iseki"],
 #scr-quiz[data-stage-theme="iseki2"],
-#scr-quiz[data-stage-theme="hashi"]{ --card-bg:#EFE7D2; --card-frame:#D4A63C; }
+#scr-quiz[data-stage-theme="hashi"],
+#scr-quiz[data-stage-theme="kazoe"]{ --card-bg:#EFE7D2; --card-frame:#D4A63C; }
 #scr-quiz[data-stage-theme="yama"],
 #scr-quiz[data-stage-theme="shiro"]{ --card-bg:#E8EEF4; --card-frame:#5C6873; }
 #scr-quiz[data-stage-theme="tou"]{ --card-bg:#EFEBF5; --card-frame:#8E7BC4; }
 #scr-quiz[data-stage-theme="sora1"],
 #scr-quiz[data-stage-theme="sora2"],
-#scr-quiz[data-stage-theme="sora3"]{ --card-bg:#EDF4FA; --card-frame:#5B9FC4; }
+#scr-quiz[data-stage-theme="sora3"],
+#scr-quiz[data-stage-theme="yomi"]{ --card-bg:#EDF4FA; --card-frame:#5B9FC4; }
 #scr-quiz[data-stage-theme="umi1"],
 #scr-quiz[data-stage-theme="umi2"],
-#scr-quiz[data-stage-theme="umi3"]{ --card-bg:#E4F0EE; --card-frame:#2E7D99; }
+#scr-quiz[data-stage-theme="umi3"],
+#scr-quiz[data-stage-theme="ruigo"]{ --card-bg:#E4F0EE; --card-frame:#2E7D99; }
 /* テーマ適用時は共通してカードとコーナーとボタンを装飾 */
 #scr-quiz[data-stage-theme] #qCard{ background:var(--card-bg); border-color:var(--card-frame); border-width:3px; position:relative; overflow:visible; }
 #scr-quiz[data-stage-theme] .qcorner{ display:block; }
@@ -339,12 +342,14 @@ td.l{text-align:left}
 }
 #scr-quiz[data-stage-theme="sora1"] .qcorner,
 #scr-quiz[data-stage-theme="sora2"] .qcorner,
-#scr-quiz[data-stage-theme="sora3"] .qcorner{
+#scr-quiz[data-stage-theme="sora3"] .qcorner,
+#scr-quiz[data-stage-theme="yomi"] .qcorner{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%235B9FC4' stroke='%233D3323' stroke-width='2'/%3E%3Cellipse cx='12' cy='12' rx='5' ry='3.5' fill='%23F7F4EC' stroke='%233D3323' stroke-width='1.5'/%3E%3C/svg%3E");
 }
 #scr-quiz[data-stage-theme="umi1"] .qcorner,
 #scr-quiz[data-stage-theme="umi2"] .qcorner,
-#scr-quiz[data-stage-theme="umi3"] .qcorner{
+#scr-quiz[data-stage-theme="umi3"] .qcorner,
+#scr-quiz[data-stage-theme="ruigo"] .qcorner{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M4 36 L4 12 Q4 4 12 4 L36 4 L36 12 L14 12 Q12 12 12 14 L12 36 Z' fill='%232E7D99' stroke='%233D3323' stroke-width='2'/%3E%3Cpath d='M9 15 Q9 8 12 8 Q15 8 15 15' fill='none' stroke='%23F2A0B4' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 #scr-quiz[data-stage-theme="yama"] .qcorner,
@@ -386,6 +391,7 @@ td.l{text-align:left}
 #endTreasures span svg{width:100%; height:auto; display:block}
 #endTitle{font-size:20px; font-weight:bold; color:#7A5713; margin:10px 0}
 .zm.zp{color:#A84A20}
+.nodeFlag{position:absolute; top:-14px; right:4px; pointer-events:none; line-height:0}
 /* こうしん トースト（P0） */
 #updToast{position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 78px); z-index:70;
   background:var(--ocean-deep); color:#fff; border-radius:16px; padding:12px 14px; display:none;
@@ -667,11 +673,11 @@ function bgmOfTheme(t) {
   if (!t) return 'map';
   if (/^(mori|hama|kawa)/.test(t)) return 'mizube';
   if (/^(douk|tani)/.test(t)) return 'chitei';
-  if (/^(iseki|hashi)/.test(t)) return 'kotoba';
+  if (/^(iseki|hashi|kazoe)/.test(t)) return 'kotoba';
   if (/^(yama|shiro)/.test(t)) return 'sancho';
   if (t === 'tou' || t === 'umi3') return 'tou';
-  if (/^sora/.test(t)) return 'sora';
-  if (/^umi/.test(t)) return 'umi';
+  if (/^(sora|yomi)/.test(t)) return 'sora';
+  if (/^(umi|ruigo)/.test(t)) return 'umi';
   return 'map';
 }
 /* iPad Safari はユーザー操作後でないと音を出せない → 最初のタップで解錠 */
@@ -724,7 +730,16 @@ const WORDS_FALLBACK = {
       vars:{ a:[2,9], b:[1,8] }, unit:'こ' },
     { id:'bird-sub', pattern:'sub', text:'とりが {a}わ います。{b}わ とんで いきました。のこりは なんわ？',
       vars:{ a:[5,15], b:[1,'a-1'] }, unit:'わ' }
-  ]
+  ],
+  counters: [['ねこ','ひき'],['とり','わ'],['くるま','だい'],['ほん','さつ'],
+    ['かみ','まい'],['えんぴつ','ほん'],['りんご','こ'],['ともだち','にん']],
+  readings: [
+    { t:'ねこが にわで ひるねを して います。', q:'ひるねを して いるのは だれ？', a:'ねこ', w:['いぬ','とり','おかあさん'] },
+    { t:'たろうくんは あさ パンを たべました。', q:'たろうくんは なにを たべた？', a:'パン', w:['ごはん','バナナ','たまご'] },
+    { t:'はなこさんは こうえんで なわとびを しました。', q:'はなこさんは どこで あそんだ？', a:'こうえん', w:['がっこう','いえ','うみ'] }
+  ],
+  similar: [['はなす','しゃべる'],['おいしい','うまい'],['きれい','うつくしい'],
+    ['だいじ','たいせつ'],['おどろく','びっくりする'],['こわい','おそろしい']]
 };
 let WORDS = WORDS_FALLBACK;
 let wordsReady = Promise.resolve();
@@ -747,6 +762,9 @@ function loadWords() {
 const poolOf = name => (WORDS.kanji && WORDS.kanji[name]) || WORDS_FALLBACK.kanji[name] || [];
 const oppPool = () => (WORDS.opposites && WORDS.opposites.length) ? WORDS.opposites : WORDS_FALLBACK.opposites;
 const storyPool = () => (WORDS.storyProblems && WORDS.storyProblems.length) ? WORDS.storyProblems : WORDS_FALLBACK.storyProblems;
+const countersPool = () => (WORDS.counters && WORDS.counters.length) ? WORDS.counters : WORDS_FALLBACK.counters;
+const readingsPool = () => (WORDS.readings && WORDS.readings.length) ? WORDS.readings : WORDS_FALLBACK.readings;
+const similarPool = () => (WORDS.similar && WORDS.similar.length) ? WORDS.similar : WORDS_FALLBACK.similar;
 
 /* ================= 問題生成（層1: ロジック） ================= */
 const numQ = (text, ans, extra) => Object.assign({ text, input: true, ans: String(ans) }, extra || {});
@@ -846,6 +864,36 @@ function makeOppGen(prompt) {
   };
 }
 const genOpp = makeOppGen();
+
+/* --- 新: かぞえかた（助数詞） --- */
+function genKazoe() {
+  const pool = countersPool();
+  const e = pick(pool);
+  const others = shuffle([...new Set(pool.map(x => x[1]))].filter(c => c !== e[1])).slice(0, 3);
+  const choices = shuffle([e[1], ...others]);
+  return { text: `「<span class="big">${e[0]}</span>」を かぞえる ことばは どれ？`,
+    choices, ans: choices.indexOf(e[1]), html: true, key: `kz:${e[0]}` };
+}
+
+/* --- 新: よみとき（短文読解） --- */
+function genYomi() {
+  const e = pick(readingsPool());
+  const choices = shuffle([e.a, ...e.w]);
+  return { text: `「${e.t}」<br>${e.q}`,
+    choices, ans: choices.indexOf(e.a), html: true, key: `y:${e.t}` };
+}
+
+/* --- 新: にたことば（類義語） --- */
+function genRuigo() {
+  const SIM = similarPool();
+  const p = pick(SIM);
+  const dir = rnd(2);
+  const q = p[dir], a = p[1 - dir];
+  const others = shuffle(SIM.flat().filter(w => w !== q && w !== a)).slice(0, 3);
+  const choices = shuffle([a, ...others]);
+  return { text: `「<span class="big">${q}</span>」と にた いみの ことばは？`,
+    choices, ans: choices.indexOf(a), html: true, key: `r:${q}` };
+}
 
 /* ================= 文章題エンジン（設計書 §2） ================= */
 /* 計算パターン。ここにエントリを足せば新パターンを追加できる（将来: mul / div / diff 等） */
@@ -1251,17 +1299,100 @@ const TAMATEBAKO_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100
   </g>
 </svg>`;
 
+
+/* ---- Phase G: 国語拡張 シーン ---- */
+const KAZOE_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#E4F0DC"/>
+  <rect x="0" y="66" width="120" height="54" fill="#9DBB7E"/>
+  <path d="M0 66 Q30 60 60 66 T120 66 L120 78 Q90 72 60 78 Q30 84 0 78 Z" fill="#7A9B5C"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M14 56 L18 56 L19 84 L13 84 Z" fill="#8A6543"/>
+    <path d="M56 54 L60 54 L61 84 L55 84 Z" fill="#8A6543"/>
+    <path d="M100 56 L104 56 L105 84 L99 84 Z" fill="#8A6543"/>
+    <path d="M12 62 L106 60 L106 65 L12 67 Z" fill="#B07B4A"/>
+    <path d="M12 73 L106 71 L106 76 L12 78 Z" fill="#B07B4A"/>
+  </g>
+  <ellipse class="bd-arch" cx="58" cy="46" rx="11" ry="11" fill="#F5C56B" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="1.5">
+    <path d="M54 40 Q58 36 62 40 L63 46 Q58 50 53 46 Z" fill="#F2C14E"/>
+    <path d="M53 46 Q58 50 63 46 L64 50 L52 50 Z" fill="#D4A63C"/>
+    <circle cx="58" cy="52" r="2" fill="#D4A63C"/>
+  </g>
+  <g stroke="#3D3323" stroke-width="2">
+    <ellipse cx="76" cy="96" rx="19" ry="12" fill="#F7F4EC"/>
+    <path d="M57 96 A19 12 0 0 0 76 108 L76 84 A19 12 0 0 0 57 96Z" fill="#D8D2C0"/>
+    <circle cx="94" cy="90" r="7" fill="#6B5D48"/>
+    <path d="M99 85 q4 -2 3 2 q-1 3 -4 1 z" fill="#4E4034"/>
+    <path d="M68 107 l0 7 M84 107 l0 7" stroke-width="3"/>
+  </g>
+  <g stroke="#3D3323" stroke-width="2">
+    <ellipse cx="30" cy="102" rx="13" ry="9" fill="#F7F4EC"/>
+    <path d="M17 102 A13 9 0 0 0 30 111 L30 93 A13 9 0 0 0 17 102Z" fill="#D8D2C0"/>
+    <circle cx="42" cy="98" r="5" fill="#6B5D48"/>
+    <path d="M26 110 l0 5 M36 110 l0 5" stroke-width="2.5"/>
+  </g>
+</svg>`;
+const YOMI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <ellipse cx="60" cy="106" rx="50" ry="12" fill="#F7F4EC" stroke="#3D3323" stroke-width="2"/>
+  <path d="M10 106 A50 12 0 0 0 60 118 L60 94 A50 12 0 0 0 10 106Z" fill="#DDE6EE"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <rect x="48" y="54" width="24" height="48" fill="#F7F4EC"/>
+    <rect x="48" y="54" width="6" height="48" fill="#D8D2C0"/>
+    <rect x="36" y="46" width="48" height="9" rx="3" fill="#E8DCC0"/>
+    <path d="M40 46 L40 36 M52 46 L52 34 M68 46 L68 34 M80 46 L80 36" stroke-width="2.5"/>
+    <path d="M36 36 Q60 30 84 36" fill="none" stroke-width="2.5"/>
+    <path d="M34 34 L60 16 L86 34 Z" fill="#5B9FC4"/>
+    <path d="M34 34 L60 16 L60 34 Z" fill="#3E7FA3"/>
+  </g>
+  <path d="M60 16 L60 6 L72 9 L60 13" fill="#E8763D" stroke="#3D3323" stroke-width="1.5"/>
+  <circle class="bd-arch" cx="60" cy="76" r="10" fill="#F2C14E" opacity="0"/>
+  <circle cx="60" cy="76" r="8" fill="#FFFDF7" stroke="#3D3323" stroke-width="2"/>
+  <path d="M56 76 Q60 72 64 76 M56 79 L64 79" fill="none" stroke="#6B5D48" stroke-width="1.5"/>
+  <ellipse cx="20" cy="28" rx="11" ry="5" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/>
+  <ellipse cx="102" cy="52" rx="9" ry="4" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const RUIGO_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#1F4E66"/>
+  <path d="M0 104 Q24 96 44 104 T84 104 T120 102 L120 120 L0 120 Z" fill="#173B4E" stroke="#3D3323" stroke-width="2"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M20 104 Q16 84 24 74 Q26 84 24 90 Q32 78 34 70 Q36 84 30 94 Q36 90 40 84 Q38 98 28 104 Z" fill="#F2A0B4"/>
+    <path d="M20 104 Q16 84 24 74 Q22 88 22 96 Z" fill="#E07A94"/>
+    <path d="M92 104 Q88 88 94 78 Q96 88 94 94 Q100 84 102 76 Q104 90 98 98 Q104 94 106 90 Q104 100 96 104 Z" fill="#E8934A"/>
+    <path d="M92 104 Q88 88 94 78 Q92 92 92 98 Z" fill="#C9622E"/>
+  </g>
+  <ellipse class="bd-arch" cx="60" cy="64" rx="24" ry="14" fill="#7EE0D0" opacity="0"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M38 64 Q48 54 56 64 Q48 74 38 64 Z" fill="#F2C14E"/>
+    <path d="M38 64 Q43 59 48 58 L48 70 Q43 69 38 64 Z" fill="#D4A63C"/>
+    <path d="M38 64 L32 58 L32 70 Z" fill="#D4A63C"/>
+    <path d="M82 64 Q72 54 64 64 Q72 74 82 64 Z" fill="#F2C14E"/>
+    <path d="M82 64 Q77 59 72 58 L72 70 Q77 69 82 64 Z" fill="#D4A63C"/>
+    <path d="M82 64 L88 58 L88 70 Z" fill="#D4A63C"/>
+  </g>
+  <circle cx="51" cy="62" r="1.8" fill="#3D3323"/>
+  <circle cx="69" cy="62" r="1.8" fill="#3D3323"/>
+  <circle cx="60" cy="42" r="2.5" fill="#7EE0D0"/><circle cx="56" cy="32" r="2" fill="#7EE0D0"/><circle cx="64" cy="24" r="2" fill="#7EE0D0"/>
+</svg>`;
+
+/* ---- 国語拡張の宝物SVG ---- */
+const SHEEPBELL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M42 16 Q50 8 58 16 L56 24 L44 24 Z" fill="#E8705A" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="44" r="22" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/><path d="M28 44 A22 22 0 0 0 50 66 L50 22 A22 22 0 0 0 28 44Z" fill="#D4A63C"/><circle cx="50" cy="50" r="4" fill="#3D3323"/><path d="M50 54 L50 62" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/><circle cx="43" cy="36" r="4" fill="#FFFDF7" opacity="0.7"/></svg>`;
+const SKYLETTER_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M14 40 Q6 36 8 30 Q14 32 18 36 M86 40 Q94 36 92 30 Q86 32 82 36" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/><rect x="24" y="24" width="52" height="36" rx="4" fill="#FFFDF7" stroke="#3D3323" stroke-width="2"/><path d="M24 28 L50 46 L76 28" fill="none" stroke="#3D3323" stroke-width="2"/><path d="M24 24 L50 42 L76 24 L76 28 L50 46 L24 28 Z" fill="#EFE0B8"/><ellipse cx="66" cy="52" rx="6" ry="4" fill="#7EC8DE" stroke="#3D3323" stroke-width="1.5"/><path d="M30 52 h14" stroke="#C9B482" stroke-width="2" stroke-linecap="round"/></svg>`;
+const TWINCORAL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><ellipse cx="50" cy="66" rx="30" ry="8" fill="#8C7B66" stroke="#3D3323" stroke-width="2"/><g stroke="#3D3323" stroke-width="2"><path d="M34 64 Q30 44 38 32 Q40 44 38 50 Q46 40 48 32 Q50 46 42 56 Q48 52 50 48 Q48 60 38 64 Z" fill="#F2A0B4"/><path d="M34 64 Q30 44 38 32 Q36 48 36 56 Z" fill="#E07A94"/><path d="M66 64 Q62 44 70 32 Q72 44 70 50 Q78 40 80 32 Q82 46 74 56 Q80 52 82 48 Q80 60 70 64 Z" fill="#F2A0B4"/><path d="M66 64 Q62 44 70 32 Q68 48 68 56 Z" fill="#E07A94"/></g><circle cx="50" cy="24" r="2" fill="#7EE0D0"/><circle cx="54" cy="16" r="1.6" fill="#7EE0D0"/></svg>`;
+
 /* シーン/宝レジストリ（scene名 → SVG。§2.1 ハードコード解消） */
 const SCENE_SVGS = { iseki:ISEKI_NODE_SVG, mori:MORI_NODE_SVG, hama:HAMA_NODE_SVG, kawa:KAWA_NODE_SVG,
   douk:DOUK_NODE_SVG, tani:TANI_NODE_SVG, hashi:HASHI_NODE_SVG, shinden:SHINDEN_NODE_SVG,
   yama:YAMA_NODE_SVG, shiro:SHIRO_NODE_SVG, tou:TOU_NODE_SVG,
   sora1:SORA1_NODE_SVG, sora2:SORA2_NODE_SVG, sora3:SORA3_NODE_SVG,
-  umi1:UMI1_NODE_SVG, umi2:UMI2_NODE_SVG, umi3:UMI3_NODE_SVG };
+  umi1:UMI1_NODE_SVG, umi2:UMI2_NODE_SVG, umi3:UMI3_NODE_SVG,
+  kazoe:KAZOE_NODE_SVG, yomi:YOMI_NODE_SVG, ruigo:RUIGO_NODE_SVG };
 const TREASURE_SVGS = { scroll:SCROLL_SVG, acorn:ACORN_SVG, shell:SHELL_SVG, goldfish:GOLDFISH_SVG,
   bluegem:BLUEGEM_SVG, dinobone:DINOBONE_SVG, rainbowfeather:RAINBOWFEATHER_SVG, goldkey:GOLDKEY_SVG,
   flameorb:FLAMEORB_SVG, crown:CROWN_SVG, trophy:TROPHY_SVG,
   pendulum:PENDULUM_SVG, wateringcan:WATERINGCAN_SVG, telescope:TELESCOPE_SVG,
-  pearl:PEARL_SVG, captainhat:CAPTAINHAT_SVG, tamatebako:TAMATEBAKO_SVG };
+  pearl:PEARL_SVG, captainhat:CAPTAINHAT_SVG, tamatebako:TAMATEBAKO_SVG,
+  sheepbell:SHEEPBELL_SVG, skyletter:SKYLETTER_SVG, twincoral:TWINCORAL_SVG };
 
 /* ナビキャラ制御 */
 function mountBuddy(el){ if (el && el.dataset.mounted !== '1'){ el.innerHTML = BUDDY_SVG; el.dataset.mounted = '1'; } }
@@ -1408,14 +1539,6 @@ const STAGES = [
     intro:'この かわには きんいろの さかなが すんでいる らしい。ひきざんで みずの ながれを よもう！',
     subFlavor:'さかなは なんびき のこる かな？',
     gen:genSub10, n:10, treasure:{i:'🐟', n:'きんの さかな', scene:'goldfish', memo:'つかまえても すぐ にがして あげた。また あえる かな', pc:'こんなに きれいだとは、まさかな！ さかなだけに！'} },
-  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', scene:'douk', theme:'douk',
-    intro:'くらい どうくつに はいるよ。10の かたまりを つくれば、あおい ほうせきが ひかりだすんだ！',
-    subFlavor:'10の かたまりを つくって かんがえよう',
-    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり', pc:'きれいすぎて ほうって おけなかったんだぜ… ほうせきだけに！'} },
-  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  scene:'tani', theme:'tani',
-    intro:'ふかい たにの そこには、おおむかしの きょうりゅうが ねむって いるんだって。ひきざんで がけを おりよう！',
-    subFlavor:'10から かりてくると できるよ',
-    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい', pc:'ぬすむのに ほねが おれたのに よ〜！'} },
   { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  scene:'iseki', theme:'iseki',
     intro:'この さきに ふるい かんじの いせきが あるよ。かべに ほられた もじを よみとけば、かくされた たからが みつかるはずさ！',
     pirate:'かんじが よめたら いい かんじだな！ …ま、よめないだろうけどな！ がっはっは！',
@@ -1425,10 +1548,22 @@ const STAGES = [
     intro:'ことばと ことばを つなぐ はしだよ。「はんたいの ことば」が わかれば、わたって いけるさ！',
     gen:makeOppGen('この ことばの はんたいがわに あるのは？'), n:10,
     treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね', pc:'てに いれたとき、うれしくて とびはねちまった！ はねだけに！'} },
+  { id:'kazoe',  name:'かぞえかたの まきば', icon:'🐑', color:'var(--coral)', scene:'kazoe', theme:'kazoe',
+    intro:'ひつじや うしが のんびり くらす まきばだよ。「かぞえる ことば」を ただしく つかえるかな？',
+    subFlavor:'なにを かぞえる ことばかな？',
+    gen:genKazoe, n:10, treasure:{i:'🔔', n:'ひつじの すず', scene:'sheepbell', memo:'ふると ひつじたちが あつまって くる ふしぎな すず', pc:'すずしい かおで ぬすんだのに よ〜！ すずだけに！'} },
   { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  scene:'shinden', theme:'iseki2',
     intro:'いせきの おくに あった、かんじの しんでんだ！むずかしい もじも あるけど、きみなら よめるはず',
     gen:makeKanjiGen('g1b', 'しんでんの とびらに かかれた もじは？'), n:10,
     treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？', pc:'かぎりなく うつくしい かがやきだぜ… かぎだけに！'} },
+  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', scene:'douk', theme:'douk',
+    intro:'くらい どうくつに はいるよ。10の かたまりを つくれば、あおい ほうせきが ひかりだすんだ！',
+    subFlavor:'10の かたまりを つくって かんがえよう',
+    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり', pc:'きれいすぎて ほうって おけなかったんだぜ… ほうせきだけに！'} },
+  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  scene:'tani', theme:'tani',
+    intro:'ふかい たにの そこには、おおむかしの きょうりゅうが ねむって いるんだって。ひきざんで がけを おりよう！',
+    subFlavor:'10から かりてくると できるよ',
+    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい', pc:'ぬすむのに ほねが おれたのに よ〜！'} },
   { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  scene:'yama', theme:'yama',
     intro:'たかい やまの ちょうじょうには「ほのおの たま」が ある。九九を となえて のぼって いこう！',
     pirate:'九九だと？ くくく… わらいが とまらないぜ！',
@@ -1443,15 +1578,17 @@ const STAGES = [
     intro:'ついに さいごの とうに きたね。いままでの ちからを ぜんぶ つかって、てっぺんを めざそう！',
     pirate:'とうとう ここまで きたか！ とうだけに な！ だが ここから さきは とおさんぜ！',
     clearTitle:'🎉 でんせつの たんけんか に なった！', boss:true,
-    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp])(), n:12,
+    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp,genKazoe])(), n:12,
     treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる', pc:'ぴかぴかで こころが とろけるぜ… トロフィーだけに！'} },
-
-  /* ===== そらの しま（Phase E） ===== */
   { id:'sora1',  name:'とけいの きゅうでん', icon:'🕰️', color:'var(--ocean)', scene:'sora1', theme:'sora1',
     intro:'くもの うえに おしろが みえる！ここは とけいの きゅうでん。はりが よめたら なかに はいれるよ',
     pirate:'とけいの もんだいなんて とけっこないぜ！ がっはっは！',
     gen:genClock, n:10,
     treasure:{i:'🕰️', n:'とけいの ふりこ', scene:'pendulum', memo:'ちくたく ちくたく。きゅうでんの じかんを きざんで いた ふりこ', pc:'けいかくが ふりだしに もどっちまった… ふりこだけに！'} },
+  { id:'yomi',   name:'よみときの てんぼうだい', icon:'🗼', color:'var(--coral)', scene:'yomi', theme:'yomi',
+    intro:'くもの うえの てんぼうだいに ついたよ。みじかい おはなしを よんで、しつもんに こたえよう！',
+    subFlavor:'おはなしを ゆっくり よんでね',
+    gen:genYomi, n:10, treasure:{i:'✉️', n:'そらの てがみ', scene:'skyletter', memo:'くもの きってが はられた てがみ。だれから とどいたんだろう？', pc:'かみわざで よみとかれたぜ！ てがみだけに！'} },
   { id:'sora2',  name:'ぶんしょうだいの にわ', icon:'🌷', color:'var(--ocean)', scene:'sora2', theme:'sora2',
     intro:'そらの にわに ついたよ。おはなの せわを しながら、おはなしの もんだいを といて みよう！',
     subFlavor:'おはなしを よく よんでね',
@@ -1462,8 +1599,6 @@ const STAGES = [
     subFlavor:'100の まとまりで かんがえよう',
     gen:genBigNum, n:10,
     treasure:{i:'🔭', n:'かずの ぼうえんきょう', scene:'telescope', memo:'のぞくと とおくの かずまで はっきり みえるんだって', pc:'とおくが みえすぎて ぼうっと しちまうぜ！ ぼうえんきょうだけに！'} },
-
-  /* ===== うみの そこ（Phase F） ===== */
   { id:'umi1',   name:'わりざんの しんかい', icon:'🌊', color:'var(--ocean)', scene:'umi1', theme:'umi1',
     intro:'ざぶーん！うみの そこに もぐるよ。おさかなを おなじ かずずつ わけて あげよう',
     pirate:'しんかいまで くるとは… しんじられん！ だいじな しんじゅは わたさんぞ！',
@@ -1475,12 +1610,16 @@ const STAGES = [
     pirate:'ここは おれさまの ふねだぞ！ カタカナが よめないと かたなしだぜ！ カタカナだけに な！',
     gen:makeKanjiGen('kana', 'カタカナで かくと どれ？'), n:10,
     treasure:{i:'🧢', n:'せんちょうの ぼうし', scene:'captainhat', memo:'かぶると きぶんは おおうなばらの せんちょう！', pc:'それ、おれの ぼうしーっ！ ないと ただの ぼうずだぜ！'} },
+  { id:'ruigo',  name:'にたことばの さんごしょう', icon:'🐠', color:'var(--coral)', scene:'ruigo', theme:'ruigo',
+    intro:'カラフルな さんごしょうだよ。そっくりな おさかなが いるみたいに、「にた いみの ことば」を さがそう！',
+    subFlavor:'いみが そっくりな ことばは どれ？',
+    gen:genRuigo, n:10, treasure:{i:'🪸', n:'ふたごの さんご', scene:'twincoral', memo:'そっくりな かたちの さんごが ふたつ ならんで いる', pc:'にせものと まちがえちまった… さんごだけに さんざんだぜ！'} },
   { id:'umi3',   name:'でんせつの りゅうぐう', icon:'🐉', color:'var(--purple)', scene:'umi3', theme:'umi3',
     intro:'うみの いちばん ふかい ばしょに、でんせつの りゅうぐうじょうが…！ぜんぶの ちからを あわせて とびらを あけよう！',
     pirate:'よくぞ りゅうぐうまで きた…。ここで まけたら かいぞくだんは おしまいだ。さいごの しょうぶ、うけて たつぜ！',
     clearTitle:'🌊 うみの でんせつに なった！', boss:true,
-    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genDiv,genBigNum,genClock,makeStoryGen(),()=>makeKanjiGen('kana','カタカナで かくと どれ？')()])(), n:14,
-    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった', pc:'なかみを みたら たまげたぜ！ たまてばこだけに！'} },
+    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genDiv,genBigNum,genClock,makeStoryGen(),genRuigo,genYomi,genKazoe,()=>makeKanjiGen('kana','カタカナで かくと どれ？')()])(), n:14,
+    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった', pc:'なかみを みたら たまげたぜ！ たまてばこだけに！'} }
 ];
 
 /* ================= 進捗（保存） ================= */
@@ -1505,18 +1644,38 @@ function show(name) {
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.scr));
 
 /* ================= マップ描画 ================= */
-const XS = [26, 68, 26, 68, 26, 68, 26, 68, 26, 68, 47, 26, 68, 26, 68, 26, 47]; /* ジグザグ配置(%) */
+const XS = [30, 66, 34, 70, 38, 62, 28, 64, 32, 68, 36, 48, 66, 30, 62, 34, 68, 30, 64, 48]; /* うねる配置(%) */
 const STEP = 132, TOPPAD = 90;
 
 /* エリア定義（ゾーン帯はここから動的生成。ステージ追加に自動追従） */
 const AREAS = [
   { name:'みずべ',     from:0,  to:2,  color:'#7FB069' },
-  { name:'ちてい',     from:3,  to:4,  color:'#5A5478' },
-  { name:'ことば',     from:5,  to:7,  color:'#A89A80' },
-  { name:'さんちょう', from:8,  to:10, color:'#5C6873' },
-  { name:'そらの しま', from:11, to:13, color:'#5B9FC4' },
-  { name:'うみの そこ', from:14, to:16, color:'#2E7D99' }
+  { name:'ことば',     from:3,  to:6,  color:'#A89A80' },
+  { name:'ちてい',     from:7,  to:8,  color:'#5A5478' },
+  { name:'さんちょう', from:9,  to:11, color:'#5C6873' },
+  { name:'そらの しま', from:12, to:15, color:'#5B9FC4' },
+  { name:'うみの そこ', from:16, to:19, color:'#2E7D99' }
 ];
+
+/* マップ景観パーツ（v7.5: 見た目刷新） */
+const FLAG_SVG = `<svg viewBox="0 0 30 34" width="26" height="30" aria-hidden="true">
+  <line x1="6" y1="2" x2="6" y2="32" stroke="#6E4A28" stroke-width="3" stroke-linecap="round"/>
+  <path d="M8 3 L26 8 L8 13 Z" fill="#E8763D" stroke="#3D3323" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M8 3 L26 8 L8 8 Z" fill="#C9622E"/>
+</svg>`;
+const DECO = {
+  tree: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-3 12 L-1 0 L1 0 L3 12 Z" fill="#8A6543" stroke="#3D3323" stroke-width="1.2"/><ellipse cx="0" cy="-6" rx="10" ry="8" fill="#7FB069" stroke="#3D3323" stroke-width="1.5"/><path d="M-10 -4 A10 8 0 0 0 0 2 L0 -14 A10 8 0 0 0 -10 -4Z" fill="#4E7E3F"/></g>`,
+  wave: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-12 0 q6 -6 12 0 t12 0" fill="none" stroke="#7EC8DE" stroke-width="2.5" stroke-linecap="round"/><path d="M-8 8 q5 -5 10 0 t10 0" fill="none" stroke="#7EC8DE" stroke-width="2" stroke-linecap="round" opacity="0.7"/></g>`,
+  pillar: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-6 12 L-5 -12 L5 -13 L6 12 Z" fill="#A89A80" stroke="#3D3323" stroke-width="1.5"/><path d="M2 -13 L5 -13 L6 12 L3 12 Z" fill="#6B5D48"/><path d="M-8 -12 L8 -13 L8 -9 L-8 -8 Z" fill="#A89A80" stroke="#3D3323" stroke-width="1.5"/></g>`,
+  crystal: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M0 -12 L6 -2 L3 10 L-3 10 L-6 -2 Z" fill="#8FD0E8" stroke="#3D3323" stroke-width="1.5"/><path d="M0 -12 L-6 -2 L-3 10 L0 10 Z" fill="#4A93B8"/></g>`,
+  rock: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-11 8 L-8 -4 L-1 -9 L8 -5 L11 7 L6 9 L-7 9 Z" fill="#8C99A6" stroke="#3D3323" stroke-width="1.5"/><path d="M-11 8 L-8 -4 L-4 -7 L-3 8 Z" fill="#5C6873"/></g>`,
+  cloud: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><ellipse cx="0" cy="0" rx="13" ry="6" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/><path d="M-13 0 A13 6 0 0 0 0 6 L0 -6 A13 6 0 0 0 -13 0Z" fill="#DDE6EE"/></g>`,
+  coral: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-4 10 Q-7 -2 -2 -9 Q0 -2 -1 3 Q4 -4 6 -9 Q8 2 2 8 Q0 9 -4 10 Z" fill="#F2A0B4" stroke="#3D3323" stroke-width="1.5"/><path d="M-4 10 Q-7 -2 -2 -9 Q-4 2 -3 7 Z" fill="#E07A94"/></g>`,
+  bubble: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><circle cx="0" cy="0" r="4" fill="none" stroke="#7EE0D0" stroke-width="1.8"/><circle cx="6" cy="-9" r="2.5" fill="none" stroke="#7EE0D0" stroke-width="1.5"/><circle cx="-5" cy="-15" r="1.8" fill="#7EE0D0"/></g>`
+};
+const AREA_DECO = { 'みずべ':['tree','wave'], 'ことば':['pillar','tree'], 'ちてい':['crystal','crystal'],
+  'さんちょう':['rock','cloud'], 'そらの しま':['cloud','cloud'], 'うみの そこ':['coral','bubble'] };
+const areaOf = i => AREAS.find(a => i >= a.from && i <= a.to);
 
 function renderMap() {
   const wrap = $('#mapWrap');
@@ -1525,21 +1684,33 @@ function renderMap() {
   wrap.style.height = H + 'px';
   const W = wrap.clientWidth || 360;
 
-  /* エリアゾーン帯を動的生成（ノードY座標から導出） */
-  const island = $('#island');
-  island.querySelectorAll('.zone').forEach(z => z.remove());
-  AREAS.forEach(a => {
+  /* 旧・帯ゾーンは廃止（SVGで描く） */
+  $('#island').querySelectorAll('.zone').forEach(z => z.remove());
+
+  let zonesSvg = '', decoSvg = '', gatesSvg = '';
+  AREAS.forEach((a, ai) => {
     if (a.from >= STAGES.length) return;
     const to = Math.min(a.to, STAGES.length - 1);
-    const top = Math.max(0, (TOPPAD + a.from * STEP - 100) / H * 100);
-    const bottom = Math.min(100, (TOPPAD + to * STEP + 40) / H * 100);
-    const z = document.createElement('div');
-    z.className = 'zone';
-    z.style.top = top + '%';
-    z.style.height = (bottom - top) + '%';
-    z.style.background = a.color;
-    z.innerHTML = `<span class="zoneLabel">${a.name}</span>`;
-    island.appendChild(z);
+    const yT = TOPPAD + a.from * STEP - 40 - 62;
+    const yB = TOPPAD + to * STEP - 40 + 62;
+    /* うねる地形帯 */
+    zonesSvg += `<path d="M0 ${yT} Q ${W*0.25} ${yT+14} ${W*0.5} ${yT} T ${W} ${yT}
+      L ${W} ${yB} Q ${W*0.75} ${yB+14} ${W*0.5} ${yB} T 0 ${yB} Z"
+      fill="${a.color}" opacity="0.15"/>`;
+    /* エリアゲート看板（2エリアめ以降の入口） */
+    if (ai > 0) {
+      /* 前後ノードの平均と反対側に置く（ラベル・星との重なり回避） */
+      const avg = (XS[a.from - 1] + XS[a.from]) / 2;
+      const gx = Math.max(52, Math.min(W - 52, avg > 50 ? W * 0.24 : W * 0.76));
+      const gy = TOPPAD + a.from * STEP - 40 - Math.round(STEP * 0.52);
+      gatesSvg += `<g transform="translate(${Math.round(gx)},${gy})">
+        <line x1="-13" y1="-4" x2="-13" y2="26" stroke="#6E4A28" stroke-width="4"/>
+        <line x1="13" y1="-4" x2="13" y2="26" stroke="#6E4A28" stroke-width="4"/>
+        <rect x="-44" y="-16" width="88" height="24" rx="7" fill="#8A6543" stroke="#3D3323" stroke-width="2"/>
+        <rect x="-44" y="-16" width="88" height="8" rx="4" fill="#6E4A28"/>
+        <text x="0" y="3" font-size="12" font-weight="bold" fill="#FFFDF7" text-anchor="middle">${a.name} へ</text>
+      </g>`;
+    }
   });
 
   let currentSet = false;
@@ -1547,6 +1718,20 @@ function renderMap() {
   STAGES.forEach((s, i) => {
     const x = XS[i] / 100 * W, y = TOPPAD + i * STEP - 40;
     pts.push([x, y]);
+    /* 景観デコ：ノードの反対サイドに散らす */
+    const area = areaOf(i);
+    if (area && AREA_DECO[area.name]) {
+      const kinds = AREA_DECO[area.name];
+      const k1 = DECO[kinds[i % kinds.length]];
+      const dx = XS[i] > 50 ? W * 0.16 : W * 0.84;
+      const sc = 0.85 + (i % 3) * 0.18;
+      if (k1) decoSvg += k1(Math.round(dx), Math.round(y + 26), sc.toFixed(2));
+      if (i % 2 === 0) {
+        const k2 = DECO[kinds[(i + 1) % kinds.length]];
+        const dx2 = XS[i] > 50 ? W * 0.88 : W * 0.12;
+        if (k2) decoSvg += k2(Math.round(dx2), Math.round(y + STEP * 0.62), (0.7 + (i % 2) * 0.2).toFixed(2));
+      }
+    }
     const unlocked = isUnlocked(i);
     const st = stg(s.id);
     const node = document.createElement('button');
@@ -1557,21 +1742,27 @@ function renderMap() {
     const stars = st.cleared ? '★'.repeat(st.best) + '☆'.repeat(3 - st.best) : '';
     const discInner = SCENE_SVGS[s.scene] || (unlocked ? s.icon : '🔒');
     const discClass = s.scene ? 'disc disc-scene' : 'disc';
-    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>`;
+    const flag = st.cleared ? `<span class="nodeFlag">${FLAG_SVG}</span>` : '';
+    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}`;
     if (unlocked) node.onclick = () => startQuiz(i);
     else node.onclick = () => { $('#fbBuddy').hidden = true; $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; $('#fbAns').classList.remove('fade'); flashFB(1100); };
     wrap.appendChild(node);
   });
 
-  /* 点線の みち */
+  /* うねる いっぽんみち（縁取り＋地面＋あしあと点線の3層） */
   const svg = $('#trail');
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
   for (let i = 1; i < pts.length; i++) {
     const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
-    d += ` C ${x1} ${y1 + 70}, ${x2} ${y2 - 70}, ${x2} ${y2}`;
+    const mx = (x1 + x2) / 2;
+    d += ` C ${mx} ${y1 + 34}, ${mx} ${y2 - 34}, ${x2} ${y2}`;
   }
-  svg.innerHTML = `<path d="${d}" fill="none" stroke="#C9B482" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 18"/>`;
+  svg.innerHTML = zonesSvg + decoSvg +
+    `<path d="${d}" fill="none" stroke="#B89B6A" stroke-width="16" stroke-linecap="round" opacity="0.45"/>` +
+    `<path d="${d}" fill="none" stroke="#EFE0B8" stroke-width="10" stroke-linecap="round"/>` +
+    `<path d="${d}" fill="none" stroke="#C9B482" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.5 13"/>` +
+    gatesSvg;
 }
 window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap(); });
 
