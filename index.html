@@ -366,10 +366,42 @@ td.l{text-align:left}
 .zoneLabel{position:absolute; top:8px; left:12px; font-size:12px; font-weight:bold; color:var(--ink);
   background:var(--white); border-radius:999px; padding:2px 10px; opacity:.85; white-space:nowrap}
 
+/* ============ v6: ダジャレかいぞくだん ============ */
+.villain{display:inline-block; line-height:0}
+.villain svg{display:block; margin:0 auto}
+#introVillain .villain svg{width:84px; height:84px}
+.vSay{background:#fff; border:3px solid #C05A4E; border-radius:14px; padding:10px 12px;
+  font-size:15px; font-weight:bold; line-height:1.7; color:var(--inkline); margin-top:8px; text-align:left}
+#introDivider{border-top:2px dashed #C9B482; margin:12px 0}
+#resVillain{margin-top:12px; display:flex; align-items:center; gap:8px; background:var(--sand);
+  border:2px solid var(--sand2); border-radius:14px; padding:8px 10px; text-align:left}
+#resVillain .villain svg{width:54px; height:54px; flex:none}
+#resVillainMsg{font-size:14px; font-weight:bold; line-height:1.55; color:var(--inkline)}
+#storyModal .villain svg, #endModal .villain svg{width:108px; height:108px}
+.storyLetter{background:#FDF8E8; border:3px solid #D4A63C; border-radius:14px; padding:12px;
+  font-size:15px; font-weight:bold; line-height:1.8; color:var(--inkline); text-align:left; margin:10px 0}
+.storySign{text-align:right; font-size:12px; color:var(--ink-soft); margin-top:6px}
+#endModal .mCard{max-width:440px}
+#endTreasures{display:grid; grid-template-columns:repeat(6,1fr); gap:4px; margin:10px 0}
+#endTreasures span svg{width:100%; height:auto; display:block}
+#endTitle{font-size:20px; font-weight:bold; color:#7A5713; margin:10px 0}
+.zm.zp{color:#A84A20}
+/* こうしん トースト（P0） */
+#updToast{position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 78px); z-index:70;
+  background:var(--ocean-deep); color:#fff; border-radius:16px; padding:12px 14px; display:none;
+  align-items:center; gap:10px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+#updToast.show{display:flex; animation:toast-in .35s cubic-bezier(0.34,1.56,0.64,1)}
+#updToast .tmsg{flex:1; font-size:14px; font-weight:bold; line-height:1.5}
+#updToast button{background:var(--gold); color:#3D3323; font-weight:bold; font-size:15px;
+  border-radius:12px; padding:10px 16px; box-shadow:0 3px 0 var(--gold-d)}
+#updToast button:active{transform:translateY(2px); box-shadow:0 1px 0 var(--gold-d)}
+@keyframes toast-in{from{transform:translateY(30px); opacity:0}to{transform:translateY(0); opacity:1}}
+
 @media (prefers-reduced-motion:reduce){
   .bd-needle.spin,.bd-needle.shake,.bd-needle.super,#fbCard.shake,.chBtn.bounce,
   .particles.go span,#resScroll.pop,#resBuddyWrap.in,.mCard,
-  .stageNode.current .disc.disc-scene .bd-arch,.particles.boss.go span{animation:none; transition:none}
+  .stageNode.current .disc.disc-scene .bd-arch,.particles.boss.go span,
+  #updToast.show{animation:none; transition:none}
   .stageNode.current .disc.disc-scene .bd-arch{opacity:.7}
 }
 </style>
@@ -417,6 +449,10 @@ td.l{text-align:left}
       <div id="resTitle"></div>
       <div id="resStars"></div>
       <div id="resScore"></div>
+      <div id="resVillain" hidden>
+        <span class="villain" id="resVillainSvg"></span>
+        <span id="resVillainMsg"></span>
+      </div>
       <div id="resTreasure" hidden>
         <div id="resTreasureText"></div>
         <div id="resTreasureIco"></div>
@@ -467,10 +503,43 @@ td.l{text-align:left}
 <!-- ステージ導入モーダル -->
 <div class="modal" id="introModal">
   <div class="mCard">
+    <div id="introVillain" hidden>
+      <span class="villain" id="introVillainSvg"></span>
+      <div class="vSay" id="introVillainMsg"></div>
+      <div id="introDivider"></div>
+    </div>
     <div class="buddy" id="introBuddy" style="display:inline-block"></div>
     <div class="mMsg" id="introMsg"></div>
     <button class="mBtn" id="introGo">ぼうけんに でる！</button>
   </div>
+</div>
+
+<!-- ちょうせんじょう（オープニング・初回1回） -->
+<div class="modal" id="storyModal">
+  <div class="mCard">
+    <span class="villain" id="storyVillain"></span>
+    <div class="storyLetter" id="storyText"></div>
+    <div class="mMsg" id="storyBuddyMsg" style="margin:10px 4px 14px"></div>
+    <button class="mBtn" id="storyGo">よし、とりかえす！</button>
+  </div>
+</div>
+
+<!-- エンディング（全17ステージクリア時・1回） -->
+<div class="modal" id="endModal">
+  <div class="mCard">
+    <div class="mMsg" style="margin-top:0">🎆 しまの たからが ぜんぶ もどった！</div>
+    <div id="endTreasures"></div>
+    <span class="villain" id="endVillain"></span>
+    <div class="vSay" id="endMsg"></div>
+    <div id="endTitle"></div>
+    <button class="mBtn" id="endGo">おしまい</button>
+  </div>
+</div>
+
+<!-- あたらしい バージョンの おしらせ（P0） -->
+<div id="updToast">
+  <span class="tmsg">✨ あたらしい ぼうけんが とどいたよ！</span>
+  <button id="updBtn">よみこむ！</button>
 </div>
 
 <!-- なまえつけ ダイアログ -->
@@ -522,12 +591,98 @@ const sndOK = () => beep([[660, .12], [880, .18]]);
 const sndNG = () => beep([[330, .25]]);
 const sndClear = () => beep([[523, .12], [659, .12], [784, .12], [1047, .3]]);
 
-$('#soundBtn').textContent = soundOn ? '🔊' : '🔇';
+/* ---- BGM（Web Audio 合成チップチューン。外部ファイル・ライブラリなし） ---- */
+let bgmOn = store.get('bk_bgm') !== '0';
+let audioUnlocked = false;
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+/* 各曲: 8分音符×16ステップのループ。mel=メロディ(矩形波) bass=ベース(三角波)。0=休符 */
+const BGM_SONGS = {
+  map:    { bpm: 96, mel:[72,76,79,76, 72,76,79,81, 79,76,72,74, 76,74,72,0],
+            bass:[48,0,48,0, 53,0,53,0, 55,0,55,0, 48,0,48,0] },
+  mizube: { bpm: 92, mel:[79,81,83,0, 79,81,83,86, 84,83,81,79, 81,79,78,0],
+            bass:[55,0,59,0, 60,0,62,0, 55,0,59,0, 62,0,55,0] },
+  chitei: { bpm: 84, mel:[69,0,72,0, 71,0,69,0, 67,0,64,0, 65,67,69,0],
+            bass:[45,0,0,0, 43,0,0,0, 41,0,0,0, 40,0,43,0] },
+  kotoba: { bpm: 90, mel:[74,77,79,0, 81,79,77,74, 76,74,72,74, 0,72,74,0],
+            bass:[50,0,53,0, 50,0,55,0, 50,0,53,0, 48,0,50,0] },
+  sancho: { bpm:104, mel:[72,72,76,72, 79,76,72,67, 69,71,72,74, 76,74,72,0],
+            bass:[48,55,48,55, 48,55,48,55, 53,57,53,57, 55,50,55,0] },
+  tou:    { bpm: 80, mel:[76,0,79,0, 78,0,76,0, 74,0,76,0, 71,0,0,0],
+            bass:[40,0,0,40, 0,0,40,0, 38,0,0,38, 0,0,35,0] },
+  sora:   { bpm: 88, mel:[81,84,86,0, 88,86,84,81, 84,81,79,77, 79,81,0,0],
+            bass:[53,0,57,0, 58,0,60,0, 53,0,57,0, 60,0,58,0] },
+  umi:    { bpm: 84, mel:[74,0,77,79, 77,0,74,0, 72,0,74,77, 74,0,0,0],
+            bass:[50,0,0,0, 48,0,0,0, 46,0,0,0, 45,0,48,0] }
+};
+const BGM = { want:null, cur:null, timer:null, step:0, nextT:0, gain:null };
+function bgmEnsure() {
+  AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+  if (AC.state === 'suspended') AC.resume();
+  if (!BGM.gain) { BGM.gain = AC.createGain(); BGM.gain.gain.value = 0.045; BGM.gain.connect(AC.destination); }
+}
+function bgmNote(m, t, d, type, vol) {
+  if (!m) return;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.value = mtof(m);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + d * 0.9);
+  o.connect(g); g.connect(BGM.gain);
+  o.start(t); o.stop(t + d);
+}
+function bgmTick() {
+  const s = BGM_SONGS[BGM.cur];
+  if (!s) return;
+  const dur = 30 / s.bpm; /* 8分音符の長さ */
+  while (BGM.nextT < AC.currentTime + 0.4) {
+    const i = BGM.step % s.mel.length;
+    bgmNote(s.mel[i], BGM.nextT, dur, 'square', 0.5);
+    bgmNote(s.bass[i % s.bass.length], BGM.nextT, dur * 1.6, 'triangle', 0.9);
+    BGM.step++; BGM.nextT += dur;
+  }
+}
+function stopBGM() { if (BGM.timer) clearInterval(BGM.timer); BGM.timer = null; BGM.cur = null; }
+function playBGM(name) {
+  BGM.want = name;
+  if (!bgmOn || !soundOn || !audioUnlocked || !name) { stopBGM(); return; }
+  if (BGM.cur === name && BGM.timer) return;
+  try {
+    bgmEnsure();
+    stopBGM();
+    BGM.cur = name; BGM.step = 0; BGM.nextT = AC.currentTime + 0.05;
+    BGM.timer = setInterval(bgmTick, 200);
+    bgmTick();
+  } catch (e) { BGM.timer = null; }
+}
+/* テーマ名 → BGMトラック */
+function bgmOfTheme(t) {
+  if (!t) return 'map';
+  if (/^(mori|hama|kawa)/.test(t)) return 'mizube';
+  if (/^(douk|tani)/.test(t)) return 'chitei';
+  if (/^(iseki|hashi)/.test(t)) return 'kotoba';
+  if (/^(yama|shiro)/.test(t)) return 'sancho';
+  if (t === 'tou' || t === 'umi3') return 'tou';
+  if (/^sora/.test(t)) return 'sora';
+  if (/^umi/.test(t)) return 'umi';
+  return 'map';
+}
+/* iPad Safari はユーザー操作後でないと音を出せない → 最初のタップで解錠 */
+window.addEventListener('pointerdown', () => {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  try { bgmEnsure(); } catch (e) {}
+  if (bgmOn) playBGM(BGM.want || 'map');
+}, { capture: true });
+
+/* 音ボタン：🔊(こうかおん＋BGM) → 🔉(こうかおんのみ) → 🔇(なし) の3だんかい */
+function soundIcon() { return soundOn ? (bgmOn ? '🔊' : '🔉') : '🔇'; }
+$('#soundBtn').textContent = soundIcon();
 $('#soundBtn').onclick = () => {
-  soundOn = !soundOn;
+  if (soundOn && bgmOn) { bgmOn = false; stopBGM(); }
+  else if (soundOn) { soundOn = false; }
+  else { soundOn = true; bgmOn = true; playBGM(BGM.want || 'map'); sndOK(); }
   store.set('bk_sound', soundOn ? '1' : '0');
-  $('#soundBtn').textContent = soundOn ? '🔊' : '🔇';
-  if (soundOn) sndOK();
+  store.set('bk_bgm', bgmOn ? '1' : '0');
+  $('#soundBtn').textContent = soundIcon();
 };
 
 /* ================= 層2: 素材データ（words.json） ================= */
@@ -1116,6 +1271,102 @@ function setBuddyFace(el, face){
 const buddyName = () => state.buddyName || 'コンパスくん';
 const withName = msg => `【${buddyName()}】${msg}`;
 
+/* ================= v6: キャプテン・ダジャーレ ================= */
+const VILLAIN_SVG = `<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+<g transform="translate(1.2,3) scale(0.97)">
+  <path d="M44 102 q-2 8 0 10 q6 2 12 0 l1 -10 z" fill="#5F462C" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M63 102 l1 10 q6 2 12 0 q2 -2 0 -10 z" fill="#7A5B3A" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M60 52 C40 52 32 66 30 82 C28 96 34 106 60 106 C86 106 92 96 90 82 C88 66 80 52 60 52 Z" fill="#C05A4E" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M38 62 C32 72 29 88 32 96 C36 103 46 105 56 105 C44 100 38 88 40 76 C41 70 43 66 46 61 Z" fill="#9E4340"/>
+  <path d="M60 56 L60 104" fill="none" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="54" cy="72" r="2.2" fill="#E8C15A" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="54" cy="84" r="2.2" fill="#E8C15A" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M86 64 Q98 68 100 78 Q101 84 96 85 Q90 86 86 78 Z" fill="#C05A4E" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M34 64 Q22 68 20 78 Q19 84 24 85 Q30 86 34 78 Z" fill="#9E4340" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M22 76 q-3 6 2 8 q5 2 8 -4" fill="#E8C15A" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M98 76 q3 6 -2 8 q-5 2 -8 -4" fill="#E8C15A" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="18" cy="86" r="5.5" fill="#F5D9AD" stroke="#3D3323" stroke-width="2"/>
+  <circle cx="102" cy="86" r="5.5" fill="#F5D9AD" stroke="#3D3323" stroke-width="2"/>
+  <circle cx="60" cy="40" r="23" fill="#F5D9AD" stroke="#3D3323" stroke-width="2.5"/>
+  <path d="M42 48 A23 23 0 0 0 60 63 A26 26 0 0 1 42 48 Z" fill="#E3BE8B"/>
+  <path d="M40 46 q-4 8 0 13 q-3 6 2 10 q-1 7 6 8 q2 6 9 5 q2 4 6 3 l0 -12 q-14 -2 -18 -14 q-2 -6 -1 -12 z" fill="#567F3E" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M44 48 q-3 7 1 11 q-3 5 2 9 q-1 6 6 6 q1 5 8 4 q2 3 5 2 q3 1 5 -2 q7 1 8 -4 q7 0 6 -6 q5 -4 2 -9 q4 -4 1 -11 q-2 -5 -8 -6 q-9 -3 -14 -3 q-5 0 -14 3 q-6 1 -8 6 z" fill="#6FA054" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M50 56 q3 4 0 8 M70 56 q-3 4 0 8 M60 60 q2 3 0 6" fill="none" stroke="#3D3323" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="60" cy="45" r="5.5" fill="#E59D77" stroke="#3D3323" stroke-width="2"/>
+  <path d="M56 47 a5.5 5.5 0 0 0 5 3 a6 6 0 0 1 -5 -3 z" fill="#CE8258"/>
+  <g transform="translate(0,-9)">
+    <path d="M20 29 Q23 36 34 36 L86 36 Q97 36 100 29 L100 32 Q95 40 84 39 L36 39 Q25 40 20 32 Z" fill="#38486B" stroke="#3D3323" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M60 8 C44 8 34 16 30 26 Q27 32 19 29 Q29 38 42 35 L78 35 Q91 38 101 29 Q93 32 90 26 C86 16 76 8 60 8 Z" fill="#4A5D85" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M36 20 C32 24 30 28 30 31 L42 33 C38 28 36 24 38 18 Z" fill="#38486B"/>
+    <circle cx="60" cy="22" r="9.5" fill="#E8C15A" stroke="#3D3323" stroke-width="2"/>
+    <path d="M55 26 a9.5 9.5 0 0 0 9 5 a10 10 0 0 1 -9 -5 z" fill="#C79B3B"/>
+    <g fill="none" stroke="#3D3323" stroke-width="2" stroke-linecap="round">
+      <path d="M56.5 16.5 q0.5 4 -3 8"/><path d="M56.5 18 q6 -1.5 7.5 0.5 q1.5 4.5 -5 9"/><path d="M60.5 21.5 q-1.5 3.5 -4 5"/>
+    </g>
+    <g fill="none" stroke="#3D3323" stroke-width="2.2" stroke-linecap="round">
+      <path d="M64.5 16 l2.2 2.2 M68 14.5 l2.2 2.2"/>
+    </g>
+  </g>
+  <g class="dj-face dj-face-normal" transform="translate(0,3)">
+    <path d="M46 30 q4 -3 8 -1" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M66 27 q4 -2 8 1" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="51" cy="37" r="4.5" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="70" cy="36" r="5" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="52" cy="38" r="1.8" fill="#3D3323"/><circle cx="71" cy="37" r="1.8" fill="#3D3323"/>
+    <path d="M52 54 q8 6 16 -1 q-2 6 -8 6 q-6 0 -8 -5 z" fill="#8A4A3C" stroke="#3D3323" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M55 55.5 l4 0.8 0 -2.2 -4 -0.6 z" fill="#FFFFFF" stroke="#3D3323" stroke-width="1"/>
+    <path d="M63 56 l4 -0.8 0 -2 -4 1 z" fill="#FFFFFF" stroke="#3D3323" stroke-width="1"/>
+  </g>
+  <g class="dj-face dj-face-oops" style="display:none" transform="translate(0,3)">
+    <path d="M46 28 q4 2 8 3" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M74 28 q-4 2 -8 3" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="51" cy="37" r="5" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="70" cy="37" r="5" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="51" cy="38.5" r="2.4" fill="#3D3323"/><circle cx="70" cy="38.5" r="2.4" fill="#3D3323"/>
+    <circle cx="52" cy="37.5" r="0.9" fill="#FFFFFF"/><circle cx="71" cy="37.5" r="0.9" fill="#FFFFFF"/>
+    <path d="M45 41 q-2 4 0 5.5 q2 1.5 3 -1 q0.8 -2.5 -3 -4.5 z" fill="#9CCBE8" stroke="#3D3323" stroke-width="1.3"/>
+    <path d="M53 56 q3 -3 5 0 q2 3 4 0 q2 -3 5 0 q-1 4 -7 4 q-6 0 -7 -4 z" fill="#8A4A3C" stroke="#3D3323" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M82 30 q3 4 1 6 q-2 2 -3.5 -0.5 q-1 -2.5 2.5 -5.5 z" fill="#9CCBE8" stroke="#3D3323" stroke-width="1.3"/>
+  </g>
+  <g class="dj-face dj-face-angry" style="display:none" transform="translate(0,3)">
+    <path d="M46 32 q4 -4 9 -2" fill="none" stroke="#3D3323" stroke-width="2.8" stroke-linecap="round"/>
+    <path d="M75 30 q-5 -4 -9 -2" fill="none" stroke="#3D3323" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="52" cy="37.5" r="4.2" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="69" cy="37" r="4.2" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8"/>
+    <circle cx="53" cy="38" r="1.8" fill="#3D3323"/><circle cx="70" cy="37.5" r="1.8" fill="#3D3323"/>
+    <ellipse cx="44" cy="45" rx="3.5" ry="2" fill="#E58B7B"/><ellipse cx="77" cy="44" rx="3.5" ry="2" fill="#E58B7B"/>
+    <path d="M52 55 q8 4 16 0 l0 3 q-8 4 -16 0 z" fill="#FFFFFF" stroke="#3D3323" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M56 55.7 l0 3 M60 56.7 l0 3 M64 56.5 l0 3" stroke="#3D3323" stroke-width="1.2"/>
+    <g stroke="#3D3323" stroke-width="1.5" fill="#EDEDED">
+      <path d="M30 14 q-4 -1 -3 -5 q1 -3 4 -2 q0 -3 4 -3 q3 0 3 3 q3 0 3 3 q0 4 -4 4 z"/>
+      <path d="M88 12 q4 -1 3 -5 q-1 -3 -4 -2 q0 -3 -4 -3 q-3 0 -3 3 q-3 0 -3 3 q0 4 4 4 z"/>
+    </g>
+  </g>
+</g>
+</svg>`;
+function mountVillain(el){ if (el && el.dataset.vmounted !== '1'){ el.innerHTML = VILLAIN_SVG; el.dataset.vmounted = '1'; } }
+function setVillainFace(el, face){
+  if (!el) return;
+  mountVillain(el);
+  el.querySelectorAll('.dj-face').forEach(g => g.style.display = 'none');
+  const f = el.querySelector('.dj-face-' + face); if (f) f.style.display = '';
+}
+
+/* ---- セリフ（ダジャレ品質基準：音の重なり2モーラ以上・両語とも既知語） ---- */
+const STORY_LETTER = 'しまの たからは ぜーんぶ いただいた！ かえして ほしけりゃ、もんだいを といて みな！ …おっと、こうかい するなよ？ かいぞくだけに、こうかい（ふねの たび）なら まいにち してるけどな！ がっはっは！';
+const STORY_LETTER_MID = 'なにっ！？ もう いくつか とりかえされてる だと！？ や、やるじゃねえか…。だが のこりの たからは ぜったいに わたさんぜ！ がっはっは！';
+const VILLAIN_LOSE = [
+  'まさか とかれるとは！ まさかな！ さかなだけに！',
+  'おぼえてろよ！ つぎは こうかい させてやるぜ！ ふねの こうかいも な！',
+  'きょうは この へんに しといてやる！ へんじは いらないぜ！',
+  'くやし〜！ …でも いい しょうぶだったぜ。なんてな！'
+];
+const VILLAIN_LOSE_BOSS = {
+  tou: 'くそ〜、とうとう まけた…！ だが しょうぶは これからだ！ うみの そこで まってるぜ！ がっはっは！',
+  umi3: 'かんぺきに まけたぜ…！ おまえは ほんものの たんけんかだ！'
+};
+const ENDING_SPEECH = 'かんぺきに まけたぜ！ おまえは ほんものの たんけんかだ。たからは ぜんぶ かえす！ やくそくだ。…これにて おしまい！ しまだけに な！ がっはっは！ また ダジャレしに くるぜ〜！';
+
 /* ボス「さいごのとう」クリア時の花火（§6.3） */
 function fireBossParticles() {
   const host = document.createElement('div');
@@ -1135,82 +1386,91 @@ function fireBossParticles() {
 const STAGES = [
   { id:'mori',   name:'すうじの もり',      icon:'🌳', color:'var(--ocean)',  scene:'mori', theme:'mori',
     intro:'ようこそ、まなびの しまへ！この もりでは かずの おおきさが わかると みちが ひらけるんだ',
+    pirate:'たからを さがすだと？ せいぜい もりあがって いきな！ もりだけに な！ がっはっは！',
     subFlavor:'どっちの きのみが おおい かな？',
-    gen:genCompare, n:10, treasure:{i:'🌰', n:'もりの どんぐり', scene:'acorn', memo:'もりの どうぶつたちの だいこうぶつ。ぴかぴかに みがいて ある'} },
+    gen:genCompare, n:10, treasure:{i:'🌰', n:'もりの どんぐり', scene:'acorn', memo:'もりの どうぶつたちの だいこうぶつ。ぴかぴかに みがいて ある', pc:'とられて きぶんは どんより… どんぐりだけに！'} },
   { id:'hama',   name:'たしざんの はま',    icon:'🏖️', color:'var(--ocean)',  scene:'hama', theme:'hama',
     intro:'なみの おとが きこえる はまべだ。かいがらを あつめるには、たしざんの ちからが いるみたい',
+    pirate:'この もんだいは むずかしいぜ〜。ハマっても しらないぜ！ はまだけに な！',
     subFlavor:'かいがらを あわせると いくつ？',
-    gen:genAdd10, n:10, treasure:{i:'🐚', n:'ひかる かいがら', scene:'shell', memo:'みみに あてると うみの おとが きこえる…きが する'} },
+    gen:genAdd10, n:10, treasure:{i:'🐚', n:'ひかる かいがら', scene:'shell', memo:'みみに あてると うみの おとが きこえる…きが する', pc:'うっかり からっぽの はこに しまってた… かいがらだけに！'} },
   { id:'kawa',   name:'ひきざんの かわ',    icon:'🏞️', color:'var(--ocean)',  scene:'kawa', theme:'kawa',
     intro:'この かわには きんいろの さかなが すんでいる らしい。ひきざんで みずの ながれを よもう！',
     subFlavor:'さかなは なんびき のこる かな？',
-    gen:genSub10, n:10, treasure:{i:'🐟', n:'きんの さかな', scene:'goldfish', memo:'つかまえても すぐ にがして あげた。また あえる かな'} },
+    gen:genSub10, n:10, treasure:{i:'🐟', n:'きんの さかな', scene:'goldfish', memo:'つかまえても すぐ にがして あげた。また あえる かな', pc:'こんなに きれいだとは、まさかな！ さかなだけに！'} },
   { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', scene:'douk', theme:'douk',
     intro:'くらい どうくつに はいるよ。10の かたまりを つくれば、あおい ほうせきが ひかりだすんだ！',
     subFlavor:'10の かたまりを つくって かんがえよう',
-    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり'} },
+    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり', pc:'きれいすぎて ほうって おけなかったんだぜ… ほうせきだけに！'} },
   { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  scene:'tani', theme:'tani',
     intro:'ふかい たにの そこには、おおむかしの きょうりゅうが ねむって いるんだって。ひきざんで がけを おりよう！',
     subFlavor:'10から かりてくると できるよ',
-    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい'} },
+    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい', pc:'ぬすむのに ほねが おれたのに よ〜！'} },
   { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  scene:'iseki', theme:'iseki',
     intro:'この さきに ふるい かんじの いせきが あるよ。かべに ほられた もじを よみとけば、かくされた たからが みつかるはずさ！',
+    pirate:'かんじが よめたら いい かんじだな！ …ま、よめないだろうけどな！ がっはっは！',
     gen:makeKanjiGen('g1a', 'かべに ほられた この もじ、なんて よむ？'), n:10,
-    treasure:{i:'📜', n:'ふるい まきもの', scene:'scroll', memo:'これには むかしの ひとの ちえが かかれて いるらしい'} },
+    treasure:{i:'📜', n:'ふるい まきもの', scene:'scroll', memo:'これには むかしの ひとの ちえが かかれて いるらしい', pc:'やっかいごとに まきこまれちまった… まきものだけに！'} },
   { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  scene:'hashi', theme:'hashi',
     intro:'ことばと ことばを つなぐ はしだよ。「はんたいの ことば」が わかれば、わたって いけるさ！',
     gen:makeOppGen('この ことばの はんたいがわに あるのは？'), n:10,
-    treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね'} },
+    treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね', pc:'てに いれたとき、うれしくて とびはねちまった！ はねだけに！'} },
   { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  scene:'shinden', theme:'iseki2',
     intro:'いせきの おくに あった、かんじの しんでんだ！むずかしい もじも あるけど、きみなら よめるはず',
     gen:makeKanjiGen('g1b', 'しんでんの とびらに かかれた もじは？'), n:10,
-    treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？'} },
+    treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？', pc:'かぎりなく うつくしい かがやきだぜ… かぎだけに！'} },
   { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  scene:'yama', theme:'yama',
     intro:'たかい やまの ちょうじょうには「ほのおの たま」が ある。九九を となえて のぼって いこう！',
+    pirate:'九九だと？ くくく… わらいが とまらないぜ！',
     subFlavor:'九九を こえに だして いって みよう',
-    gen:genKuku, n:10, treasure:{i:'🔥', n:'ほのおの たま', scene:'flameorb', memo:'もっていると からだが ぽかぽか する。ふゆに べんり'} },
+    gen:genKuku, n:10, treasure:{i:'🔥', n:'ほのおの たま', scene:'flameorb', memo:'もっていると からだが ぽかぽか する。ふゆに べんり', pc:'あつくて たまらないぜ！ ほのおの たまだけに！'} },
   { id:'shiro',  name:'けいさんの しろ',    icon:'🏰', color:'var(--ocean)',  scene:'shiro', theme:'shiro',
     intro:'りっぱな おしろに とうちゃく！おおきな かずの けいさんが できたら、おうさまが むかえて くれるよ',
     subFlavor:'くらいごとに じゅんばんに けいさん しよう',
     gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10,
-    treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？'} },
+    treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？', pc:'とりかえされて かんかんだぜ！ かんむりだけに！'} },
   { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
     intro:'ついに さいごの とうに きたね。いままでの ちからを ぜんぶ つかって、てっぺんを めざそう！',
+    pirate:'とうとう ここまで きたか！ とうだけに な！ だが ここから さきは とおさんぜ！',
     clearTitle:'🎉 でんせつの たんけんか に なった！', boss:true,
     gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp])(), n:12,
-    treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる'} },
+    treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる', pc:'ぴかぴかで こころが とろけるぜ… トロフィーだけに！'} },
 
   /* ===== そらの しま（Phase E） ===== */
   { id:'sora1',  name:'とけいの きゅうでん', icon:'🕰️', color:'var(--ocean)', scene:'sora1', theme:'sora1',
     intro:'くもの うえに おしろが みえる！ここは とけいの きゅうでん。はりが よめたら なかに はいれるよ',
+    pirate:'とけいの もんだいなんて とけっこないぜ！ がっはっは！',
     gen:genClock, n:10,
-    treasure:{i:'🕰️', n:'とけいの ふりこ', scene:'pendulum', memo:'ちくたく ちくたく。きゅうでんの じかんを きざんで いた ふりこ'} },
+    treasure:{i:'🕰️', n:'とけいの ふりこ', scene:'pendulum', memo:'ちくたく ちくたく。きゅうでんの じかんを きざんで いた ふりこ', pc:'けいかくが ふりだしに もどっちまった… ふりこだけに！'} },
   { id:'sora2',  name:'ぶんしょうだいの にわ', icon:'🌷', color:'var(--ocean)', scene:'sora2', theme:'sora2',
     intro:'そらの にわに ついたよ。おはなの せわを しながら、おはなしの もんだいを といて みよう！',
     subFlavor:'おはなしを よく よんでね',
     gen:makeStoryGen(), n:10,
-    treasure:{i:'🪣', n:'まほうの じょうろ', scene:'wateringcan', memo:'みずを あげると おはなが ちょっと うれしそうに ゆれる'} },
+    treasure:{i:'🪣', n:'まほうの じょうろ', scene:'wateringcan', memo:'みずを あげると おはなが ちょっと うれしそうに ゆれる', pc:'これが あれば みずやりが じょうずに なるんだがな… じょうろだけに！'} },
   { id:'sora3',  name:'おおきなかずの くも', icon:'☁️', color:'var(--ocean)', scene:'sora3', theme:'sora3',
     intro:'くもの かいだんを のぼると、とおくまで みわたせるよ。100より おおきい かずの せかいだ！',
     subFlavor:'100の まとまりで かんがえよう',
     gen:genBigNum, n:10,
-    treasure:{i:'🔭', n:'かずの ぼうえんきょう', scene:'telescope', memo:'のぞくと とおくの かずまで はっきり みえるんだって'} },
+    treasure:{i:'🔭', n:'かずの ぼうえんきょう', scene:'telescope', memo:'のぞくと とおくの かずまで はっきり みえるんだって', pc:'とおくが みえすぎて ぼうっと しちまうぜ！ ぼうえんきょうだけに！'} },
 
   /* ===== うみの そこ（Phase F） ===== */
   { id:'umi1',   name:'わりざんの しんかい', icon:'🌊', color:'var(--ocean)', scene:'umi1', theme:'umi1',
     intro:'ざぶーん！うみの そこに もぐるよ。おさかなを おなじ かずずつ わけて あげよう',
+    pirate:'しんかいまで くるとは… しんじられん！ だいじな しんじゅは わたさんぞ！',
     subFlavor:'九九を さかさに つかうと とけるよ',
     gen:genDiv, n:10,
-    treasure:{i:'🦪', n:'しんじゅの たま', scene:'pearl', memo:'かいの なかで ながい あいだ そだった たからもの'} },
+    treasure:{i:'🦪', n:'しんじゅの たま', scene:'pearl', memo:'かいの なかで ながい あいだ そだった たからもの', pc:'うつくしすぎて しんじられん！ しんじゅだけに！'} },
   { id:'umi2',   name:'カタカナの ちんぼつせん', icon:'🚢', color:'var(--coral)', scene:'umi2', theme:'umi2',
     intro:'ふるい ふねが しずんで いる…！つみにの なまえは ぜんぶ カタカナで かかれて いるみたい',
+    pirate:'ここは おれさまの ふねだぞ！ カタカナが よめないと かたなしだぜ！ カタカナだけに な！',
     gen:makeKanjiGen('kana', 'カタカナで かくと どれ？'), n:10,
-    treasure:{i:'🧢', n:'せんちょうの ぼうし', scene:'captainhat', memo:'かぶると きぶんは おおうなばらの せんちょう！'} },
+    treasure:{i:'🧢', n:'せんちょうの ぼうし', scene:'captainhat', memo:'かぶると きぶんは おおうなばらの せんちょう！', pc:'それ、おれの ぼうしーっ！ ないと ただの ぼうずだぜ！'} },
   { id:'umi3',   name:'でんせつの りゅうぐう', icon:'🐉', color:'var(--purple)', scene:'umi3', theme:'umi3',
     intro:'うみの いちばん ふかい ばしょに、でんせつの りゅうぐうじょうが…！ぜんぶの ちからを あわせて とびらを あけよう！',
+    pirate:'よくぞ りゅうぐうまで きた…。ここで まけたら かいぞくだんは おしまいだ。さいごの しょうぶ、うけて たつぜ！',
     clearTitle:'🌊 うみの でんせつに なった！', boss:true,
     gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genDiv,genBigNum,genClock,makeStoryGen(),()=>makeKanjiGen('kana','カタカナで かくと どれ？')()])(), n:14,
-    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった'} },
+    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった', pc:'なかみを みたら たまげたぜ！ たまてばこだけに！'} },
 ];
 
 /* ================= 進捗（保存） ================= */
@@ -1230,6 +1490,7 @@ function show(name) {
   if (name === 'map') renderMap();
   if (name === 'zukan') renderZukan();
   if (name === 'parent') renderParent();
+  if (name === 'map' || name === 'zukan' || name === 'parent') playBGM('map');
 }
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.scr));
 
@@ -1327,10 +1588,17 @@ function startQuiz(i) {
       Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
       if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
       show('quiz');
+      playBGM(bgmOfTheme(s.theme));
       renderQ();
     });
   };
-  if (s.intro && state.introSeen[s.id] !== today()) {
+  if ((s.intro || s.pirate) && state.introSeen[s.id] !== today()) {
+    const iv = $('#introVillain');
+    if (s.pirate) {
+      iv.hidden = false;
+      setVillainFace($('#introVillainSvg'), s.boss ? 'angry' : 'normal');
+      $('#introVillainMsg').textContent = 'ダジャーレ「' + s.pirate + '」';
+    } else iv.hidden = true;
     setBuddyFace($('#introBuddy'), 'normal');
     $('#introMsg').textContent = s.intro;
     const modal = $('#introModal');
@@ -1451,12 +1719,22 @@ function finish() {
   $('#resTitle').textContent = cleared ? (s.clearTitle || (s.name + ' クリア！')) : 'あと すこし！';
   $('#resStars').textContent = cleared ? '★'.repeat(starN) + '☆'.repeat(3 - starN) : '🔥';
   $('#resScore').textContent = `${n}もんちゅう ${c}もん せいかい！`;
+
+  /* 船長の まけおしみ（クリア時のみ。不合格時は はげましだけにする） */
+  const rv = $('#resVillain');
+  if (cleared) {
+    rv.hidden = false;
+    setVillainFace($('#resVillainSvg'), 'oops');
+    const line = VILLAIN_LOSE_BOSS[s.id] || pick(VILLAIN_LOSE);
+    $('#resVillainMsg').textContent = 'ダジャーレ「' + line + '」';
+  } else rv.hidden = true;
+
   const tr = $('#resTreasure');
   const rbWrap = $('#resBuddyWrap');
   rbWrap.classList.remove('in');
   if (firstClear) {
     tr.hidden = false;
-    $('#resTreasureText').textContent = `「${s.treasure.n}」を みつけた！`;
+    $('#resTreasureText').textContent = `「${s.treasure.n}」を とりもどした！`;
     const ico = $('#resTreasureIco');
     const tsvg = TREASURE_SVGS[s.treasure.scene];
     if (tsvg) {
@@ -1480,6 +1758,23 @@ function finish() {
   } else tr.hidden = true;
   if (cleared) sndClear();
   show('result');
+
+  /* エンディング：17この たからが すべて そろったら 1かいだけ */
+  if (cleared && state.treasures.length === STAGES.length && !state.endingSeen) {
+    setTimeout(showEnding, s.boss ? 1800 : 900);
+  }
+}
+
+function showEnding() {
+  state.endingSeen = 1; save();
+  $('#endTreasures').innerHTML = STAGES.map(s =>
+    `<span>${TREASURE_SVGS[s.treasure.scene] || s.treasure.i}</span>`).join('');
+  setVillainFace($('#endVillain'), 'oops');
+  $('#endMsg').textContent = 'ダジャーレ「' + ENDING_SPEECH + '」';
+  $('#endTitle').textContent = '✨ しょうごう「しまの だいえいゆう」✨';
+  $('#endModal').classList.add('show');
+  fireBossParticles();
+  $('#endGo').onclick = () => $('#endModal').classList.remove('show');
 }
 $('#retryBtn').onclick = () => startQuiz(Q.stageIdx);
 $('#mapBtn').onclick = () => show('map');
@@ -1490,10 +1785,11 @@ function renderZukan() {
   $('#zkGrid').innerHTML = STAGES.map(s => {
     const got = state.treasures.includes(s.id);
     const memo = (got && s.treasure.memo) ? `<div class="zm">${s.treasure.memo}</div>` : '';
+    const pc = (got && s.treasure.pc) ? `<div class="zm zp">ダジャーレ「${s.treasure.pc}」</div>` : '';
     return `<div class="zkCard ${got ? 'yes' : 'no'}">
       <div class="zi">${got ? s.treasure.i : '❓'}</div>
       <div class="zn">${got ? s.treasure.n : '？？？'}</div>
-      ${memo}
+      ${memo}${pc}
     </div>`;
   }).join('');
 }
@@ -1624,18 +1920,64 @@ function askBuddyName() {
     const v = $('#nameInput').value.trim().replace(/\s+/g, '').slice(0, 6);
     state.buddyName = v || 'コンパスくん'; save();
     modal.classList.remove('show');
+    showStory();
   };
   $('#nameGo').onclick = done;
   $('#nameInput').onkeydown = e => { if (e.key === 'Enter') done(); };
+}
+
+/* ================= オープニング（ちょうせんじょう） ================= */
+function showStory() {
+  if (state.storySeen) return;
+  setVillainFace($('#storyVillain'), 'normal');
+  const letter = state.treasures.length ? STORY_LETTER_MID : STORY_LETTER;
+  $('#storyText').innerHTML = letter.replace(/</g, '&lt;') +
+    '<div class="storySign">—— ダジャレかいぞくだん キャプテン・ダジャーレ</div>';
+  $('#storyBuddyMsg').textContent = withName('「たいへんだ！ たからを とりかえしに いこう！」');
+  const modal = $('#storyModal');
+  modal.classList.add('show');
+  $('#storyGo').onclick = () => {
+    state.storySeen = 1; save();
+    modal.classList.remove('show');
+  };
 }
 
 /* ================= init ================= */
 initParticles();
 loadWords();
 show('map');
-if (!state.buddyName) askBuddyName();
+if (!state.buddyName) askBuddyName(); else showStory();
+
+/* ---- Service Worker：登録＋更新検知 → 子ども向けトースト（P0） ---- */
+function notifyUpdate(sw) {
+  const toast = $('#updToast');
+  toast.classList.add('show');
+  $('#updBtn').onclick = () => {
+    $('#updBtn').disabled = true;
+    try { sw.postMessage('SKIP_WAITING'); } catch (e) { location.reload(); }
+  };
+}
 if ('serviceWorker' in navigator) {
-  try { navigator.serviceWorker.register('./sw.js'); } catch (e) {}
+  try {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      /* 起動のたびに かならず更新チェック */
+      if (reg.update) reg.update().catch(() => {});
+      /* すでに待機中の新バージョンがあれば すぐ知らせる */
+      if (reg.waiting && navigator.serviceWorker.controller) notifyUpdate(reg.waiting);
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) notifyUpdate(nw);
+        });
+      });
+    }).catch(() => {});
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloading) return; reloading = true;
+      location.reload();
+    });
+  } catch (e) {}
 }
 </script>
 </body>
