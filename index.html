@@ -570,7 +570,7 @@ const store = {
 
 /* ================= sound (控えめ) ================= */
 let AC = null, soundOn = store.get('bk_sound') !== '0';
-function beep(seq) {
+function beep(seq, vol) {
   if (!soundOn) return;
   try {
     AC = AC || new (window.AudioContext || window.webkitAudioContext)();
@@ -579,7 +579,7 @@ function beep(seq) {
     seq.forEach(([f, d]) => {
       const o = AC.createOscillator(), g = AC.createGain();
       o.type = 'sine'; o.frequency.value = f;
-      g.gain.setValueAtTime(0.08, t);
+      g.gain.setValueAtTime(vol || 0.08, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + d);
       o.connect(g); g.connect(AC.destination);
       o.start(t); o.stop(t + d);
@@ -589,7 +589,14 @@ function beep(seq) {
 }
 const sndOK = () => beep([[660, .12], [880, .18]]);
 const sndNG = () => beep([[330, .25]]);
-const sndClear = () => beep([[523, .12], [659, .12], [784, .12], [1047, .3]]);
+const sndTap = () => beep([[1050, .05]], 0.045);   /* ボタンの「おした」てごたえ */
+const sndClear = () => beep([[523, .11], [659, .11], [784, .11], [1047, .22], [784, .09], [1047, .42]]);  /* ファンファーレ */
+const sndOshii = () => beep([[392, .16], [349, .2], [440, .32]], 0.06);  /* ざんねん（やさしく） */
+
+/* すべてのボタンで タップ音（押せた手ごたえ） */
+document.addEventListener('pointerdown', e => {
+  if (e.target && e.target.closest && e.target.closest('button')) sndTap();
+}, true);
 
 /* ---- BGM（Web Audio 合成チップチューン。外部ファイル・ライブラリなし） ---- */
 let bgmOn = store.get('bk_bgm') !== '0';
@@ -612,7 +619,9 @@ const BGM_SONGS = {
   sora:   { bpm: 88, mel:[81,84,86,0, 88,86,84,81, 84,81,79,77, 79,81,0,0],
             bass:[53,0,57,0, 58,0,60,0, 53,0,57,0, 60,0,58,0] },
   umi:    { bpm: 84, mel:[74,0,77,79, 77,0,74,0, 72,0,74,77, 74,0,0,0],
-            bass:[50,0,0,0, 48,0,0,0, 46,0,0,0, 45,0,48,0] }
+            bass:[50,0,0,0, 48,0,0,0, 46,0,0,0, 45,0,48,0] },
+  victory:{ bpm:112, mel:[72,76,79,84, 0,79,84,0, 81,79,76,79, 72,0,0,0],
+            bass:[48,0,52,0, 55,0,52,0, 53,0,55,0, 48,0,55,0] }
 };
 const BGM = { want:null, cur:null, timer:null, step:0, nextT:0, gain:null };
 function bgmEnsure() {
@@ -747,7 +756,7 @@ function genCompare() {
   if (a === b) b = (b % 20) + 1;
   const big = rnd(2) === 0;
   const ans = big ? (a > b ? 0 : 1) : (a < b ? 0 : 1);
-  return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans };
+  return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans, key: `cmp:${a},${b},${big}` };
 }
 function genAdd10() { const a = 1 + rnd(9); const b = 1 + rnd(10 - a); return numQ(`${a} ＋ ${b} ＝ ？`, a + b); }
 function genSub10() { const a = 2 + rnd(9); const b = 1 + rnd(a - 1); return numQ(`${a} − ${b} ＝ ？`, a - b); }
@@ -771,16 +780,16 @@ function genBigNum() {
     if (a === b) b = b === 999 ? 998 : b + 1;
     const big = rnd(2) === 0;
     const ans = big ? (a > b ? 0 : 1) : (a < b ? 0 : 1);
-    return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans };
+    return { text: big ? 'どちらが おおきい かず？' : 'どちらが ちいさい かず？', choices: [String(a), String(b)], ans, key: `big:${a},${b},${big}` };
   }
   const h = 1 + rnd(9), t = rnd(10), o = rnd(10);
   return numQ(`100が ${h}こ、10が ${t}こ、1が ${o}こ。<br>あわせて いくつ？`, h * 100 + t * 10 + o, { html: true });
 }
 
 /* --- 新: とけい よみ（なんじ／なんじはん） --- */
-function clockSVG(hour, half) {
-  const hAng = (hour % 12) * 30 + (half ? 15 : 0);
-  const mAng = half ? 180 : 0;
+function clockSVG(hour, min) {
+  const hAng = (hour % 12) * 30 + min * 0.5;   /* 短針は分に応じて すすむ */
+  const mAng = min * 6;
   const hand = (ang, len, w, col) => {
     const r = (ang - 90) * Math.PI / 180;
     return `<line x1="50" y1="50" x2="${(50 + len * Math.cos(r)).toFixed(1)}" y2="${(50 + len * Math.sin(r)).toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
@@ -798,19 +807,20 @@ function clockSVG(hour, half) {
     <circle cx="50" cy="50" r="4" fill="#3D3323"/>
   </svg>`;
 }
-const clockLabel = (h, half) => `${h}じ${half ? 'はん' : ''}`;
+const clockLabel = (h, m) => m === 0 ? `${h}じ` : `${h}じ ${m}ぷん`;
 function genClock() {
-  const h = 1 + rnd(12), half = rnd(2) === 0;
-  const correct = clockLabel(h, half);
-  const cand = new Set([correct, clockLabel(h, !half)]);
-  const mis = ((h + 5) % 12) + 1;            /* 短針を読み違えた時刻 */
-  cand.add(clockLabel(mis, half));
+  const h = 1 + rnd(12), m = 10 * rnd(6);      /* 0,10,20,30,40,50ぷん */
+  const correct = clockLabel(h, m);
+  const cand = new Set([correct]);
+  cand.add(clockLabel(h, (m + 10) % 60));      /* 10ぷん ずれ */
+  cand.add(clockLabel((h % 12) + 1, m));       /* 1じかん ずれ */
+  cand.add(clockLabel(h, (m + 50) % 60));      /* ぎゃくに 10ぷん */
   let guard = 0;
   while (cand.size < 4 && guard++ < 40) {
-    cand.add(clockLabel(1 + rnd(12), rnd(2) === 0));
+    cand.add(clockLabel(1 + rnd(12), 10 * rnd(6)));
   }
   const choices = shuffle([...cand].slice(0, 4));
-  return { text: `とけいは いま なんじ？${clockSVG(h, half)}`, choices, ans: choices.indexOf(correct), html: true };
+  return { text: `とけいは いま なんじ？${clockSVG(h, m)}`, choices, ans: choices.indexOf(correct), html: true, key: `t:${h}:${m}` };
 }
 
 /* --- 漢字／カタカナ（プール名で遅延参照） --- */
@@ -820,7 +830,7 @@ function makeKanjiGen(poolName, prompt) {
     const e = pick(pool);
     const wrong = shuffle(pool.filter(x => x[1] !== e[1])).slice(0, 3).map(x => x[1]);
     const choices = shuffle([e[1], ...wrong]);
-    return { text: `${prompt || 'よみかたは どれ？'}<span class="big">${e[0]}</span>`, choices, ans: choices.indexOf(e[1]), html: true };
+    return { text: `${prompt || 'よみかたは どれ？'}<span class="big">${e[0]}</span>`, choices, ans: choices.indexOf(e[1]), html: true, key: `k:${e[0]}` };
   };
 }
 function makeOppGen(prompt) {
@@ -832,7 +842,7 @@ function makeOppGen(prompt) {
     const others = shuffle(OPP.flat().filter(w => w !== q && w !== a)).slice(0, 3);
     const choices = shuffle([a, ...others]);
     const text = prompt ? `${prompt}<span class="big">${q}</span>` : `「${q}」の<br>はんたいの ことばは？`;
-    return { text, choices, ans: choices.indexOf(a), html: true };
+    return { text, choices, ans: choices.indexOf(a), html: true, key: `o:${q}` };
   };
 }
 const genOpp = makeOppGen();
@@ -1573,7 +1583,8 @@ function buildQuestions(stage) {
   let guard = 0;
   while (list.length < stage.n && guard++ < 300) {
     const q = stage.gen();
-    const key = q.text + '|' + (q.choices ? q.choices.join(',') : q.ans);
+    /* 実体キー優先（同じ漢字・時刻・式は選択肢が違っても同一問題とみなす） */
+    const key = q.key || q.text;
     if (seen.has(key)) continue;
     seen.add(key); list.push(q);
   }
@@ -1700,6 +1711,7 @@ function answer(v) {
 
 /* ================= けっか ================= */
 function finish() {
+  stopBGM();  /* けっか画面は クイズ曲を とめて ファンファーレへ */
   const s = STAGES[Q.stageIdx], n = Q.list.length, c = Q.correct;
   const passLine = Math.ceil(n * 0.6);
   const starLine = [n, n - 2, passLine];
@@ -1756,7 +1768,8 @@ function finish() {
     const rb = $('#resBuddy'); rb.dataset.mounted = '0';
     setTimeout(() => { setBuddyFace(rb, 'super'); rbWrap.classList.add('in'); }, 1000);
   } else tr.hidden = true;
-  if (cleared) sndClear();
+  if (cleared) { sndClear(); setTimeout(() => { if (!$('#scr-result').hidden) playBGM('victory'); }, 1400); }
+  else sndOshii();
   show('result');
 
   /* エンディング：17この たからが すべて そろったら 1かいだけ */

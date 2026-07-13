@@ -6,7 +6,7 @@
  *  - 新SWは自動では有効化せず、ページからの SKIP_WAITING メッセージで切替
  *    （ページ側が「あたらしい ぼうけんが とどいたよ！」トーストを出し、タップでリロード）
  */
-const CACHE = 'bouken-v6';
+const CACHE = 'bouken-v7';
 const ASSETS = ['./', './index.html', './manifest.json', './words.json', './icon-192.png', './icon-512.png'];
 const NETWORK_FIRST = ['./words.json'];
 
