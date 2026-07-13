@@ -1,6 +1,8 @@
 # GAME_SPEC.md — ぼうけんドリル ゲーム仕様書
 
-現行 v5 の完全な仕様。実装の「正」はコードだが、意図と全体像はここを参照すること。
+現行 v8 の仕様。実装の「正」はコードだが、意図と全体像はここを参照すること。
+**ステージ構成・出題・BGMの最新一覧は `docs/stage_overview.md` を正とする**（v6以降の物語・BGM・
+国語拡張・マップ刷新は `docs/design_v6_screens_and_stages.md` / `docs/plan_v7_feedback.md` も参照）。
 
 ---
 

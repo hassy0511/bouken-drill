@@ -391,7 +391,14 @@ td.l{text-align:left}
 #endTreasures span svg{width:100%; height:auto; display:block}
 #endTitle{font-size:20px; font-weight:bold; color:#7A5713; margin:10px 0}
 .zm.zp{color:#A84A20}
+#scr-quiz[data-stage-theme="yomi"] #qText{font-size:21px; text-align:left; line-height:1.8}
 .nodeFlag{position:absolute; top:-14px; right:4px; pointer-events:none; line-height:0}
+.nodeBuddy{position:absolute; top:-4px; left:-32px; pointer-events:none; line-height:0}
+.nodeBuddy svg{width:42px; height:42px}
+.stageNode.current .nodeBuddy{animation:buddy-bob 1.6s ease-in-out infinite}
+@keyframes buddy-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+#scr-map{animation:sea-drift 14s linear infinite}
+@keyframes sea-drift{from{background-position:0 0}to{background-position:80px 40px}}
 /* こうしん トースト（P0） */
 #updToast{position:fixed; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom) + 78px); z-index:70;
   background:var(--ocean-deep); color:#fff; border-radius:16px; padding:12px 14px; display:none;
@@ -407,7 +414,7 @@ td.l{text-align:left}
   .bd-needle.spin,.bd-needle.shake,.bd-needle.super,#fbCard.shake,.chBtn.bounce,
   .particles.go span,#resScroll.pop,#resBuddyWrap.in,.mCard,
   .stageNode.current .disc.disc-scene .bd-arch,.particles.boss.go span,
-  #updToast.show{animation:none; transition:none}
+  #updToast.show,.stageNode.current .nodeBuddy,#scr-map{animation:none; transition:none}
   .stageNode.current .disc.disc-scene .bd-arch{opacity:.7}
 }
 </style>
@@ -729,7 +736,11 @@ const WORDS_FALLBACK = {
     { id:'apple-add', pattern:'add', text:'りんごが {a}こ あります。{b}こ もらいました。ぜんぶで なんこ？',
       vars:{ a:[2,9], b:[1,8] }, unit:'こ' },
     { id:'bird-sub', pattern:'sub', text:'とりが {a}わ います。{b}わ とんで いきました。のこりは なんわ？',
-      vars:{ a:[5,15], b:[1,'a-1'] }, unit:'わ' }
+      vars:{ a:[5,15], b:[1,'a-1'] }, unit:'わ' },
+    { id:'box-mul', pattern:'mul', text:'1はこに ケーキが {a}こ はいって います。{b}はこでは ぜんぶで なんこ？',
+      vars:{ a:[2,9], b:[2,9] }, unit:'こ' },
+    { id:'apple-diff', pattern:'diff', text:'りんごが {a}こ、みかんが {b}こ あります。かずの ちがいは なんこ？',
+      vars:{ a:[5,18], b:[1,'a-1'] }, unit:'こ' }
   ],
   counters: [['ねこ','ひき'],['とり','わ'],['くるま','だい'],['ほん','さつ'],
     ['かみ','まい'],['えんぴつ','ほん'],['りんご','こ'],['ともだち','にん']],
@@ -857,7 +868,7 @@ function makeOppGen(prompt) {
     const p = pick(OPP);
     const dir = rnd(2);
     const q = p[dir], a = p[1 - dir];
-    const others = shuffle(OPP.flat().filter(w => w !== q && w !== a)).slice(0, 3);
+    const others = shuffle([...new Set(OPP.flat())].filter(w => w !== q && w !== a)).slice(0, 3);
     const choices = shuffle([a, ...others]);
     const text = prompt ? `${prompt}<span class="big">${q}</span>` : `「${q}」の<br>はんたいの ことばは？`;
     return { text, choices, ans: choices.indexOf(a), html: true, key: `o:${q}` };
@@ -889,7 +900,7 @@ function genRuigo() {
   const p = pick(SIM);
   const dir = rnd(2);
   const q = p[dir], a = p[1 - dir];
-  const others = shuffle(SIM.flat().filter(w => w !== q && w !== a)).slice(0, 3);
+  const others = shuffle([...new Set(SIM.flat())].filter(w => w !== q && w !== a)).slice(0, 3);
   const choices = shuffle([a, ...others]);
   return { text: `「<span class="big">${q}</span>」と にた いみの ことばは？`,
     choices, ans: choices.indexOf(a), html: true, key: `r:${q}` };
@@ -898,8 +909,11 @@ function genRuigo() {
 /* ================= 文章題エンジン（設計書 §2） ================= */
 /* 計算パターン。ここにエントリを足せば新パターンを追加できる（将来: mul / div / diff 等） */
 const PATTERNS = {
-  add: v => v.a + v.b,
-  sub: v => v.a - v.b
+  add:  v => v.a + v.b,
+  sub:  v => v.a - v.b,
+  mul:  v => v.a * v.b,
+  div:  v => v.a / v.b,          /* わりきれない組は下の整数ガードで再生成される */
+  diff: v => Math.abs(v.a - v.b)
 };
 
 /* "a-1" 形式の簡易参照のみ解決する（任意の式評価はしない） */
@@ -914,7 +928,7 @@ function resolveBound(bound, vals) {
 
 function buildStoryQuestion(tpl) {
   if (!PATTERNS[tpl.pattern]) { console.warn('unknown pattern:', tpl.pattern, tpl.id); return null; }
-  for (let attempt = 0; attempt < 20; attempt++) {
+  for (let attempt = 0; attempt < 40; attempt++) {
     const vals = {};
     let bad = false;
     for (const key of Object.keys(tpl.vars)) {
@@ -925,7 +939,7 @@ function buildStoryQuestion(tpl) {
     }
     if (bad) continue;
     const ans = PATTERNS[tpl.pattern](vals);
-    if (!Number.isFinite(ans) || ans < 0 || ans > 999) continue;
+    if (!Number.isFinite(ans) || !Number.isInteger(ans) || ans < 0 || ans > 999) continue;
     let text = tpl.text;
     for (const key of Object.keys(vals)) text = text.split('{' + key + '}').join(String(vals[key]));
     if (/\{[a-z]\}/.test(text)) { console.warn('unresolved placeholder:', tpl.id); return null; }
@@ -1574,10 +1588,10 @@ const STAGES = [
     subFlavor:'くらいごとに じゅんばんに けいさん しよう',
     gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10,
     treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？', pc:'とりかえされて かんかんだぜ！ かんむりだけに！'} },
-  { id:'tou',    name:'さいごの とう',      icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
-    intro:'ついに さいごの とうに きたね。いままでの ちからを ぜんぶ つかって、てっぺんを めざそう！',
+  { id:'tou',    name:'ダジャーレの とう',  icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
+    intro:'かいぞくだんの とりでの とうだ！てっぺんで ダジャーレが まちかまえて いるよ。いままでの ちからを ぜんぶ つかおう！',
     pirate:'とうとう ここまで きたか！ とうだけに な！ だが ここから さきは とおさんぜ！',
-    clearTitle:'🎉 でんせつの たんけんか に なった！', boss:true,
+    clearTitle:'⚔️ ダジャーレを とうから おいはらった！', boss:true,
     gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp,genKazoe])(), n:12,
     treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる', pc:'ぴかぴかで こころが とろけるぜ… トロフィーだけに！'} },
   { id:'sora1',  name:'とけいの きゅうでん', icon:'🕰️', color:'var(--ocean)', scene:'sora1', theme:'sora1',
@@ -1645,7 +1659,7 @@ document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.
 
 /* ================= マップ描画 ================= */
 const XS = [30, 66, 34, 70, 38, 62, 28, 64, 32, 68, 36, 48, 66, 30, 62, 34, 68, 30, 64, 48]; /* うねる配置(%) */
-const STEP = 132, TOPPAD = 90;
+const STEP = 132, TOPPAD = 152;
 
 /* エリア定義（ゾーン帯はここから動的生成。ステージ追加に自動追従） */
 const AREAS = [
@@ -1688,15 +1702,24 @@ function renderMap() {
   $('#island').querySelectorAll('.zone').forEach(z => z.remove());
 
   let zonesSvg = '', decoSvg = '', gatesSvg = '';
+  /* スタートの旗かざり */
+  gatesSvg += `<g transform="translate(${Math.round(W * (XS[0] > 50 ? 0.26 : 0.74))},${TOPPAD - 46})">
+    <line x1="-13" y1="-4" x2="-13" y2="26" stroke="#6E4A28" stroke-width="4"/>
+    <line x1="13" y1="-4" x2="13" y2="26" stroke="#6E4A28" stroke-width="4"/>
+    <rect x="-52" y="-16" width="104" height="24" rx="7" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
+    <rect x="-52" y="-16" width="104" height="8" rx="4" fill="#A84A20"/>
+    <text x="0" y="3" font-size="12" font-weight="bold" fill="#FFFDF7" text-anchor="middle">⚓ ぼうけん スタート</text>
+  </g>`;
   AREAS.forEach((a, ai) => {
     if (a.from >= STAGES.length) return;
     const to = Math.min(a.to, STAGES.length - 1);
     const yT = TOPPAD + a.from * STEP - 40 - 62;
     const yB = TOPPAD + to * STEP - 40 + 62;
     /* うねる地形帯 */
-    zonesSvg += `<path d="M0 ${yT} Q ${W*0.25} ${yT+14} ${W*0.5} ${yT} T ${W} ${yT}
-      L ${W} ${yB} Q ${W*0.75} ${yB+14} ${W*0.5} ${yB} T 0 ${yB} Z"
-      fill="${a.color}" opacity="0.15"/>`;
+    const ph = ai % 2 === 0 ? 16 : -16;
+    zonesSvg += `<path d="M0 ${yT} Q ${W*0.25} ${yT+ph} ${W*0.5} ${yT} T ${W} ${yT}
+      L ${W} ${yB} Q ${W*0.75} ${yB+ph} ${W*0.5} ${yB} T 0 ${yB} Z"
+      fill="${a.color}" opacity="0.18"/>`;
     /* エリアゲート看板（2エリアめ以降の入口） */
     if (ai > 0) {
       /* 前後ノードの平均と反対側に置く（ラベル・星との重なり回避） */
@@ -1723,14 +1746,12 @@ function renderMap() {
     if (area && AREA_DECO[area.name]) {
       const kinds = AREA_DECO[area.name];
       const k1 = DECO[kinds[i % kinds.length]];
-      const dx = XS[i] > 50 ? W * 0.16 : W * 0.84;
+      const dx = (XS[i] > 50 ? 0.14 : 0.86) + ((i * 7) % 5 - 2) * 0.012;
       const sc = 0.85 + (i % 3) * 0.18;
-      if (k1) decoSvg += k1(Math.round(dx), Math.round(y + 26), sc.toFixed(2));
-      if (i % 2 === 0) {
-        const k2 = DECO[kinds[(i + 1) % kinds.length]];
-        const dx2 = XS[i] > 50 ? W * 0.88 : W * 0.12;
-        if (k2) decoSvg += k2(Math.round(dx2), Math.round(y + STEP * 0.62), (0.7 + (i % 2) * 0.2).toFixed(2));
-      }
+      if (k1) decoSvg += k1(Math.round(W * dx), Math.round(y + 18 + ((i * 13) % 3) * 14), sc.toFixed(2));
+      const k2 = DECO[kinds[(i + 1) % kinds.length]];
+      const dx2 = (XS[i] > 50 ? 0.9 : 0.1) + ((i * 11) % 4 - 1.5) * 0.014;
+      if (k2) decoSvg += k2(Math.round(W * dx2), Math.round(y + STEP * (0.5 + ((i * 5) % 3) * 0.09)), (0.68 + (i % 2) * 0.22).toFixed(2));
     }
     const unlocked = isUnlocked(i);
     const st = stg(s.id);
@@ -1743,7 +1764,9 @@ function renderMap() {
     const discInner = SCENE_SVGS[s.scene] || (unlocked ? s.icon : '🔒');
     const discClass = s.scene ? 'disc disc-scene' : 'disc';
     const flag = st.cleared ? `<span class="nodeFlag">${FLAG_SVG}</span>` : '';
-    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}`;
+    const here = node.classList.contains('current')
+      ? `<span class="nodeBuddy buddy" aria-hidden="true">${BUDDY_SVG}</span>` : '';
+    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}${here}`;
     if (unlocked) node.onclick = () => startQuiz(i);
     else node.onclick = () => { $('#fbBuddy').hidden = true; $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; $('#fbAns').classList.remove('fade'); flashFB(1100); };
     wrap.appendChild(node);
@@ -1769,16 +1792,23 @@ window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap()
 /* ================= クイズエンジン ================= */
 let Q = { stageIdx:0, list:[], pos:0, correct:0, busy:false };
 
+/* 直前トライで出した問題キー（ステージごと・メモリ保持）。
+   「さっきと おなじ もんだい」の連続を避ける */
+const RECENT_KEYS = {};
 function buildQuestions(stage) {
   const list = [], seen = new Set();
+  const recent = RECENT_KEYS[stage.id] || new Set();
   let guard = 0;
-  while (list.length < stage.n && guard++ < 300) {
+  while (list.length < stage.n && guard++ < 400) {
     const q = stage.gen();
     /* 実体キー優先（同じ漢字・時刻・式は選択肢が違っても同一問題とみなす） */
     const key = q.key || q.text;
     if (seen.has(key)) continue;
+    /* 前半の試行では 直前トライと同じ問題も避ける（プールが小さい場合は後半で許容） */
+    if (recent.has(key) && guard < 250) continue;
     seen.add(key); list.push(q);
   }
+  RECENT_KEYS[stage.id] = seen;
   return list;
 }
 
