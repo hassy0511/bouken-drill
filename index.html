@@ -410,11 +410,59 @@ td.l{text-align:left}
 #updToast button:active{transform:translateY(2px); box-shadow:0 1px 0 var(--gold-d)}
 @keyframes toast-in{from{transform:translateY(30px); opacity:0}to{transform:translateY(0); opacity:1}}
 
+/* ============ v9: ぐんとう（しま=カリキュラム） ============ */
+#scr-sea{background:var(--ocean); padding:18px 14px calc(env(safe-area-inset-bottom) + 24px)}
+#scr-sea{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 40'%3E%3Cpath d='M0 20 Q10 14 20 20 T40 20 T60 20 T80 20' fill='none' stroke='%23FFFDF7' stroke-width='2.5' opacity='0.25' stroke-linecap='round'/%3E%3C/svg%3E"); background-size:80px 40px}
+#seaHead h2{color:#fff; font-size:20px}
+#seaSub{color:#FFFFFF; background:rgba(30,107,133,.85); display:inline-block; padding:4px 12px; border-radius:999px; font-size:13px; font-weight:bold; margin:6px 0 14px}
+#seaGrid{display:grid; grid-template-columns:1fr; gap:14px; max-width:560px; margin:0 auto}
+.islCard{background:var(--white); border:3px solid var(--sand2); border-radius:22px; padding:12px;
+  display:flex; align-items:center; gap:14px; text-align:left; box-shadow:0 5px 0 rgba(0,0,0,.18); width:100%}
+.islCard:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.islCard .islArt{flex:none}
+.islCard .islArt svg{width:124px; height:88px; display:block; border-radius:12px}
+.islCard .islName{font-size:18px; font-weight:bold; display:block; color:var(--ink)}
+.islCard .islMeta{font-size:13px; color:var(--ink-soft); display:block; margin-top:5px}
+.islCard .islDone{color:var(--gold-d); font-weight:bold; font-size:13px; display:block; margin-top:3px}
+.islCard.soon{opacity:.8; filter:grayscale(.5)}
+#seaBtn{position:sticky; top:10px; margin:10px 0 -46px 12px; z-index:6; background:var(--white);
+  border:2px solid var(--sand2); border-radius:12px; padding:9px 13px; font-weight:bold; font-size:14px;
+  color:var(--ink-soft); box-shadow:0 3px 0 rgba(0,0,0,.12)}
+#seaBtn:active{transform:translateY(2px)}
+/* tapcount（タップでかぞえる） */
+#tapArea{background:var(--white); border:3px solid var(--sand2); border-radius:18px; padding:12px;
+  margin-bottom:12px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center}
+.tapItem{position:relative; width:52px; height:52px; padding:0; background:none; border:none}
+.tapItem svg{width:100%; height:100%; display:block}
+.tapItem .cnt{position:absolute; top:-6px; right:-6px; background:var(--gold); color:#3D3323;
+  font-size:13px; font-weight:bold; width:22px; height:22px; border-radius:50%;
+  display:none; align-items:center; justify-content:center; border:2px solid var(--gold-d)}
+.tapItem.counted .cnt{display:flex}
+/* match（ペアあわせ） */
+#choices.matchGrid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+.mcard{min-height:66px; font-size:26px; font-weight:bold; border-radius:16px;
+  background:var(--white); border:3px solid var(--ocean); box-shadow:0 4px 0 var(--ocean-d); color:var(--ink)}
+.mcard.sel{border-color:var(--gold); box-shadow:0 4px 0 var(--gold-d); transform:translateY(1px)}
+.mcard.ok{background:var(--gold); border-color:var(--gold-d); color:#3D3323; box-shadow:none}
+.mcard.ng{animation:card-shake .3s ease-in-out}
+/* dig（きんかほりだし） */
+#choices.digGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.digBtn{position:relative; min-height:78px; border-radius:16px; background:none; border:none; box-shadow:none; padding:0}
+.digBtn svg{width:100%; height:100%; display:block}
+.digBtn b{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:24px; color:#4A3B28; padding-top:12px}
+.digBtn.ng{animation:card-shake .3s ease-in-out}
+.digBtn.got b{opacity:0}
+/* fillblank */
+.blank{display:inline-block; min-width:1.2em; color:var(--coral-d); border-bottom:4px solid var(--coral); line-height:1.15}
+.feq{font-size:36px; letter-spacing:2px}
+.zkCard .zi svg{width:64px; height:auto; display:inline-block}
+
 @media (prefers-reduced-motion:reduce){
   .bd-needle.spin,.bd-needle.shake,.bd-needle.super,#fbCard.shake,.chBtn.bounce,
   .particles.go span,#resScroll.pop,#resBuddyWrap.in,.mCard,
   .stageNode.current .disc.disc-scene .bd-arch,.particles.boss.go span,
-  #updToast.show,.stageNode.current .nodeBuddy,#scr-map{animation:none; transition:none}
+  #updToast.show,.stageNode.current .nodeBuddy,#scr-map,.mcard.ng,.digBtn.ng{animation:none; transition:none}
   .stageNode.current .disc.disc-scene .bd-arch{opacity:.7}
 }
 </style>
@@ -427,8 +475,18 @@ td.l{text-align:left}
 </header>
 
 <main>
-  <!-- ぼうけんマップ -->
+  <!-- しまえらび（ぐんとうマップ） -->
+  <section class="screen" id="scr-sea" hidden>
+    <div id="seaHead">
+      <h2>🗺️ しまを えらぼう</h2>
+      <p id="seaSub">ダジャーレかいぞくだんから ぐんとうの たからを とりもどせ！</p>
+    </div>
+    <div id="seaGrid"></div>
+  </section>
+
+  <!-- しまマップ -->
   <section class="screen" id="scr-map">
+    <button id="seaBtn">⛵ しまえらび</button>
     <div id="mapWrap">
       <div id="island"></div>
       <svg id="trail" aria-hidden="true"></svg>
@@ -449,6 +507,7 @@ td.l{text-align:left}
       <div id="qText"></div>
       <div id="qSub"></div>
     </div>
+    <div id="tapArea" hidden></div>
     <div id="choices"></div>
     <div id="pad">
       <div id="ansBox">&nbsp;</div>
@@ -497,7 +556,7 @@ td.l{text-align:left}
 </main>
 
 <nav id="tabs">
-  <button data-scr="map" class="on"><span class="ticon">🗺️</span>ぼうけん</button>
+  <button data-scr="sea" class="on"><span class="ticon">🗺️</span>ぼうけん</button>
   <button data-scr="zukan"><span class="ticon">💎</span>ずかん</button>
   <button data-scr="parent"><span class="ticon">👨‍👩‍👧</span>おうちのひと</button>
 </nav>
@@ -1537,141 +1596,532 @@ function fireBossParticles() {
   setTimeout(() => host.remove(), 1200);
 }
 
-/* ================= ステージ定義（データ駆動） ================= */
-const STAGES = [
-  { id:'mori',   name:'すうじの もり',      icon:'🌳', color:'var(--ocean)',  scene:'mori', theme:'mori',
-    intro:'ようこそ、まなびの しまへ！この もりでは かずの おおきさが わかると みちが ひらけるんだ',
-    pirate:'たからを さがすだと？ せいぜい もりあがって いきな！ もりだけに な！ がっはっは！',
-    subFlavor:'どっちの きのみが おおい かな？',
-    gen:genCompare, n:10, treasure:{i:'🌰', n:'もりの どんぐり', scene:'acorn', memo:'もりの どうぶつたちの だいこうぶつ。ぴかぴかに みがいて ある', pc:'とられて きぶんは どんより… どんぐりだけに！'} },
-  { id:'hama',   name:'たしざんの はま',    icon:'🏖️', color:'var(--ocean)',  scene:'hama', theme:'hama',
-    intro:'なみの おとが きこえる はまべだ。かいがらを あつめるには、たしざんの ちからが いるみたい',
-    pirate:'この もんだいは むずかしいぜ〜。ハマっても しらないぜ！ はまだけに な！',
-    subFlavor:'かいがらを あわせると いくつ？',
-    gen:genAdd10, n:10, treasure:{i:'🐚', n:'ひかる かいがら', scene:'shell', memo:'みみに あてると うみの おとが きこえる…きが する', pc:'うっかり からっぽの はこに しまってた… かいがらだけに！'} },
-  { id:'kawa',   name:'ひきざんの かわ',    icon:'🏞️', color:'var(--ocean)',  scene:'kawa', theme:'kawa',
-    intro:'この かわには きんいろの さかなが すんでいる らしい。ひきざんで みずの ながれを よもう！',
-    subFlavor:'さかなは なんびき のこる かな？',
-    gen:genSub10, n:10, treasure:{i:'🐟', n:'きんの さかな', scene:'goldfish', memo:'つかまえても すぐ にがして あげた。また あえる かな', pc:'こんなに きれいだとは、まさかな！ さかなだけに！'} },
-  { id:'iseki1', name:'かんじの いせき',    icon:'🗿', color:'var(--coral)',  scene:'iseki', theme:'iseki',
-    intro:'この さきに ふるい かんじの いせきが あるよ。かべに ほられた もじを よみとけば、かくされた たからが みつかるはずさ！',
-    pirate:'かんじが よめたら いい かんじだな！ …ま、よめないだろうけどな！ がっはっは！',
-    gen:makeKanjiGen('g1a', 'かべに ほられた この もじ、なんて よむ？'), n:10,
-    treasure:{i:'📜', n:'ふるい まきもの', scene:'scroll', memo:'これには むかしの ひとの ちえが かかれて いるらしい', pc:'やっかいごとに まきこまれちまった… まきものだけに！'} },
-  { id:'hashi',  name:'ことばの はし',      icon:'🌉', color:'var(--coral)',  scene:'hashi', theme:'hashi',
-    intro:'ことばと ことばを つなぐ はしだよ。「はんたいの ことば」が わかれば、わたって いけるさ！',
-    gen:makeOppGen('この ことばの はんたいがわに あるのは？'), n:10,
-    treasure:{i:'🪶', n:'にじの はね', scene:'rainbowfeather', memo:'にじの いろが きらきら かわる ふしぎな はね', pc:'てに いれたとき、うれしくて とびはねちまった！ はねだけに！'} },
-  { id:'kazoe',  name:'かぞえかたの まきば', icon:'🐑', color:'var(--coral)', scene:'kazoe', theme:'kazoe',
-    intro:'ひつじや うしが のんびり くらす まきばだよ。「かぞえる ことば」を ただしく つかえるかな？',
-    subFlavor:'なにを かぞえる ことばかな？',
-    gen:genKazoe, n:10, treasure:{i:'🔔', n:'ひつじの すず', scene:'sheepbell', memo:'ふると ひつじたちが あつまって くる ふしぎな すず', pc:'すずしい かおで ぬすんだのに よ〜！ すずだけに！'} },
-  { id:'iseki2', name:'かんじの しんでん',  icon:'🏛️', color:'var(--coral)',  scene:'shinden', theme:'iseki2',
-    intro:'いせきの おくに あった、かんじの しんでんだ！むずかしい もじも あるけど、きみなら よめるはず',
-    gen:makeKanjiGen('g1b', 'しんでんの とびらに かかれた もじは？'), n:10,
-    treasure:{i:'🗝️', n:'こがねの かぎ', scene:'goldkey', memo:'しんでんの どこかの とびらを あける かぎ。どの とびら だろう？', pc:'かぎりなく うつくしい かがやきだぜ… かぎだけに！'} },
-  { id:'douk',   name:'くりあがりの どうくつ', icon:'⛰️', color:'var(--ocean)', scene:'douk', theme:'douk',
-    intro:'くらい どうくつに はいるよ。10の かたまりを つくれば、あおい ほうせきが ひかりだすんだ！',
-    subFlavor:'10の かたまりを つくって かんがえよう',
-    gen:genAddCarry, n:10, treasure:{i:'💎', n:'あおい ほうせき', scene:'bluegem', memo:'くらい ところで そっと ひかる。よるの おともに ぴったり', pc:'きれいすぎて ほうって おけなかったんだぜ… ほうせきだけに！'} },
-  { id:'tani',   name:'くりさがりの たに',  icon:'🌋', color:'var(--ocean)',  scene:'tani', theme:'tani',
-    intro:'ふかい たにの そこには、おおむかしの きょうりゅうが ねむって いるんだって。ひきざんで がけを おりよう！',
-    subFlavor:'10から かりてくると できるよ',
-    gen:genSubBorrow, n:10, treasure:{i:'🦴', n:'きょうりゅうの ほね', scene:'dinobone', memo:'はるか むかしの いきものの ほね。さわると ちょっと つめたい', pc:'ぬすむのに ほねが おれたのに よ〜！'} },
-  { id:'yama',   name:'九九の やま',        icon:'🗻', color:'var(--ocean)',  scene:'yama', theme:'yama',
-    intro:'たかい やまの ちょうじょうには「ほのおの たま」が ある。九九を となえて のぼって いこう！',
-    pirate:'九九だと？ くくく… わらいが とまらないぜ！',
-    subFlavor:'九九を こえに だして いって みよう',
-    gen:genKuku, n:10, treasure:{i:'🔥', n:'ほのおの たま', scene:'flameorb', memo:'もっていると からだが ぽかぽか する。ふゆに べんり', pc:'あつくて たまらないぜ！ ほのおの たまだけに！'} },
-  { id:'shiro',  name:'けいさんの しろ',    icon:'🏰', color:'var(--ocean)',  scene:'shiro', theme:'shiro',
-    intro:'りっぱな おしろに とうちゃく！おおきな かずの けいさんが できたら、おうさまが むかえて くれるよ',
-    subFlavor:'くらいごとに じゅんばんに けいさん しよう',
-    gen:()=> (rnd(2)? genHissanAdd() : genHissanSub()), n:10,
-    treasure:{i:'👑', n:'おうさまの かんむり', scene:'crown', memo:'かぶると ちょっとだけ おうさまの きぶん。にあってる？', pc:'とりかえされて かんかんだぜ！ かんむりだけに！'} },
-  { id:'tou',    name:'ダジャーレの とう',  icon:'🌟', color:'var(--purple)', scene:'tou', theme:'tou',
-    intro:'かいぞくだんの とりでの とうだ！てっぺんで ダジャーレが まちかまえて いるよ。いままでの ちからを ぜんぶ つかおう！',
-    pirate:'とうとう ここまで きたか！ とうだけに な！ だが ここから さきは とおさんぜ！',
-    clearTitle:'⚔️ ダジャーレを とうから おいはらった！', boss:true,
-    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genHissanAdd,()=>makeKanjiGen([...poolOf('g1a'), ...poolOf('g1b')])(),genOpp,genKazoe])(), n:12,
-    treasure:{i:'🏆', n:'でんせつの トロフィー', scene:'trophy', memo:'でんせつの たんけんかの あかし。きみの なまえが きざまれて いる', pc:'ぴかぴかで こころが とろけるぜ… トロフィーだけに！'} },
-  { id:'sora1',  name:'とけいの きゅうでん', icon:'🕰️', color:'var(--ocean)', scene:'sora1', theme:'sora1',
-    intro:'くもの うえに おしろが みえる！ここは とけいの きゅうでん。はりが よめたら なかに はいれるよ',
-    pirate:'とけいの もんだいなんて とけっこないぜ！ がっはっは！',
-    gen:genClock, n:10,
-    treasure:{i:'🕰️', n:'とけいの ふりこ', scene:'pendulum', memo:'ちくたく ちくたく。きゅうでんの じかんを きざんで いた ふりこ', pc:'けいかくが ふりだしに もどっちまった… ふりこだけに！'} },
-  { id:'yomi',   name:'よみときの てんぼうだい', icon:'🗼', color:'var(--coral)', scene:'yomi', theme:'yomi',
-    intro:'くもの うえの てんぼうだいに ついたよ。みじかい おはなしを よんで、しつもんに こたえよう！',
-    subFlavor:'おはなしを ゆっくり よんでね',
-    gen:genYomi, n:10, treasure:{i:'✉️', n:'そらの てがみ', scene:'skyletter', memo:'くもの きってが はられた てがみ。だれから とどいたんだろう？', pc:'かみわざで よみとかれたぜ！ てがみだけに！'} },
-  { id:'sora2',  name:'ぶんしょうだいの にわ', icon:'🌷', color:'var(--ocean)', scene:'sora2', theme:'sora2',
-    intro:'そらの にわに ついたよ。おはなの せわを しながら、おはなしの もんだいを といて みよう！',
-    subFlavor:'おはなしを よく よんでね',
-    gen:makeStoryGen(), n:10,
-    treasure:{i:'🪣', n:'まほうの じょうろ', scene:'wateringcan', memo:'みずを あげると おはなが ちょっと うれしそうに ゆれる', pc:'これが あれば みずやりが じょうずに なるんだがな… じょうろだけに！'} },
-  { id:'sora3',  name:'おおきなかずの くも', icon:'☁️', color:'var(--ocean)', scene:'sora3', theme:'sora3',
-    intro:'くもの かいだんを のぼると、とおくまで みわたせるよ。100より おおきい かずの せかいだ！',
-    subFlavor:'100の まとまりで かんがえよう',
-    gen:genBigNum, n:10,
-    treasure:{i:'🔭', n:'かずの ぼうえんきょう', scene:'telescope', memo:'のぞくと とおくの かずまで はっきり みえるんだって', pc:'とおくが みえすぎて ぼうっと しちまうぜ！ ぼうえんきょうだけに！'} },
-  { id:'umi1',   name:'わりざんの しんかい', icon:'🌊', color:'var(--ocean)', scene:'umi1', theme:'umi1',
-    intro:'ざぶーん！うみの そこに もぐるよ。おさかなを おなじ かずずつ わけて あげよう',
-    pirate:'しんかいまで くるとは… しんじられん！ だいじな しんじゅは わたさんぞ！',
-    subFlavor:'九九を さかさに つかうと とけるよ',
-    gen:genDiv, n:10,
-    treasure:{i:'🦪', n:'しんじゅの たま', scene:'pearl', memo:'かいの なかで ながい あいだ そだった たからもの', pc:'うつくしすぎて しんじられん！ しんじゅだけに！'} },
-  { id:'umi2',   name:'カタカナの ちんぼつせん', icon:'🚢', color:'var(--coral)', scene:'umi2', theme:'umi2',
-    intro:'ふるい ふねが しずんで いる…！つみにの なまえは ぜんぶ カタカナで かかれて いるみたい',
-    pirate:'ここは おれさまの ふねだぞ！ カタカナが よめないと かたなしだぜ！ カタカナだけに な！',
-    gen:makeKanjiGen('kana', 'カタカナで かくと どれ？'), n:10,
-    treasure:{i:'🧢', n:'せんちょうの ぼうし', scene:'captainhat', memo:'かぶると きぶんは おおうなばらの せんちょう！', pc:'それ、おれの ぼうしーっ！ ないと ただの ぼうずだぜ！'} },
-  { id:'ruigo',  name:'にたことばの さんごしょう', icon:'🐠', color:'var(--coral)', scene:'ruigo', theme:'ruigo',
-    intro:'カラフルな さんごしょうだよ。そっくりな おさかなが いるみたいに、「にた いみの ことば」を さがそう！',
-    subFlavor:'いみが そっくりな ことばは どれ？',
-    gen:genRuigo, n:10, treasure:{i:'🪸', n:'ふたごの さんご', scene:'twincoral', memo:'そっくりな かたちの さんごが ふたつ ならんで いる', pc:'にせものと まちがえちまった… さんごだけに さんざんだぜ！'} },
-  { id:'umi3',   name:'でんせつの りゅうぐう', icon:'🐉', color:'var(--purple)', scene:'umi3', theme:'umi3',
-    intro:'うみの いちばん ふかい ばしょに、でんせつの りゅうぐうじょうが…！ぜんぶの ちからを あわせて とびらを あけよう！',
-    pirate:'よくぞ りゅうぐうまで きた…。ここで まけたら かいぞくだんは おしまいだ。さいごの しょうぶ、うけて たつぜ！',
-    clearTitle:'🌊 うみの でんせつに なった！', boss:true,
-    gen:()=> pick([genAddCarry,genSubBorrow,genKuku,genDiv,genBigNum,genClock,makeStoryGen(),genRuigo,genYomi,genKazoe,()=>makeKanjiGen('kana','カタカナで かくと どれ？')()])(), n:14,
-    treasure:{i:'🎁', n:'りゅうぐうの たまてばこ', scene:'tamatebako', memo:'あけては いけない…と いわれて いるけど、もう あけちゃった', pc:'なかみを みたら たまげたぜ！ たまてばこだけに！'} }
+/* ================= v9: しま（カリキュラム）フレームワーク ================= */
+
+/* ---- 子分：ハサミー（カニの かんぶ） ---- */
+const HASAMY_SVG = `<svg viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
+<g transform="translate(0,4)">
+  <path d="M28 96 q-8 8 -16 8 q6 -8 10 -14 M92 96 q8 8 16 8 q-6 -8 -10 -14" fill="none" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/>
+  <path d="M36 100 q-6 8 -13 10 M84 100 q6 8 13 10" fill="none" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="60" cy="78" rx="34" ry="26" fill="#E8705A" stroke="#3D3323" stroke-width="2.5"/>
+  <path d="M26 78 A34 26 0 0 0 60 104 L60 52 A34 26 0 0 0 26 78 Z" fill="#C94A38"/>
+  <path d="M40 88 q6 5 12 0 M62 88 q6 5 12 0" fill="none" stroke="#3D3323" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="42" y1="54" x2="36" y2="36" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/>
+  <line x1="78" y1="54" x2="84" y2="36" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="36" cy="30" r="9" fill="#FFFDF7" stroke="#3D3323" stroke-width="2.5"/>
+  <circle cx="84" cy="30" r="9" fill="#FFFDF7" stroke="#3D3323" stroke-width="2.5"/>
+  <path d="M10 44 q-6 -18 10 -24 q14 -6 22 6 q4 8 -2 14 q-8 -10 -18 -8 q2 6 -1 10 q-6 4 -11 2 z" fill="#E8705A" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M10 44 q-6 -18 10 -24 q-6 10 -4 20 z" fill="#C94A38"/>
+  <path d="M110 44 q6 -18 -10 -24 q-14 -6 -22 6 q-4 8 2 14 q8 -10 18 -8 q-2 6 1 10 q6 4 11 2 z" fill="#E8705A" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M110 44 q6 -18 -10 -24 q6 10 4 20 z" fill="#C94A38"/>
+  <path d="M24 58 l8 8 M96 58 l-8 8" stroke="#3D3323" stroke-width="3" stroke-linecap="round"/>
+  <g class="dj-face dj-face-normal">
+    <circle cx="34" cy="30" r="3" fill="#3D3323"/><circle cx="82" cy="30" r="3" fill="#3D3323"/>
+    <path d="M48 72 q12 10 24 0" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g class="dj-face dj-face-oops" style="display:none">
+    <circle cx="34" cy="31" r="3.4" fill="#3D3323"/><circle cx="82" cy="31" r="3.4" fill="#3D3323"/>
+    <circle cx="35" cy="30" r="1.1" fill="#FFFDF7"/><circle cx="83" cy="30" r="1.1" fill="#FFFDF7"/>
+    <path d="M27 36 q-2 4 0 5.5 q2 1.5 3 -1 q0.8 -2.5 -3 -4.5 z" fill="#9CCBE8" stroke="#3D3323" stroke-width="1.3"/>
+    <path d="M50 76 q5 -5 10 0 q5 5 10 0" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g class="dj-face dj-face-angry" style="display:none">
+    <path d="M28 22 l10 4 M92 22 l-10 4" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="35" cy="31" r="3" fill="#3D3323"/><circle cx="81" cy="31" r="3" fill="#3D3323"/>
+    <path d="M48 76 q12 -8 24 0" fill="none" stroke="#3D3323" stroke-width="2.5" stroke-linecap="round"/>
+    <g stroke="#3D3323" stroke-width="1.5" fill="#EDEDED">
+      <path d="M18 14 q-4 -1 -3 -5 q1 -3 4 -2 q0 -3 4 -3 q3 0 3 3 q3 0 3 3 q0 4 -4 4 z"/>
+    </g>
+  </g>
+</g></svg>`;
+
+/* ---- v9 シーンSVG（たしざんの しま） ---- */
+const IWABA_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <rect x="0" y="58" width="120" height="62" fill="#7EC8DE"/>
+  <path d="M0 64 Q15 60 30 64 T60 64 T90 64 T120 64" fill="none" stroke="#FFFDF7" stroke-width="2.5" stroke-linecap="round"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M12 92 L18 66 L34 62 L44 74 L40 96 L16 98 Z" fill="#8C99A6"/>
+    <path d="M12 92 L18 66 L26 64 L24 94 Z" fill="#5C6873"/>
+    <path d="M70 98 L76 74 L94 70 L104 84 L100 102 L74 104 Z" fill="#8C99A6"/>
+    <path d="M70 98 L76 74 L84 72 L82 100 Z" fill="#5C6873"/>
+  </g>
+  <ellipse class="bd-arch" cx="56" cy="96" rx="14" ry="8" fill="#F5C56B" opacity="0"/>
+  <ellipse cx="56" cy="98" rx="12" ry="6" fill="#4A93B8" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M50 40 l2.5 5 5.5 .8 -4 3.9 1 5.5 -5 -2.6 -5 2.6 1 -5.5 -4 -3.9 5.5 -.8 z" fill="#F2A0B4" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="98" cy="30" r="2" fill="#FFFDF7"/><circle cx="20" cy="24" r="2" fill="#FFFDF7"/>
+</svg>`;
+const MISAKI_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <rect x="0" y="70" width="120" height="50" fill="#7EC8DE"/>
+  <path d="M0 120 L0 78 Q40 60 78 74 L84 120 Z" fill="#9DBB7E" stroke="#3D3323" stroke-width="2"/>
+  <path d="M0 120 L0 78 Q20 70 36 72 L34 120 Z" fill="#7A9B5C"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M46 74 L50 40 L62 40 L66 74 Z" fill="#F7F4EC"/>
+    <path d="M46 74 L50 40 L54 40 L52 74 Z" fill="#D8D2C0"/>
+    <rect x="48" y="52" width="16" height="7" fill="#E8705A"/>
+    <path d="M47 40 L65 40 L61 30 L51 30 Z" fill="#5B9FC4"/>
+  </g>
+  <circle class="bd-arch" cx="56" cy="35" r="7" fill="#F2C14E" opacity="0"/>
+  <circle cx="56" cy="35" r="4.5" fill="#F5C56B" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M86 92 Q92 86 98 92 M96 104 Q102 98 108 104" fill="none" stroke="#FFFDF7" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
+const SANBASHI_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <rect x="0" y="52" width="120" height="68" fill="#7EC8DE"/>
+  <path d="M0 60 Q20 56 40 60 T80 60 T120 60" fill="none" stroke="#FFFDF7" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M0 120 L0 96 Q30 88 56 96 L52 120 Z" fill="#EEDFB0" stroke="#3D3323" stroke-width="2"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M30 92 L108 66 L112 74 L34 100 Z" fill="#B07B4A"/>
+    <path d="M30 92 L108 66 L108 70 L32 96 Z" fill="#8A6543"/>
+    <path d="M48 88 L48 106 M72 80 L72 98 M96 72 L96 90" stroke-width="4"/>
+  </g>
+  <ellipse class="bd-arch" cx="104" cy="62" rx="10" ry="8" fill="#F5C56B" opacity="0"/>
+  <circle cx="104" cy="60" r="5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M12 76 Q16 70 22 74" fill="none" stroke="#FFFDF7" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+const MIHARI_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <rect x="0" y="88" width="120" height="32" fill="#EEDFB0"/>
+  <path d="M0 88 Q30 84 60 88 T120 88" fill="none" stroke="#D8C48E" stroke-width="3"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M42 88 L50 34 L70 34 L78 88 Z" fill="#B07B4A"/>
+    <path d="M42 88 L50 34 L56 34 L50 88 Z" fill="#8A6543"/>
+    <rect x="44" y="28" width="32" height="10" rx="3" fill="#8A6543"/>
+    <path d="M46 58 L74 58 M44 72 L76 72" stroke-width="3"/>
+  </g>
+  <circle class="bd-arch" cx="60" cy="22" r="8" fill="#F2C14E" opacity="0"/>
+  <line x1="60" y1="28" x2="60" y2="8" stroke="#6E4A28" stroke-width="3"/>
+  <path d="M60 9 L76 13 L60 18 Z" fill="#E8705A" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M14 100 q-3 -6 3 -8 M104 102 q3 -6 -3 -8" fill="none" stroke="#4E6E3B" stroke-width="2.5" stroke-linecap="round"/>
+</svg>`;
+const OOISO_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#7EC8DE"/>
+  <path d="M0 30 Q20 24 40 30 T80 30 T120 30" fill="none" stroke="#FFFDF7" stroke-width="2.5" stroke-linecap="round"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M8 120 L14 84 L34 78 L48 92 L44 120 Z" fill="#8C99A6"/>
+    <path d="M8 120 L14 84 L24 81 L22 120 Z" fill="#5C6873"/>
+    <path d="M66 120 L72 92 L92 86 L106 100 L102 120 Z" fill="#8C99A6"/>
+    <path d="M66 120 L72 92 L82 89 L80 120 Z" fill="#5C6873"/>
+  </g>
+  <ellipse class="bd-arch" cx="57" cy="106" rx="12" ry="8" fill="#7EE0D0" opacity="0"/>
+  <path d="M50 104 Q54 96 58 104 M56 108 Q60 100 64 108" fill="none" stroke="#4E6E3B" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="30" cy="52" r="2.5" fill="#FFFDF7"/><circle cx="92" cy="60" r="2" fill="#FFFDF7"/>
+</svg>`;
+const HORIBA_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#F5E7C0"/>
+  <rect x="0" y="20" width="120" height="14" fill="#7EC8DE"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M12 70 Q26 48 42 70 Q27 76 12 70 Z" fill="#EEDFB0"/>
+    <path d="M12 70 Q20 56 27 52 Q22 64 22 72 Z" fill="#D8C48E"/>
+    <path d="M66 64 Q80 42 96 64 Q81 70 66 64 Z" fill="#EEDFB0"/>
+    <path d="M66 64 Q74 50 81 46 Q76 58 76 66 Z" fill="#D8C48E"/>
+    <path d="M38 104 Q52 82 68 104 Q53 110 38 104 Z" fill="#EEDFB0"/>
+    <path d="M38 104 Q46 90 53 86 Q48 98 48 106 Z" fill="#D8C48E"/>
+  </g>
+  <ellipse class="bd-arch" cx="82" cy="98" rx="12" ry="10" fill="#F2C14E" opacity="0"/>
+  <circle cx="82" cy="98" r="8" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/>
+  <path d="M77 95 a8 8 0 0 0 7 10 a9 9 0 0 1 -7 -10 z" fill="#D4A63C"/>
+  <path d="M100 78 L110 60 M104 80 L114 76" stroke="#8A6543" stroke-width="3" stroke-linecap="round"/>
+  <path d="M108 56 L116 60 L112 66 L104 62 Z" fill="#8C99A6" stroke="#3D3323" stroke-width="1.5"/>
+</svg>`;
+const OONAMI_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#CFE6F5"/>
+  <path d="M0 120 L0 70 Q10 40 42 34 Q84 28 96 52 Q100 64 88 66 Q94 50 74 44 Q46 38 30 58 Q18 72 28 92 L120 92 L120 120 Z" fill="#4A93B8" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M0 120 L0 70 Q8 44 34 36 Q20 48 16 64 Q12 84 24 100 L20 120 Z" fill="#2E7D99"/>
+  <path d="M88 66 Q94 50 74 44 Q84 46 90 54 Q94 60 88 66 Z" fill="#FFFDF7"/>
+  <path d="M30 58 Q40 46 56 46" fill="none" stroke="#7EC8DE" stroke-width="3" stroke-linecap="round"/>
+  <ellipse class="bd-arch" cx="72" cy="102" rx="16" ry="9" fill="#7EE0D0" opacity="0"/>
+  <path d="M56 104 Q64 96 72 104 T88 104" fill="none" stroke="#FFFDF7" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="100" cy="30" r="2.5" fill="#FFFDF7"/><circle cx="14" cy="26" r="2" fill="#FFFDF7"/>
+</svg>`;
+const TORIDE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="120" height="120" fill="#F5E7C0"/>
+  <rect x="0" y="96" width="120" height="24" fill="#EEDFB0"/>
+  <g stroke="#3D3323" stroke-width="2">
+    <path d="M20 96 L24 56 L40 56 L44 96 Z" fill="#E8D3A0"/>
+    <path d="M20 96 L24 56 L30 56 L28 96 Z" fill="#C9AE72"/>
+    <path d="M76 96 L80 56 L96 56 L100 96 Z" fill="#E8D3A0"/>
+    <path d="M76 96 L80 56 L86 56 L84 96 Z" fill="#C9AE72"/>
+    <path d="M40 96 L42 68 L78 68 L80 96 Z" fill="#E8D3A0"/>
+    <path d="M22 56 L22 48 L28 48 L28 52 L34 52 L34 48 L42 48 L42 56 Z" fill="#E8D3A0"/>
+    <path d="M78 56 L78 48 L84 48 L84 52 L90 52 L90 48 L98 48 L98 56 Z" fill="#E8D3A0"/>
+  </g>
+  <path d="M52 96 L52 80 Q60 72 68 80 L68 96 Z" fill="#3D3323"/>
+  <ellipse class="bd-arch" cx="60" cy="88" rx="7" ry="9" fill="#F5C56B" opacity="0"/>
+  <line x1="60" y1="68" x2="60" y2="46" stroke="#6E4A28" stroke-width="3"/>
+  <path d="M60 47 L78 52 L60 58 Z" fill="#E8705A" stroke="#3D3323" stroke-width="1.5"/>
+  <path d="M64 51 q3 2 0 4 M69 50 q3 2 0 4" fill="none" stroke="#3D3323" stroke-width="1.2"/>
+</svg>`;
+
+/* ---- しまえらびカード ---- */
+const ISLAND_ADD_CARD = `<svg viewBox="0 0 160 112" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="160" height="112" fill="#3AA6C9"/>
+  <path d="M0 30 Q20 24 40 30 T80 30 T120 30 T160 30" fill="none" stroke="#FFFDF7" stroke-width="2.5" opacity="0.5" stroke-linecap="round"/>
+  <ellipse cx="80" cy="86" rx="62" ry="22" fill="#EEDFB0" stroke="#3D3323" stroke-width="2.5"/>
+  <path d="M18 86 A62 22 0 0 0 80 108 L80 64 A62 22 0 0 0 18 86 Z" fill="#D8C48E"/>
+  <path d="M46 70 C44 52 48 40 44 30" fill="none" stroke="#8A6543" stroke-width="4" stroke-linecap="round"/>
+  <g stroke="#3D3323" stroke-width="1.5">
+    <path d="M44 30 Q30 24 26 32 Q36 34 44 30" fill="#7FB069"/>
+    <path d="M44 30 Q58 24 62 32 Q52 34 44 30" fill="#7FB069"/>
+    <path d="M44 30 Q36 18 42 14 Q46 24 44 30" fill="#4E7E3F"/>
+  </g>
+  <g stroke="#3D3323" stroke-width="2">
+    <rect x="88" y="62" width="34" height="22" rx="3" fill="#C9622E"/>
+    <path d="M88 62 Q105 52 122 62 L122 68 L88 68 Z" fill="#A84A20"/>
+    <rect x="102" y="64" width="6" height="8" rx="1.5" fill="#F2C14E" stroke-width="1.5"/>
+  </g>
+  <circle cx="76" cy="80" r="6" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <circle cx="64" cy="86" r="5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/>
+  <g transform="translate(34,84) scale(0.5)">
+    <ellipse cx="0" cy="0" rx="16" ry="11" fill="#E8705A" stroke="#3D3323" stroke-width="3"/>
+    <circle cx="-7" cy="-14" r="5" fill="#FFFDF7" stroke="#3D3323" stroke-width="2.5"/>
+    <circle cx="7" cy="-14" r="5" fill="#FFFDF7" stroke="#3D3323" stroke-width="2.5"/>
+    <circle cx="-6" cy="-14" r="2" fill="#3D3323"/><circle cx="8" cy="-14" r="2" fill="#3D3323"/>
+  </g>
+</svg>`;
+const ISLAND_SOON_CARD = `<svg viewBox="0 0 160 112" width="100%" height="100%" aria-hidden="true">
+  <rect x="0" y="0" width="160" height="112" fill="#9FB6BE"/>
+  <ellipse cx="80" cy="88" rx="58" ry="20" fill="#C4CDCB" stroke="#77878B" stroke-width="2.5"/>
+  <path d="M60 70 Q80 30 102 68 Q80 80 60 70 Z" fill="#B0BDBB" stroke="#77878B" stroke-width="2.5"/>
+  <text x="80" y="62" font-size="30" font-weight="bold" fill="#5C6873" text-anchor="middle">?</text>
+  <ellipse cx="40" cy="30" rx="12" ry="5" fill="#DDE6E4" opacity="0.8"/>
+  <ellipse cx="120" cy="22" rx="10" ry="4" fill="#DDE6E4" opacity="0.8"/>
+</svg>`;
+
+/* ---- v9 宝物SVG ---- */
+const COIN_SVG9 = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><circle cx="50" cy="40" r="26" fill="#F2C14E" stroke="#3D3323" stroke-width="2.5"/><path d="M24 40 A26 26 0 0 0 50 66 L50 14 A26 26 0 0 0 24 40 Z" fill="#D4A63C"/><circle cx="50" cy="40" r="17" fill="none" stroke="#B8892E" stroke-width="2"/><path d="M50 30 l3 6 6.5 1 -4.7 4.6 1.1 6.4 -5.9 -3 -5.9 3 1.1 -6.4 -4.7 -4.6 6.5 -1 z" fill="#FFF3D0" stroke="#3D3323" stroke-width="1.5"/><path d="M28 18 l4 4 M76 20 l-4 4" stroke="#F5C56B" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const COINBAG_SVG9 = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M40 22 Q35 12 42 10 Q50 14 58 10 Q65 12 60 22 Z" fill="#B07B4A" stroke="#3D3323" stroke-width="2"/><path d="M30 64 Q26 34 44 26 L56 26 Q74 34 70 64 Q60 74 40 74 Q32 70 30 64 Z" fill="#D8A45C" stroke="#3D3323" stroke-width="2.5"/><path d="M30 64 Q26 34 44 26 Q34 40 36 58 Q37 68 42 72 Q33 70 30 64 Z" fill="#B07B4A"/><path d="M42 22 L58 22" stroke="#3D3323" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="50" r="8" fill="#F2C14E" stroke="#3D3323" stroke-width="1.8"/><path d="M50 46 l1.5 3 3.5 .5 -2.5 2.4 .6 3.4 -3.1 -1.6 -3.1 1.6 .6 -3.4 -2.5 -2.4 3.5 -.5 z" fill="#FFF3D0"/></svg>`;
+
+Object.assign(SCENE_SVGS, { iwaba:IWABA_SVG, misaki:MISAKI_SVG, sanbashi:SANBASHI_SVG,
+  mihari:MIHARI_SVG, ooiso:OOISO_SVG, horiba:HORIBA_SVG, oonami:OONAMI_SVG, toride:TORIDE_SVG });
+Object.assign(TREASURE_SVGS, { coin:COIN_SVG9, coinbag:COINBAG_SVG9 });
+
+/* キャラクター切替（船長／子分） */
+const CHAR_SVGS = { dajare: VILLAIN_SVG, hasamy: HASAMY_SVG };
+function mountChar(el, who) {
+  if (el && el.dataset.cmounted !== who) { el.innerHTML = CHAR_SVGS[who]; el.dataset.cmounted = who; }
+}
+function setCharFace(el, who, face) {
+  if (!el) return;
+  mountChar(el, who);
+  el.querySelectorAll('.dj-face').forEach(g => g.style.display = 'none');
+  const f = el.querySelector('.dj-face-' + face); if (f) f.style.display = '';
+}
+
+/* ================= 出題タイプ生成（たしざんの しま） ================= */
+const ITEM_SVGS = {
+  coin: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/><path d="M5 20 A15 15 0 0 0 20 35 L20 5 A15 15 0 0 0 5 20 Z" fill="#D4A63C"/><circle cx="20" cy="20" r="9" fill="none" stroke="#B8892E" stroke-width="1.5"/></svg>`,
+  shell: `<svg viewBox="0 0 40 40"><path d="M20 33 L8 20 Q8 8 20 8 Q32 8 32 20 Z" fill="#F2C4B0" stroke="#3D3323" stroke-width="2"/><path d="M20 33 L8 20 Q8 8 20 8 Z" fill="#E09A80"/><path d="M20 33 L14 14 M20 33 L20 11 M20 33 L26 14" fill="none" stroke="#3D3323" stroke-width="1.3"/></svg>`,
+  crab: `<svg viewBox="0 0 40 40"><ellipse cx="20" cy="24" rx="12" ry="9" fill="#E8705A" stroke="#3D3323" stroke-width="2"/><path d="M8 24 A12 9 0 0 0 20 33 L20 15 A12 9 0 0 0 8 24 Z" fill="#C94A38"/><circle cx="15" cy="12" r="4" fill="#FFFDF7" stroke="#3D3323" stroke-width="1.8"/><circle cx="25" cy="12" r="4" fill="#FFFDF7" stroke="#3D3323" stroke-width="1.8"/><circle cx="15" cy="12" r="1.5" fill="#3D3323"/><circle cx="25" cy="12" r="1.5" fill="#3D3323"/></svg>`
+};
+const ITEM_NAME = { coin:'きんか', shell:'かいがら', crab:'カニ' };
+
+function bagSVG(n) {
+  const pos = [[20,16],[34,16],[27,26],[13,26],[41,26],[20,36],[34,36],[27,46],[13,40]];
+  let coins = '';
+  for (let i = 0; i < n; i++) {
+    const [x,y] = pos[i];
+    coins += `<circle cx="${x}" cy="${y+10}" r="5.5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.4"/>`;
+  }
+  return `<svg viewBox="0 0 54 66" width="72" height="88" aria-hidden="true">
+    <path d="M20 10 Q17 4 21 3 Q27 6 33 3 Q37 4 34 10 Z" fill="#B07B4A" stroke="#3D3323" stroke-width="1.5"/>
+    <path d="M8 46 Q6 20 20 14 L34 14 Q48 20 46 46 Q40 58 27 58 Q14 58 8 46 Z" fill="#EFE0B8" stroke="#3D3323" stroke-width="2"/>
+    ${coins}
+  </svg>`;
+}
+const moundSVG = `<svg viewBox="0 0 90 66" aria-hidden="true"><path d="M6 58 Q45 8 84 58 Q45 66 6 58 Z" fill="#EEDFB0" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/><path d="M6 58 Q26 30 41 22 Q28 42 26 60 Q14 60 6 58 Z" fill="#D8C48E"/></svg>`;
+const coinBurstSVG = `<svg viewBox="0 0 90 66" aria-hidden="true"><path d="M6 58 Q45 18 84 58 Q45 66 6 58 Z" fill="#EEDFB0" stroke="#3D3323" stroke-width="2.5" stroke-linejoin="round"/><circle cx="45" cy="30" r="13" fill="#F2C14E" stroke="#3D3323" stroke-width="2"/><path d="M32 30 A13 13 0 0 0 45 43 L45 17 A13 13 0 0 0 32 30 Z" fill="#D4A63C"/><path d="M26 16 l4 4 M64 16 l-4 4 M45 8 l0 5" stroke="#F5C56B" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+
+/* 2つの グループの 絵（たしざんの スキャフォールド） */
+function groupsSVG(a, b) {
+  const dot = (x, y) => `<circle cx="${x}" cy="${y}" r="7" fill="#F2C14E" stroke="#3D3323" stroke-width="1.6"/>`;
+  const row = (n, ox) => Array.from({length:n}, (_,i) => dot(ox + (i%5)*17, 18 + Math.floor(i/5)*17)).join('');
+  const wA = Math.min(a,5)*17 + 6, wB = Math.min(b,5)*17 + 6;
+  return `<svg viewBox="0 0 240 56" width="220" height="52" aria-hidden="true" style="display:block;margin:6px auto">
+    <rect x="2" y="6" width="${wA+6}" height="44" rx="10" fill="none" stroke="#C9B482" stroke-width="2" stroke-dasharray="4 4"/>
+    ${row(a, 12)}
+    <text x="${wA+22}" y="34" font-size="22" font-weight="bold" fill="#4A3B28">＋</text>
+    <rect x="${wA+40}" y="6" width="${wB+6}" height="44" rx="10" fill="none" stroke="#C9B482" stroke-width="2" stroke-dasharray="4 4"/>
+    ${row(b, wA+50)}
+  </svg>`;
+}
+/* くり上がりのヒント（10のトレイをつくる図） */
+function carryHintSVG(a, b) {
+  const move = 10 - a;
+  const tray = Array.from({length:a}, (_,i) => `<circle cx="${14+i*13}" cy="20" r="5.5" fill="#F2C14E" stroke="#3D3323" stroke-width="1.4"/>`).join('');
+  const ghost = Array.from({length:move}, (_,i) => `<circle cx="${14+(a+i)*13}" cy="20" r="5.5" fill="none" stroke="#C9B482" stroke-width="1.4" stroke-dasharray="3 3"/>`).join('');
+  const grp = Array.from({length:b}, (_,i) => {
+    const boxed = i < move;
+    return `<circle cx="${160+(i%5)*15}" cy="${16+Math.floor(i/5)*15}" r="5.5" fill="${boxed?'#F5C56B':'#F2C14E'}" stroke="#3D3323" stroke-width="1.4"/>`;
+  }).join('');
+  return `<svg viewBox="0 0 240 46" width="230" height="46" aria-hidden="true" style="display:block;margin:6px auto">
+    <rect x="6" y="10" width="136" height="20" rx="4" fill="#FFFDF7" stroke="#3D3323" stroke-width="1.6"/>
+    ${tray}${ghost}${grp}
+    <path d="M158 34 Q140 42 128 32" fill="none" stroke="#C9622E" stroke-width="2" stroke-linecap="round" marker-end=""/>
+    <text x="200" y="44" font-size="10" fill="#7A6A50">10の トレイを つくろう</text>
+  </svg>`;
+}
+
+/* --- 個別ジェネレータ --- */
+function qTap(lo, hi, item) {
+  const k = lo + rnd(hi - lo + 1);
+  return { type:'tapcount', input:true, item, k,
+    text:`${ITEM_NAME[item]}は ぜんぶで なんこ？`, ans:String(k), unit:'こ',
+    sub:'タップして かぞえてから すうじを おそう', key:`tc:${item}:${k}` };
+}
+function qWitch() {
+  const k = 3 + rnd(5);
+  const j = (k >= 8 || rnd(2)) ? k - 1 : k + 1;
+  const idx = rnd(3);
+  const arr = [k, k, k]; arr[idx] = j;
+  const choices = arr.map(n => bagSVG(n));
+  return { text:'かずが ちがう ふくろは どれ？', html:true, choices, ans:idx,
+    ansLabel:`${j}この ふくろ`, sub:'よーく かぞえてね', key:`w:${k}:${j}` };
+}
+function qMatchTo(t) {
+  const as = shuffle(Array.from({length:t-1}, (_,i) => i+1)).slice(0, 4);
+  return { type:'match', target:t, tops:as.slice(), bots:shuffle(as.map(a => t - a)),
+    text:`あわせて <b>${t}</b>に なる ペアを つくろう！`, html:true,
+    sub:'うえと したの ふだを 1まいずつ タップ',
+    key:`m:${t}:${as.slice().sort((x,y)=>x-y).join(',')}` };
+}
+function qFillTo(t) {
+  const a = 1 + rnd(t - 1);
+  const pos = rnd(2);
+  const eq = pos ? `<span class="blank">□</span> ＋ ${t-a} ＝ ${t}` : `${a} ＋ <span class="blank">□</span> ＝ ${t}`;
+  return { text:`<span class="feq">${eq}</span>`, html:true, input:true,
+    ans:String(pos ? a : t - a), sub:'□に はいる かずは？', key:`fb:${t}:${pos}:${a}` };
+}
+function qAddPic() {
+  const a = 1 + rnd(8), b = 1 + rnd(Math.min(5, 10 - a));
+  return { text:`${a} ＋ ${b} ＝ ？${groupsSVG(a, b)}`, html:true, input:true,
+    ans:String(a + b), sub:'えを みながら けいさんしよう', key:`ap:${a}+${b}` };
+}
+function qAdd10v9() {
+  const a = 1 + rnd(9), b = 1 + rnd(10 - a);
+  return { text:`${a} ＋ ${b} ＝ ？`, input:true, ans:String(a + b), key:`a:${a}+${b}` };
+}
+function qTen20() {
+  const n = 1 + rnd(9);
+  if (rnd(2)) return { text:`10と ${n}で、いくつ？`, input:true, ans:String(10 + n), key:`t20a:${n}` };
+  return { text:`${10 + n}は、10と いくつ？`, input:true, ans:String(n), key:`t20b:${n}` };
+}
+function qTapTray() {
+  const k = 11 + rnd(9);
+  return Object.assign(qTap(0, 0, 'coin'), { k, ans:String(k), key:`tc:tray:${k}`,
+    text:'きんかは ぜんぶで なんこ？<br><span style="font-size:14px;color:#7A6A50">10この トレイと ばらを あわせて かぞえよう</span>', html:true });
+}
+function qBigAdd() {
+  if (rnd(2)) { const n = 1 + rnd(9); return { text:`10 ＋ ${n} ＝ ？`, input:true, ans:String(10 + n), key:`b:10+${n}` }; }
+  const a = 11 + rnd(8), u = a - 10, b = 1 + rnd(9 - u);
+  return { text:`${a} ＋ ${b} ＝ ？`, input:true, ans:String(a + b), key:`b:${a}+${b}` };
+}
+function q3num() {
+  const a = 1 + rnd(4), b = 1 + rnd(Math.min(5, 9 - a)), c = 1 + rnd(Math.min(8, 20 - a - b));
+  return { text:`${a} ＋ ${b} ＋ ${c} ＝ ？`, input:true, ans:String(a + b + c),
+    sub:'まえから じゅんばんに けいさんしよう', key:`3:${a}+${b}+${c}` };
+}
+function qFill3() {
+  const a = 1 + rnd(4), b = 1 + rnd(Math.min(5, 9 - a)), d = 1 + rnd(Math.min(8, 19 - a - b));
+  const c = a + b + d;
+  return { text:`<span class="feq">${a} ＋ ${b} ＋ <span class="blank">□</span> ＝ ${c}</span>`, html:true,
+    input:true, ans:String(d), sub:'□に はいる かずは？', key:`f3:${a}+${b}=${c}` };
+}
+function qCarryStep() {
+  const a = 6 + rnd(4);
+  const need = 10 - a;
+  const cand = new Set([need]);
+  let g = 0;
+  while (cand.size < 4 && g++ < 30) cand.add(1 + rnd(9));
+  const choices = shuffle([...cand]).map(String);
+  return { text:`10を つくろう！<br>${a}は あと いくつで 10？`, html:true, choices,
+    ans:choices.indexOf(String(need)), sub:'くりあがりの じゅんびだよ', key:`cs:${a}` };
+}
+function qCarryPic() {
+  const a = 6 + rnd(4), b = (11 - a) + rnd(a - 1);
+  return { text:`${a} ＋ ${b} ＝ ？${carryHintSVG(a, b)}`, html:true, input:true,
+    ans:String(a + b), sub:'10の トレイを つくって かんがえよう', key:`cp:${a}+${b}` };
+}
+function qCarry() {
+  const a = 2 + rnd(8), b = (11 - a) + rnd(a - 1);
+  return { text:`${a} ＋ ${b} ＝ ？`, input:true, ans:String(a + b), key:`c:${a}+${b}` };
+}
+function qDig() {
+  let a, b;
+  const kind = rnd(3);
+  if (kind === 0) { a = 1 + rnd(8); b = 1 + rnd(10 - a > 0 ? 10 - a : 1); }
+  else if (kind === 1) { a = 10; b = 1 + rnd(9); }
+  else { a = 11 + rnd(8); b = 1 + rnd(Math.max(1, 9 - (a - 10))); }
+  const ans = a + b;
+  const set = new Set([ans]);
+  let g = 0;
+  while (set.size < 9 && g++ < 80) set.add(Math.max(1, ans - 4 + rnd(9)));
+  let fill = 1;
+  while (set.size < 9) set.add(ans + 4 + fill++);
+  const choices = shuffle([...set].slice(0, 9).map(String));
+  return { type:'dig', text:`${a} ＋ ${b} ＝ ？ の すなやまを ほろう！`, choices,
+    ans:choices.indexOf(String(ans)), ansLabel:String(ans),
+    sub:'こたえの すなやまを タップ！', key:`dg:${a}+${b}` };
+}
+
+/* --- 島の文章題（たしざん・ふざけ担当） --- */
+const ADD_STORY = [
+  { id:'hs-coin', pattern:'add', text:'ハサミーが きんかを {a}まい すなに かくしました。しんぱいに なって さらに {b}まい かくしました。かくした きんかは ぜんぶで なんまい？', vars:{ a:[2,9], b:[1,8] }, unit:'まい' },
+  { id:'hs-tako', pattern:'add', text:'タコの こぶんが たこやきを {a}こ やきました。手が 8ほん あるので すぐ もう {b}こ やけました。ぜんぶで なんこ？', vars:{ a:[2,9], b:[1,8] }, unit:'こ' },
+  { id:'hs-kai', pattern:'add', text:'ダジャーレが 「かいすいよく サイコー！」と おおさわぎ しながら かいがらを {a}こ ひろいました。ハサミーも {b}こ ひろいました。あわせて なんこ？', vars:{ a:[2,9], b:[2,8] }, unit:'こ' },
+  { id:'hs-kani', pattern:'add', text:'カニの ぎょうれつが よこばいで やってきます。まえの れつに {a}ひき、うしろの れつに {b}ひき。ぜんぶで なんびき？', vars:{ a:[2,9], b:[2,9] }, unit:'ひき' },
+  { id:'hs-suna', pattern:'add', text:'すなの おしろを つくったら、ハサミーが「おれの とりでに にてる！」と いばりました。はたを {a}ほん、かいがらの かざりを {b}こ つけました。かざりは あわせて いくつ？', vars:{ a:[2,7], b:[2,8] }, unit:'こ' },
+  { id:'hs-nemuri', pattern:'add', text:'ひるねずきの ハサミーは、あさに {a}かい、ひるに {b}かい あくびを しました。あくびは ぜんぶで なんかい？', vars:{ a:[2,9], b:[1,8] }, unit:'かい' }
+];
+function qChallenge() {
+  for (let i = 0; i < 30; i++) {
+    const q = buildStoryQuestion(pick(ADD_STORY));
+    if (q) { q.sub = '🔥 チャレンジもんだい！'; return q; }
+  }
+  return qAdd10v9();
+}
+
+const mkMix = pairs => {
+  const bag = [];
+  pairs.forEach(([fn, w]) => { for (let i = 0; i < w; i++) bag.push(fn); });
+  return () => pick(bag)();
+};
+
+/* ================= しま定義（カリキュラムパック） ================= */
+const ADD_STAGES = [
+  { id:'add-kazoe', name:'かぞえの すなはま', scene:'hama', theme:'hama', skill:'10までの かず',
+    intro:'まずは かぞえる れんしゅうから！ すなはまに ちらばった きんかを かぞえよう',
+    hench:'この しまの きんかは ぜんぶ おれさまの もんだ！ かぞえられる もんならな！',
+    gen:mkMix([[() => qTap(3, 10, 'coin'), 3], [() => qTap(3, 10, 'shell'), 2], [() => qTap(3, 10, 'crab'), 1], [qWitch, 4]]), n:10,
+    treasure:{ n:'ひかる きんか', scene:'coin', memo:'すなの なかで ぴかぴか ひかって いた さいしょの きんか', pc:'1まいぐらい いいだろ〜！ …だめか。' } },
+  { id:'add-ikutsu', name:'いくつといくつの いわば', scene:'iwaba', theme:'hama', skill:'かずの ぶんかい',
+    intro:'いわばの かにたちは ペアが だいすき。あわせて 5や 10に なる かずを みつけよう！',
+    gen:mkMix([[() => qMatchTo(pick([5, 7, 10])), 4], [() => qFillTo(pick([5, 7, 10])), 6]]), n:9,
+    treasure:{ n:'きんかの ふくろ', scene:'coinbag', memo:'ちいさな きんかが ぎっしり。ふると シャラシャラ おとが する', pc:'ふくろごと とったのに ふくろだたきに あった きぶんだぜ…' } },
+  { id:'add-e', name:'えあわせの みさき', scene:'misaki', theme:'hama', skill:'たしざん(えつき)',
+    intro:'とうだいの みさきに ついたよ。えを みながら たしざんの れんしゅうだ！',
+    gen:mkMix([[qAddPic, 7], [qAdd10v9, 3]]), n:10,
+    treasure:{ n:'ペアの かいがら', scene:'shell', memo:'ぴったり かさなる 2まいぐみの かいがら', pc:'2まいで 1つとは…たしざんみたいな かいがらだぜ。' } },
+  { id:'add-suji', name:'すうじの さんばし', scene:'sanbashi', theme:'hama', skill:'たしざん(〜10)',
+    intro:'ながい さんばしを わたりながら、すうじだけで たしざんに ちょうせん！',
+    gen:mkMix([[qAdd10v9, 6], [() => qFillTo(10), 4]]), n:10,
+    treasure:{ n:'きんの さかな', scene:'goldfish', memo:'さんばしの したで きらりと ひかった おおものだ', pc:'つりあげられたのは おれの ほうだったぜ…' } },
+  { id:'add-test1', name:'ハサミーの みはりだい', scene:'mihari', theme:'hama', skill:'かくにんテスト①', test:true, challenge:true,
+    intro:'ハサミーの みはりだいだ！ いままでの ちからを ぜんぶ つかって つきやぶろう！',
+    hench:'ここから さきは とおさんぜ！ たしざんは たしかに おれさまの とくいわざ！',
+    gen:mkMix([[() => qTap(4, 10, 'coin'), 1], [qWitch, 2], [() => qMatchTo(10), 2], [() => qFillTo(10), 2], [qAddPic, 2], [qAdd10v9, 3]]), n:12,
+    treasure:{ n:'みはりの ぼうえんきょう', scene:'telescope', memo:'ハサミーが つかっていた。のぞくと おきの ふねまで みえる', pc:'これが ないと みはりが できないぜ！ かえして…くれないか。' } },
+  { id:'add-20', name:'20までの おおいそ', scene:'ooiso', theme:'hama', skill:'20までの かず', challenge:true,
+    intro:'おおきな いわの いそだよ。10の トレイを つかうと おおきい かずも かんたん！',
+    gen:mkMix([[qTapTray, 3], [qTen20, 7]]), n:10,
+    treasure:{ n:'おおいその しんじゅ', scene:'pearl', memo:'いそかげの かいの なかで そだった まんまるの しんじゅ', pc:'まるくて おいしそうだと おもったら たからだった。' } },
+  { id:'add-big', name:'おおきなかずの はまべ', scene:'kawa', theme:'hama', skill:'たしざん(〜20・くりあがりなし)', challenge:true,
+    intro:'かわが うみに ながれこむ はまべだ。20までの たしざんも 10の トレイで らくらく！',
+    gen:mkMix([[qBigAdd, 7], [qTen20, 3]]), n:10,
+    treasure:{ n:'あおい ほうせき', scene:'bluegem', memo:'かわの そこから ころがって きた すきとおる いし', pc:'あおくて ひんやり。にぎると おちつくんだよな…' } },
+  { id:'add-3kazu', name:'3つのかずの さんごしょう', scene:'ruigo', theme:'umi1', skill:'3つの かずの たしざん', challenge:true,
+    intro:'さんごしょうには かずが 3つ！ まえから じゅんばんに たして いこう',
+    gen:mkMix([[q3num, 8], [qFill3, 2]]), n:9,
+    treasure:{ n:'3つごの さんご', scene:'twincoral', memo:'そっくりな かたちの さんごが 3つ…に みえて 2つ ならんでいる', pc:'3つめは おれが たべた。…うそだぜ。' } },
+  { id:'add-dig', name:'きんかの ほりば', scene:'horiba', theme:'hama', skill:'あそび：ほりだし', challenge:false,
+    intro:'ここは たからの ほりば！ こたえの すなやまを ほって きんかを あつめよう！',
+    hench:'おれさまが うめた きんかだぞ！ ほれる もんなら ほって みな！ カニだけに すなほりは とくいなんだからな！',
+    gen:qDig, n:9,
+    treasure:{ n:'きんかの ちず', scene:'scroll', memo:'きんかの かくしばしょが ぜんぶ かいて ある ちず', pc:'ちずまで とられたら もう かくせないぜ〜！' } },
+  { id:'add-kuri', name:'くりあがりの おおなみ', scene:'oonami', theme:'umi1', skill:'くりあがりの たしざん', challenge:true,
+    intro:'おおなみが ざっぱーん！ 10の トレイを つくれば くりあがりも こわくない！',
+    gen:mkMix([[qCarryStep, 3], [qCarryPic, 3], [qCarry, 6]]), n:12,
+    treasure:{ n:'なみの たからばこ', scene:'tamatebako', memo:'あけると なみの おとが きこえる ふしぎな はこ', pc:'なかみは ひみつだぜ。…もう あけたのか。' } },
+  { id:'add-boss', name:'ハサミーの すなの とりで', scene:'toride', theme:'tou', skill:'まとめテスト(ボス)', boss:true, challenge:true,
+    intro:'ついに ハサミーの とりでだ！ しまの たしざんを ぜんぶ つかって しょうぶ！',
+    hench:'よくぞ ここまで きたな！ まけたら きんかは ぜんぶ かえして やる。かかって こい！',
+    clearTitle:'⚔️ ハサミーに かった！',
+    gen:mkMix([[qAdd10v9, 3], [() => qFillTo(10), 2], [qBigAdd, 2], [q3num, 2], [qCarry, 4], [qDig, 1]]), n:14,
+    treasure:{ n:'きんかの かんむり', scene:'crown', memo:'しまの たからの あかし。たしざんマスターだけが かぶれる', pc:'にあってるぜ…。おれより ずっとな。' } }
 ];
 
-/* ================= 進捗（保存） ================= */
-let state = { stats:{}, treasures:[], days:{}, buddyName:'', introSeen:{} };
-try { const raw = store.get('bk_state'); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch (e) {}
-if (!state.introSeen) state.introSeen = {};
-const save = () => store.set('bk_state', JSON.stringify(state));
-const stg = id => state.stats[id] || { plays:0, best:0, bestN:0, tq:0, tc:0, cleared:false, last:'' };
-const today = () => new Date().toISOString().slice(0, 10);
+const ISLANDS = [
+  { id:'math-g1-add', title:'たしざんの しま', subject:'さんすう（1ねん）', card:ISLAND_ADD_CARD,
+    clearTitle:'たしざんマスター',
+    hench:{ name:'ハサミー', svg:'hasamy',
+      lose:[ 'まけて くやしくて かにみそが にえるぜ〜！',
+             'きょうは よこばいで にげるぜ！ カニだけに な！',
+             'つぎは まけないぜ！ たしかな やくそくだ！ たしざんだけに な！',
+             'ぐぬぬ… ハサミの ちょうしが わるかっただけだぜ！' ],
+      loseTest:'みはりだいが やぶられた〜！ だが すなの とりでは そう あまくないぜ！',
+      loseBoss:'まいった！ きんかは ぜんぶ かえすぜ。…おれ、ほんとは たしざんより さんぽが すきなんだ。さんぽだけに さんすうは もう こりごりだぜ！' },
+    areas:[ { name:'すなはま', from:0, to:4, color:'#7FB069', deco:['wave','tree'] },
+            { name:'おきあい', from:5, to:8, color:'#5B9FC4', deco:['wave','bubble'] },
+            { name:'とりで',   from:9, to:10, color:'#2E7D99', deco:['coral','bubble'] } ],
+    stages:ADD_STAGES },
+  { soon:true, title:'ひきざんの しま', subject:'さんすう（1ねん）' },
+  { soon:true, title:'かんじの しま', subject:'こくご（1ねん）' },
+  { soon:true, title:'とけいの そらじま', subject:'さんすう' }
+];
+const islandById = id => ISLANDS.find(i => i.id === id);
 
-function isUnlocked(i) { return i === 0 || stg(STAGES[i - 1].id).cleared; }
+/* ================= 進捗（v2スキーマ） ================= */
+let state = { v:2, buddyName:'', days:{}, storySeen2:0, islands:{} };
+try {
+  const raw = store.get('bk_state');
+  if (raw) {
+    const j = JSON.parse(raw);
+    if (j && j.v === 2) state = Object.assign(state, j);
+    else if (j) { state.buddyName = j.buddyName || ''; state.days = j.days || {}; } /* 旧形式：名前と日別記録だけ引き継ぐ */
+  }
+} catch (e) {}
+if (!state.islands) state.islands = {};
+const save = () => store.set('bk_state', JSON.stringify(state));
+const isl = id => state.islands[id] || (state.islands[id] = { stats:{}, treasures:[], introSeen:{}, endingSeen:0 });
+const stg = (islandId, sid) => isl(islandId).stats[sid] || { plays:0, best:0, tq:0, tc:0, cleared:false, last:'' };
+const today = () => new Date().toISOString().slice(0, 10);
+let curIsland = ISLANDS[0];
+function isUnlocked(island, i) { return i === 0 || stg(island.id, island.stages[i - 1].id).cleared; }
+function islandCleared(island) { return island.stages.every(st => stg(island.id, st.id).cleared); }
 
 /* ================= 画面切替 ================= */
 function show(name) {
-  ['map','quiz','result','zukan','parent'].forEach(s => $('#scr-' + s).hidden = (s !== name));
-  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.scr === name));
+  ['sea','map','quiz','result','zukan','parent'].forEach(s => $('#scr-' + s).hidden = (s !== name));
+  document.querySelectorAll('#tabs button').forEach(b => {
+    const adv = (name === 'sea' || name === 'map' || name === 'quiz' || name === 'result');
+    b.classList.toggle('on', b.dataset.scr === name || (b.dataset.scr === 'sea' && adv));
+  });
+  if (name === 'sea') renderSea();
   if (name === 'map') renderMap();
   if (name === 'zukan') renderZukan();
   if (name === 'parent') renderParent();
-  if (name === 'map' || name === 'zukan' || name === 'parent') playBGM('map');
+  if (name !== 'quiz' && name !== 'result') playBGM('map');
 }
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.scr));
+$('#seaBtn').onclick = () => show('sea');
 
-/* ================= マップ描画 ================= */
-const XS = [30, 66, 34, 70, 38, 62, 28, 64, 32, 68, 36, 48, 66, 30, 62, 34, 68, 30, 64, 48]; /* うねる配置(%) */
+/* ================= しまえらび ================= */
+function renderSea() {
+  $('#seaGrid').innerHTML = ISLANDS.map((il, i) => {
+    if (il.soon) {
+      return `<div class="islCard soon">
+        <span class="islArt">${ISLAND_SOON_CARD}</span>
+        <span><span class="islName">？？？の しま</span>
+        <span class="islMeta">${il.subject}・ちかいうちに あらわれる…</span></span></div>`;
+    }
+    const d = isl(il.id);
+    const done = il.stages.filter(st => stg(il.id, st.id).cleared).length;
+    const flag = islandCleared(il) ? `<span class="islDone">🚩 クリアずみ！「${il.clearTitle}」</span>` : '';
+    return `<button class="islCard" data-i="${i}">
+      <span class="islArt">${il.card}</span>
+      <span><span class="islName">${il.title}</span>
+      <span class="islMeta">${il.subject}・たから ${d.treasures.length}／${il.stages.length}</span>${flag}</span>
+    </button>`;
+  }).join('');
+  $('#seaGrid').querySelectorAll('button.islCard').forEach(b => b.onclick = () => {
+    curIsland = ISLANDS[Number(b.dataset.i)];
+    show('map');
+  });
+}
+
+/* ================= しまマップ ================= */
 const STEP = 132, TOPPAD = 152;
-
-/* エリア定義（ゾーン帯はここから動的生成。ステージ追加に自動追従） */
-const AREAS = [
-  { name:'みずべ',     from:0,  to:2,  color:'#7FB069' },
-  { name:'ことば',     from:3,  to:6,  color:'#A89A80' },
-  { name:'ちてい',     from:7,  to:8,  color:'#5A5478' },
-  { name:'さんちょう', from:9,  to:11, color:'#5C6873' },
-  { name:'そらの しま', from:12, to:15, color:'#5B9FC4' },
-  { name:'うみの そこ', from:16, to:19, color:'#2E7D99' }
-];
-
-/* マップ景観パーツ（v7.5: 見た目刷新） */
 const FLAG_SVG = `<svg viewBox="0 0 30 34" width="26" height="30" aria-hidden="true">
   <line x1="6" y1="2" x2="6" y2="32" stroke="#6E4A28" stroke-width="3" stroke-linecap="round"/>
   <path d="M8 3 L26 8 L8 13 Z" fill="#E8763D" stroke="#3D3323" stroke-width="1.5" stroke-linejoin="round"/>
@@ -1680,49 +2130,42 @@ const FLAG_SVG = `<svg viewBox="0 0 30 34" width="26" height="30" aria-hidden="t
 const DECO = {
   tree: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-3 12 L-1 0 L1 0 L3 12 Z" fill="#8A6543" stroke="#3D3323" stroke-width="1.2"/><ellipse cx="0" cy="-6" rx="10" ry="8" fill="#7FB069" stroke="#3D3323" stroke-width="1.5"/><path d="M-10 -4 A10 8 0 0 0 0 2 L0 -14 A10 8 0 0 0 -10 -4Z" fill="#4E7E3F"/></g>`,
   wave: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-12 0 q6 -6 12 0 t12 0" fill="none" stroke="#7EC8DE" stroke-width="2.5" stroke-linecap="round"/><path d="M-8 8 q5 -5 10 0 t10 0" fill="none" stroke="#7EC8DE" stroke-width="2" stroke-linecap="round" opacity="0.7"/></g>`,
-  pillar: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-6 12 L-5 -12 L5 -13 L6 12 Z" fill="#A89A80" stroke="#3D3323" stroke-width="1.5"/><path d="M2 -13 L5 -13 L6 12 L3 12 Z" fill="#6B5D48"/><path d="M-8 -12 L8 -13 L8 -9 L-8 -8 Z" fill="#A89A80" stroke="#3D3323" stroke-width="1.5"/></g>`,
-  crystal: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M0 -12 L6 -2 L3 10 L-3 10 L-6 -2 Z" fill="#8FD0E8" stroke="#3D3323" stroke-width="1.5"/><path d="M0 -12 L-6 -2 L-3 10 L0 10 Z" fill="#4A93B8"/></g>`,
-  rock: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-11 8 L-8 -4 L-1 -9 L8 -5 L11 7 L6 9 L-7 9 Z" fill="#8C99A6" stroke="#3D3323" stroke-width="1.5"/><path d="M-11 8 L-8 -4 L-4 -7 L-3 8 Z" fill="#5C6873"/></g>`,
-  cloud: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><ellipse cx="0" cy="0" rx="13" ry="6" fill="#F7F4EC" stroke="#3D3323" stroke-width="1.5"/><path d="M-13 0 A13 6 0 0 0 0 6 L0 -6 A13 6 0 0 0 -13 0Z" fill="#DDE6EE"/></g>`,
   coral: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><path d="M-4 10 Q-7 -2 -2 -9 Q0 -2 -1 3 Q4 -4 6 -9 Q8 2 2 8 Q0 9 -4 10 Z" fill="#F2A0B4" stroke="#3D3323" stroke-width="1.5"/><path d="M-4 10 Q-7 -2 -2 -9 Q-4 2 -3 7 Z" fill="#E07A94"/></g>`,
   bubble: (x,y,sc)=>`<g transform="translate(${x},${y}) scale(${sc})"><circle cx="0" cy="0" r="4" fill="none" stroke="#7EE0D0" stroke-width="1.8"/><circle cx="6" cy="-9" r="2.5" fill="none" stroke="#7EE0D0" stroke-width="1.5"/><circle cx="-5" cy="-15" r="1.8" fill="#7EE0D0"/></g>`
 };
-const AREA_DECO = { 'みずべ':['tree','wave'], 'ことば':['pillar','tree'], 'ちてい':['crystal','crystal'],
-  'さんちょう':['rock','cloud'], 'そらの しま':['cloud','cloud'], 'うみの そこ':['coral','bubble'] };
-const areaOf = i => AREAS.find(a => i >= a.from && i <= a.to);
+const areaOf = (island, i) => island.areas.find(a => i >= a.from && i <= a.to);
+const xsFor = stages => stages.map((st, i) =>
+  (st.boss || st.test) ? 48 + ((i % 2) ? 6 : -6) : ((i % 2) ? 64 : 32) + ((i * 7) % 9 - 4));
 
 function renderMap() {
+  const island = curIsland;
+  const stages = island.stages;
+  const XS = xsFor(stages);
   const wrap = $('#mapWrap');
   wrap.querySelectorAll('.stageNode').forEach(n => n.remove());
-  const H = TOPPAD + STAGES.length * STEP;
+  const H = TOPPAD + stages.length * STEP;
   wrap.style.height = H + 'px';
   const W = wrap.clientWidth || 360;
-
-  /* 旧・帯ゾーンは廃止（SVGで描く） */
   $('#island').querySelectorAll('.zone').forEach(z => z.remove());
 
   let zonesSvg = '', decoSvg = '', gatesSvg = '';
-  /* スタートの旗かざり */
   gatesSvg += `<g transform="translate(${Math.round(W * (XS[0] > 50 ? 0.26 : 0.74))},${TOPPAD - 46})">
     <line x1="-13" y1="-4" x2="-13" y2="26" stroke="#6E4A28" stroke-width="4"/>
     <line x1="13" y1="-4" x2="13" y2="26" stroke="#6E4A28" stroke-width="4"/>
-    <rect x="-52" y="-16" width="104" height="24" rx="7" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
-    <rect x="-52" y="-16" width="104" height="8" rx="4" fill="#A84A20"/>
-    <text x="0" y="3" font-size="12" font-weight="bold" fill="#FFFDF7" text-anchor="middle">⚓ ぼうけん スタート</text>
+    <rect x="-56" y="-16" width="112" height="24" rx="7" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
+    <rect x="-56" y="-16" width="112" height="8" rx="4" fill="#A84A20"/>
+    <text x="0" y="3" font-size="12" font-weight="bold" fill="#FFFDF7" text-anchor="middle">⚓ ${island.title}</text>
   </g>`;
-  AREAS.forEach((a, ai) => {
-    if (a.from >= STAGES.length) return;
-    const to = Math.min(a.to, STAGES.length - 1);
+  island.areas.forEach((a, ai) => {
+    if (a.from >= stages.length) return;
+    const to = Math.min(a.to, stages.length - 1);
     const yT = TOPPAD + a.from * STEP - 40 - 62;
     const yB = TOPPAD + to * STEP - 40 + 62;
-    /* うねる地形帯 */
     const ph = ai % 2 === 0 ? 16 : -16;
     zonesSvg += `<path d="M0 ${yT} Q ${W*0.25} ${yT+ph} ${W*0.5} ${yT} T ${W} ${yT}
       L ${W} ${yB} Q ${W*0.75} ${yB+ph} ${W*0.5} ${yB} T 0 ${yB} Z"
       fill="${a.color}" opacity="0.18"/>`;
-    /* エリアゲート看板（2エリアめ以降の入口） */
     if (ai > 0) {
-      /* 前後ノードの平均と反対側に置く（ラベル・星との重なり回避） */
       const avg = (XS[a.from - 1] + XS[a.from]) / 2;
       const gx = Math.max(52, Math.min(W - 52, avg > 50 ? W * 0.24 : W * 0.76));
       const gy = TOPPAD + a.from * STEP - 40 - Math.round(STEP * 0.52);
@@ -1738,41 +2181,36 @@ function renderMap() {
 
   let currentSet = false;
   const pts = [];
-  STAGES.forEach((s, i) => {
+  stages.forEach((s, i) => {
     const x = XS[i] / 100 * W, y = TOPPAD + i * STEP - 40;
     pts.push([x, y]);
-    /* 景観デコ：ノードの反対サイドに散らす */
-    const area = areaOf(i);
-    if (area && AREA_DECO[area.name]) {
-      const kinds = AREA_DECO[area.name];
+    const area = areaOf(island, i);
+    if (area && area.deco) {
+      const kinds = area.deco;
       const k1 = DECO[kinds[i % kinds.length]];
       const dx = (XS[i] > 50 ? 0.14 : 0.86) + ((i * 7) % 5 - 2) * 0.012;
-      const sc = 0.85 + (i % 3) * 0.18;
-      if (k1) decoSvg += k1(Math.round(W * dx), Math.round(y + 18 + ((i * 13) % 3) * 14), sc.toFixed(2));
+      if (k1) decoSvg += k1(Math.round(W * dx), Math.round(y + 18 + ((i * 13) % 3) * 14), (0.85 + (i % 3) * 0.18).toFixed(2));
       const k2 = DECO[kinds[(i + 1) % kinds.length]];
       const dx2 = (XS[i] > 50 ? 0.9 : 0.1) + ((i * 11) % 4 - 1.5) * 0.014;
       if (k2) decoSvg += k2(Math.round(W * dx2), Math.round(y + STEP * (0.5 + ((i * 5) % 3) * 0.09)), (0.68 + (i % 2) * 0.22).toFixed(2));
     }
-    const unlocked = isUnlocked(i);
-    const st = stg(s.id);
+    const unlocked = isUnlocked(island, i);
+    const st = stg(island.id, s.id);
     const node = document.createElement('button');
     node.className = 'stageNode' + (unlocked ? '' : ' locked') + (st.cleared ? ' cleared' : '');
     if (unlocked && !st.cleared && !currentSet) { node.classList.add('current'); currentSet = true; }
     node.style.left = x + 'px'; node.style.top = y + 'px';
-    node.style.setProperty('--stagecolor', s.color);
+    node.style.setProperty('--stagecolor', s.boss ? 'var(--purple)' : s.test ? 'var(--coral)' : 'var(--ocean)');
     const stars = st.cleared ? '★'.repeat(st.best) + '☆'.repeat(3 - st.best) : '';
-    const discInner = SCENE_SVGS[s.scene] || (unlocked ? s.icon : '🔒');
-    const discClass = s.scene ? 'disc disc-scene' : 'disc';
+    const discInner = SCENE_SVGS[s.scene] || (unlocked ? '⭐' : '🔒');
     const flag = st.cleared ? `<span class="nodeFlag">${FLAG_SVG}</span>` : '';
-    const here = node.classList.contains('current')
-      ? `<span class="nodeBuddy buddy" aria-hidden="true">${BUDDY_SVG}</span>` : '';
-    node.innerHTML = `<span class="${discClass}">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}${here}`;
+    const here = node.classList.contains('current') ? `<span class="nodeBuddy buddy" aria-hidden="true">${BUDDY_SVG}</span>` : '';
+    node.innerHTML = `<span class="disc disc-scene">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}${here}`;
     if (unlocked) node.onclick = () => startQuiz(i);
     else node.onclick = () => { $('#fbBuddy').hidden = true; $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; $('#fbAns').classList.remove('fade'); flashFB(1100); };
     wrap.appendChild(node);
   });
 
-  /* うねる いっぽんみち（縁取り＋地面＋あしあと点線の3層） */
   const svg = $('#trail');
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
@@ -1792,8 +2230,6 @@ window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap()
 /* ================= クイズエンジン ================= */
 let Q = { stageIdx:0, list:[], pos:0, correct:0, busy:false };
 
-/* 直前トライで出した問題キー（ステージごと・メモリ保持）。
-   「さっきと おなじ もんだい」の連続を避ける */
 const RECENT_KEYS = {};
 function buildQuestions(stage) {
   const list = [], seen = new Set();
@@ -1801,42 +2237,48 @@ function buildQuestions(stage) {
   let guard = 0;
   while (list.length < stage.n && guard++ < 400) {
     const q = stage.gen();
-    /* 実体キー優先（同じ漢字・時刻・式は選択肢が違っても同一問題とみなす） */
     const key = q.key || q.text;
     if (seen.has(key)) continue;
-    /* 前半の試行では 直前トライと同じ問題も避ける（プールが小さい場合は後半で許容） */
     if (recent.has(key) && guard < 250) continue;
     seen.add(key); list.push(q);
+  }
+  /* チャレンジ！（ふざけ文章題）を まいかい 1もん まぜる */
+  if (stage.challenge && list.length) {
+    const c = qChallenge();
+    list[list.length - 1] = c;
+    seen.add(c.key || c.text);
   }
   RECENT_KEYS[stage.id] = seen;
   return list;
 }
 
 function startQuiz(i) {
-  const s = STAGES[i];
+  const island = curIsland;
+  const s = island.stages[i];
   const openQuiz = () => {
     const scr = $('#scr-quiz');
     wordsReady.then(() => {
       Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
       if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
       show('quiz');
-      playBGM(bgmOfTheme(s.theme));
+      playBGM(s.boss || s.test ? 'tou' : bgmOfTheme(s.theme));
       renderQ();
     });
   };
-  if ((s.intro || s.pirate) && state.introSeen[s.id] !== today()) {
+  const d = isl(island.id);
+  if ((s.intro || s.hench) && d.introSeen[s.id] !== today()) {
     const iv = $('#introVillain');
-    if (s.pirate) {
+    if (s.hench) {
       iv.hidden = false;
-      setVillainFace($('#introVillainSvg'), s.boss ? 'angry' : 'normal');
-      $('#introVillainMsg').textContent = 'ダジャーレ「' + s.pirate + '」';
+      setCharFace($('#introVillainSvg'), island.hench.svg, (s.boss || s.test) ? 'angry' : 'normal');
+      $('#introVillainMsg').textContent = island.hench.name + '「' + s.hench + '」';
     } else iv.hidden = true;
     setBuddyFace($('#introBuddy'), 'normal');
     $('#introMsg').textContent = s.intro;
     const modal = $('#introModal');
     modal.classList.add('show');
     const go = () => {
-      state.introSeen[s.id] = today(); save();
+      d.introSeen[s.id] = today(); save();
       modal.classList.remove('show');
       $('#introGo').onclick = null; modal.onclick = null;
       openQuiz();
@@ -1849,28 +2291,86 @@ $('#backBtn').onclick = () => show('map');
 
 function renderQ() {
   const q = Q.list[Q.pos];
+  const stage = curIsland.stages[Q.stageIdx];
   $('#dots').innerHTML = Q.list.map((_, i) => {
     if (i < Q.pos) return `<i class="${Q.list[i]._ok ? 'ok' : 'ng'}"></i>`;
     return `<i class="${i === Q.pos ? 'now' : ''}"></i>`;
   }).join('');
-  $('#qText').innerHTML = q.html ? q.text : q.text.replace(/</g,'&lt;');
-  const curStage = STAGES[Q.stageIdx];
-  $('#qSub').textContent = curStage.subFlavor || (q.input ? 'すうじを おして OK！' : 'こたえを えらんでね');
+  $('#qText').innerHTML = q.html ? q.text : q.text.replace(/</g, '&lt;');
+  $('#qSub').textContent = q.sub || stage.subFlavor || (q.input ? 'すうじを おして OK！' : 'こたえを えらんでね');
 
-  const ch = $('#choices'), pad = $('#pad');
+  const ch = $('#choices'), pad = $('#pad'), tap = $('#tapArea');
+  ch.className = ''; ch.innerHTML = ''; ch.style.display = 'none';
+  pad.classList.remove('show');
+  tap.hidden = true; tap.innerHTML = '';
+
+  if (q.type === 'match') { renderMatch(q, ch); return; }
+  if (q.type === 'tapcount') {
+    renderTapCount(q, tap);
+    pad.classList.add('show'); $('#ansBox').textContent = ''; renderKeys();
+    return;
+  }
+  if (q.type === 'dig') { renderDig(q, ch); return; }
   if (q.input) {
-    ch.innerHTML = ''; ch.style.display = 'none';
-    pad.classList.add('show');
-    $('#ansBox').textContent = '';
-    renderKeys();
+    pad.classList.add('show'); $('#ansBox').textContent = ''; renderKeys();
   } else {
-    pad.classList.remove('show');
     ch.style.display = 'grid';
     ch.className = q.choices.length === 2 ? 'one' : '';
-    ch.id = 'choices';
     ch.innerHTML = q.choices.map((c, i) => `<button class="chBtn" data-i="${i}">${c}</button>`).join('');
     ch.querySelectorAll('button').forEach(b => b.onclick = () => answer(Number(b.dataset.i)));
   }
+}
+
+function renderTapCount(q, host) {
+  host.hidden = false;
+  let counted = 0;
+  host.innerHTML = Array.from({length:q.k}, (_, i) =>
+    `<button class="tapItem" data-i="${i}">${ITEM_SVGS[q.item] || ITEM_SVGS.coin}<span class="cnt"></span></button>`).join('');
+  host.querySelectorAll('.tapItem').forEach(b => b.onclick = () => {
+    if (b.classList.contains('counted')) return;
+    b.classList.add('counted');
+    counted++;
+    b.querySelector('.cnt').textContent = counted;
+  });
+}
+
+function renderMatch(q, host) {
+  host.style.display = 'grid';
+  host.className = 'matchGrid';
+  host.innerHTML =
+    q.tops.map((v, i) => `<button class="mcard" data-row="t" data-v="${v}" data-i="${i}">${v}</button>`).join('') +
+    q.bots.map((v, i) => `<button class="mcard" data-row="b" data-v="${v}" data-i="${i}">${v}</button>`).join('');
+  let sel = null, done = 0, miss = 0;
+  host.querySelectorAll('.mcard').forEach(b => b.onclick = () => {
+    if (b.classList.contains('ok') || Q.busy) return;
+    if (!sel) { sel = b; b.classList.add('sel'); return; }
+    if (sel === b) { b.classList.remove('sel'); sel = null; return; }
+    if (sel.dataset.row === b.dataset.row) { sel.classList.remove('sel'); sel = b; b.classList.add('sel'); return; }
+    const sum = Number(sel.dataset.v) + Number(b.dataset.v);
+    if (sum === q.target) {
+      sel.classList.remove('sel'); sel.classList.add('ok'); b.classList.add('ok');
+      sndOK(); done++;
+      sel = null;
+      if (done === q.tops.length) judge(miss === 0, miss === 0 ? '' : `あわせて ${q.target}`);
+    } else {
+      miss++;
+      sndNG();
+      [sel, b].forEach(x => { x.classList.remove('ng'); void x.offsetWidth; x.classList.add('ng'); });
+      sel.classList.remove('sel'); sel = null;
+    }
+  });
+}
+
+function renderDig(q, host) {
+  host.style.display = 'grid';
+  host.className = 'digGrid';
+  host.innerHTML = q.choices.map((c, i) =>
+    `<button class="digBtn" data-i="${i}">${moundSVG}<b>${c}</b></button>`).join('');
+  host.querySelectorAll('.digBtn').forEach(b => b.onclick = () => {
+    const i = Number(b.dataset.i);
+    if (i === q.ans) { b.innerHTML = coinBurstSVG; answer(i); }
+    else { b.classList.remove('ng'); void b.offsetWidth; b.classList.add('ng'); answer(i); }
+  });
 }
 
 function renderKeys() {
@@ -1895,11 +2395,10 @@ function flashFB(ms, cb) {
   setTimeout(() => { $('#fb').classList.remove('show'); if (cb) cb(); }, ms);
 }
 
-function answer(v) {
+function judge(ok, correctLabel) {
   if (Q.busy) return;
   Q.busy = true;
   const q = Q.list[Q.pos];
-  const ok = q.input ? String(v) === q.ans : v === q.ans;
   q._ok = ok;
   if (ok) { Q.correct++; sndOK(); } else sndNG();
 
@@ -1910,14 +2409,10 @@ function answer(v) {
 
   const ansEl = $('#fbAns');
   ansEl.classList.remove('fade');
-  if (ok) { ansEl.textContent = ''; }
-  else { ansEl.textContent = 'こたえは 「' + (q.input ? (q.ans + (q.unit || '')) : q.choices[q.ans]) + '」'; void ansEl.offsetWidth; ansEl.classList.add('fade'); }
+  if (ok || !correctLabel) { ansEl.textContent = ''; }
+  else { ansEl.textContent = 'こたえは 「' + correctLabel + '」'; void ansEl.offsetWidth; ansEl.classList.add('fade'); }
 
   if (ok) {
-    if (!q.input && typeof v === 'number') {
-      const btn = $('#choices').querySelector('[data-i="' + v + '"]');
-      if (btn) { btn.classList.add('bounce'); }
-    }
     const p = $('#fbParticles'); p.classList.remove('go'); void p.offsetWidth; p.classList.add('go');
   } else {
     const card = $('#fbCard'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
@@ -1930,36 +2425,48 @@ function answer(v) {
   });
 }
 
+function answer(v) {
+  if (Q.busy) return;
+  const q = Q.list[Q.pos];
+  const ok = q.input ? String(v) === q.ans : v === q.ans;
+  if (ok && !q.input && typeof v === 'number' && q.type !== 'dig') {
+    const btn = $('#choices').querySelector('[data-i="' + v + '"]');
+    if (btn) btn.classList.add('bounce');
+  }
+  const label = q.input ? (q.ans + (q.unit || '')) : (q.ansLabel || (q.choices ? q.choices[q.ans] : ''));
+  judge(ok, label);
+}
+
 /* ================= けっか ================= */
 function finish() {
-  stopBGM();  /* けっか画面は クイズ曲を とめて ファンファーレへ */
-  const s = STAGES[Q.stageIdx], n = Q.list.length, c = Q.correct;
+  stopBGM();
+  const island = curIsland;
+  const s = island.stages[Q.stageIdx], n = Q.list.length, c = Q.correct;
   const passLine = Math.ceil(n * 0.6);
-  const starLine = [n, n - 2, passLine];
-  const starN = c >= starLine[0] ? 3 : c >= starLine[1] ? 2 : c >= starLine[2] ? 1 : 0;
+  const starN = c >= n ? 3 : c >= n - 2 ? 2 : c >= passLine ? 1 : 0;
   const cleared = c >= passLine;
 
-  const st = stg(s.id);
+  const d = isl(island.id);
+  const st = stg(island.id, s.id);
   const firstClear = cleared && !st.cleared;
   st.plays++; st.tq += n; st.tc += c; st.last = today();
   if (cleared) { st.cleared = true; if (starN > st.best) st.best = starN; }
-  state.stats[s.id] = st;
-  const d = state.days[today()] || { q:0, c:0 };
-  d.q += n; d.c += c; state.days[today()] = d;
-  if (firstClear && !state.treasures.includes(s.id)) state.treasures.push(s.id);
+  d.stats[s.id] = st;
+  const day = state.days[today()] || { q:0, c:0 };
+  day.q += n; day.c += c; state.days[today()] = day;
+  if (firstClear && !d.treasures.includes(s.id)) d.treasures.push(s.id);
   save();
 
   $('#resTitle').textContent = cleared ? (s.clearTitle || (s.name + ' クリア！')) : 'あと すこし！';
   $('#resStars').textContent = cleared ? '★'.repeat(starN) + '☆'.repeat(3 - starN) : '🔥';
   $('#resScore').textContent = `${n}もんちゅう ${c}もん せいかい！`;
 
-  /* 船長の まけおしみ（クリア時のみ。不合格時は はげましだけにする） */
   const rv = $('#resVillain');
   if (cleared) {
     rv.hidden = false;
-    setVillainFace($('#resVillainSvg'), 'oops');
-    const line = VILLAIN_LOSE_BOSS[s.id] || pick(VILLAIN_LOSE);
-    $('#resVillainMsg').textContent = 'ダジャーレ「' + line + '」';
+    setCharFace($('#resVillainSvg'), island.hench.svg, 'oops');
+    const line = s.boss ? island.hench.loseBoss : s.test ? island.hench.loseTest : pick(island.hench.lose);
+    $('#resVillainMsg').textContent = island.hench.name + '「' + line + '」';
   } else rv.hidden = true;
 
   const tr = $('#resTreasure');
@@ -1970,62 +2477,69 @@ function finish() {
     $('#resTreasureText').textContent = `「${s.treasure.n}」を とりもどした！`;
     const ico = $('#resTreasureIco');
     const tsvg = TREASURE_SVGS[s.treasure.scene];
-    if (tsvg) {
-      ico.innerHTML = tsvg;
-      const wrap = ico.querySelector('.scroll-wrap');
-      if (wrap) { wrap.classList.remove('pop'); void wrap.offsetWidth; wrap.classList.add('pop'); }
-      const a = ico.querySelector('.tr-a'), b = ico.querySelector('.tr-b');
-      if (a && b) {
-        setTimeout(() => {
-          a.style.transition = 'opacity .4s'; b.style.transition = 'opacity .4s';
-          b.style.display = ''; void b.offsetWidth;
-          a.style.opacity = '0'; b.style.opacity = '1';
-        }, 600);
-      }
-    } else {
-      ico.innerHTML = `<span class="tico">${s.treasure.i}</span>`;
+    ico.innerHTML = tsvg || '';
+    const wrap2 = ico.querySelector('.scroll-wrap');
+    if (wrap2) { wrap2.classList.remove('pop'); void wrap2.offsetWidth; wrap2.classList.add('pop'); }
+    const a = ico.querySelector('.tr-a'), b = ico.querySelector('.tr-b');
+    if (a && b) {
+      setTimeout(() => {
+        a.style.transition = 'opacity .4s'; b.style.transition = 'opacity .4s';
+        b.style.display = ''; void b.offsetWidth;
+        a.style.opacity = '0'; b.style.opacity = '1';
+      }, 600);
     }
     if (s.boss && cleared) fireBossParticles();
     const rb = $('#resBuddy'); rb.dataset.mounted = '0';
     setTimeout(() => { setBuddyFace(rb, 'super'); rbWrap.classList.add('in'); }, 1000);
   } else tr.hidden = true;
+
   if (cleared) { sndClear(); setTimeout(() => { if (!$('#scr-result').hidden) playBGM('victory'); }, 1400); }
   else sndOshii();
   show('result');
 
-  /* エンディング：17この たからが すべて そろったら 1かいだけ */
-  if (cleared && state.treasures.length === STAGES.length && !state.endingSeen) {
-    setTimeout(showEnding, s.boss ? 1800 : 900);
+  if (cleared && islandCleared(island) && !d.endingSeen) {
+    setTimeout(() => showIslandClear(island), s.boss ? 1800 : 900);
   }
-}
-
-function showEnding() {
-  state.endingSeen = 1; save();
-  $('#endTreasures').innerHTML = STAGES.map(s =>
-    `<span>${TREASURE_SVGS[s.treasure.scene] || s.treasure.i}</span>`).join('');
-  setVillainFace($('#endVillain'), 'oops');
-  $('#endMsg').textContent = 'ダジャーレ「' + ENDING_SPEECH + '」';
-  $('#endTitle').textContent = '✨ しょうごう「しまの だいえいゆう」✨';
-  $('#endModal').classList.add('show');
-  fireBossParticles();
-  $('#endGo').onclick = () => $('#endModal').classList.remove('show');
 }
 $('#retryBtn').onclick = () => startQuiz(Q.stageIdx);
 $('#mapBtn').onclick = () => show('map');
 
+function showIslandClear(island) {
+  const d = isl(island.id);
+  d.endingSeen = 1; save();
+  $('#endTreasures').innerHTML = island.stages.map(s =>
+    `<span>${TREASURE_SVGS[s.treasure.scene] || ''}</span>`).join('');
+  setCharFace($('#endVillain'), island.hench.svg, 'oops');
+  $('#endMsg').textContent = island.hench.name + '「' + island.hench.loseBoss + '」';
+  $('#endTitle').textContent = `✨ しょうごう「${island.clearTitle}」✨`;
+  $('#endModal').classList.add('show');
+  fireBossParticles();
+  $('#endGo').onclick = () => $('#endModal').classList.remove('show');
+}
+
 /* ================= ずかん ================= */
 function renderZukan() {
-  $('#zkCount').textContent = `みつけた たから：${state.treasures.length} ／ ${STAGES.length}`;
-  $('#zkGrid').innerHTML = STAGES.map(s => {
-    const got = state.treasures.includes(s.id);
-    const memo = (got && s.treasure.memo) ? `<div class="zm">${s.treasure.memo}</div>` : '';
-    const pc = (got && s.treasure.pc) ? `<div class="zm zp">ダジャーレ「${s.treasure.pc}」</div>` : '';
-    return `<div class="zkCard ${got ? 'yes' : 'no'}">
-      <div class="zi">${got ? s.treasure.i : '❓'}</div>
-      <div class="zn">${got ? s.treasure.n : '？？？'}</div>
-      ${memo}${pc}
-    </div>`;
-  }).join('');
+  $('#zkGrid').style.display = 'block';
+  const playable = ISLANDS.filter(il => !il.soon);
+  let total = 0, got = 0, html = '';
+  playable.forEach(il => {
+    const d = isl(il.id);
+    total += il.stages.length; got += d.treasures.length;
+    html += `<h3 style="font-size:16px;margin:14px 0 8px">⛵ ${il.title}</h3><div class="zkGridIn" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">`;
+    html += il.stages.map(s => {
+      const has = d.treasures.includes(s.id);
+      const memo = (has && s.treasure.memo) ? `<div class="zm">${s.treasure.memo}</div>` : '';
+      const pc = (has && s.treasure.pc) ? `<div class="zm zp">${il.hench.name}「${s.treasure.pc}」</div>` : '';
+      return `<div class="zkCard ${has ? 'yes' : 'no'}">
+        <div class="zi">${has ? (TREASURE_SVGS[s.treasure.scene] || '') : '❓'}</div>
+        <div class="zn">${has ? s.treasure.n : '？？？'}</div>
+        ${memo}${pc}
+      </div>`;
+    }).join('');
+    html += '</div>';
+  });
+  $('#zkCount').textContent = `みつけた たから：${got} ／ ${total}`;
+  $('#zkGrid').innerHTML = html;
 }
 
 /* ================= おうちのひと ================= */
@@ -2051,10 +2565,11 @@ function openDash() {
   $('#pinPad').style.display = 'none';
   const dash = $('#dash'); dash.hidden = false;
   let tq = 0, tc = 0;
-  Object.values(state.stats).forEach(s => { tq += s.tq; tc += s.tc; });
+  ISLANDS.filter(il => !il.soon).forEach(il => {
+    Object.values(isl(il.id).stats).forEach(s => { tq += s.tq; tc += s.tc; });
+  });
   const rate = tq ? Math.round(tc / tq * 100) : 0;
 
-  /* 直近7日 */
   const days = [];
   for (let i = 6; i >= 0; i--) {
     const dt = new Date(); dt.setDate(dt.getDate() - i);
@@ -2063,11 +2578,15 @@ function openDash() {
   }
   const mx = Math.max(1, ...days.map(d => d.q));
 
-  const rows = STAGES.map(s => {
-    const st = stg(s.id);
-    const r = st.tq ? Math.round(st.tc / st.tq * 100) : '-';
-    return `<tr><td class="l">${s.icon} ${s.name}</td><td>${st.plays}</td><td>${st.cleared ? '★'.repeat(st.best) : '—'}</td><td>${r === '-' ? '—' : r + '%'}</td><td>${st.last || '—'}</td></tr>`;
-  }).join('');
+  let rows = '';
+  ISLANDS.filter(il => !il.soon).forEach(il => {
+    rows += `<tr><th colspan="5" style="text-align:left">⛵ ${il.title}</th></tr>`;
+    rows += il.stages.map(s => {
+      const st = stg(il.id, s.id);
+      const r = st.tq ? Math.round(st.tc / st.tq * 100) : '-';
+      return `<tr><td class="l">${s.name}<br><span style="font-size:11px;color:var(--ink-soft)">${s.skill || ''}</span></td><td>${st.plays}</td><td>${st.cleared ? '★'.repeat(st.best) : '—'}</td><td>${r === '-' ? '—' : r + '%'}</td><td>${st.last || '—'}</td></tr>`;
+    }).join('');
+  });
 
   dash.innerHTML = `
     <div class="cards">
@@ -2088,11 +2607,11 @@ function openDash() {
     <div id="backupMsg"></div>
     <button id="renameBtn" style="margin-top:12px;width:100%;min-height:48px;border-radius:14px;background:#fff;border:2px solid var(--ocean);color:var(--ocean-d);font-weight:bold;font-size:15px">コンパスの なまえを かえる（いま：${buddyName()}）</button>
     <button id="resetBtn">データをすべてリセット</button>
-    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※バックアップはファイルとして書き出し／読み込みできます（機種変更や消去対策）。<br>※PINは v1 では「1234」固定です。</p>`;
+    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※バックアップはファイルとして書き出し／読み込みできます。<br>※PINは v1 では「1234」固定です。</p>`;
   $('#renameBtn').onclick = () => { askBuddyName(); };
   $('#resetBtn').onclick = () => {
     if (confirm('本当にすべての進捗を消しますか？')) {
-      state = { stats:{}, treasures:[], days:{}, buddyName:'', introSeen:{} }; save(); show('map'); askBuddyName();
+      state = { v:2, buddyName:'', days:{}, storySeen2:0, islands:{} }; save(); show('sea'); askBuddyName();
     }
   };
 
@@ -2100,7 +2619,7 @@ function openDash() {
 
   $('#exportBtn').onclick = () => {
     try {
-      const payload = { app:'bouken-drill', version:1, savedAt: new Date().toISOString(), state };
+      const payload = { app:'bouken-drill', version:2, savedAt: new Date().toISOString(), state };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -2121,9 +2640,9 @@ function openDash() {
       try {
         const payload = JSON.parse(reader.result);
         const incoming = payload && payload.state ? payload.state : payload;
-        if (!incoming || typeof incoming !== 'object' || !incoming.stats) throw new Error('bad format');
+        if (!incoming || typeof incoming !== 'object' || incoming.v !== 2) throw new Error('bad format');
         if (!confirm('今の進捗を、読み込んだバックアップで上書きします。よろしいですか？')) { e.target.value=''; return; }
-        state = Object.assign({ stats:{}, treasures:[], days:{} }, incoming);
+        state = Object.assign({ v:2, buddyName:'', days:{}, storySeen2:0, islands:{} }, incoming);
         save();
         msg('読み込みました！');
         openDash();
@@ -2136,7 +2655,7 @@ function openDash() {
   };
 }
 
-/* ================= 命名ダイアログ ================= */
+/* ================= 命名・オープニング ================= */
 function initParticles() {
   const cols = ['#F5C56B', '#D4A63C', '#8E7BC4', '#F5C56B', '#D4A63C'];
   const dxs = [-24, -10, 4, 16, 24];
@@ -2154,24 +2673,23 @@ function askBuddyName() {
     const v = $('#nameInput').value.trim().replace(/\s+/g, '').slice(0, 6);
     state.buddyName = v || 'コンパスくん'; save();
     modal.classList.remove('show');
-    showStory();
+    showStory9();
   };
   $('#nameGo').onclick = done;
   $('#nameInput').onkeydown = e => { if (e.key === 'Enter') done(); };
 }
 
-/* ================= オープニング（ちょうせんじょう） ================= */
-function showStory() {
-  if (state.storySeen) return;
-  setVillainFace($('#storyVillain'), 'normal');
-  const letter = state.treasures.length ? STORY_LETTER_MID : STORY_LETTER;
-  $('#storyText').innerHTML = letter.replace(/</g, '&lt;') +
+const LETTER9 = 'まなびの ぐんとうの たからは ぜーんぶ いただいた！ しまじまには おれさまの かんぶたちを おいてある。とりかえせる もんなら とりかえして みな！ …おっと、こうかい するなよ？ かいぞくだけに、こうかい（ふねの たび）なら まいにち してるけどな！ がっはっは！';
+function showStory9() {
+  if (state.storySeen2) return;
+  setCharFace($('#storyVillain'), 'dajare', 'normal');
+  $('#storyText').innerHTML = LETTER9.replace(/</g, '&lt;') +
     '<div class="storySign">—— ダジャレかいぞくだん キャプテン・ダジャーレ</div>';
-  $('#storyBuddyMsg').textContent = withName('「たいへんだ！ たからを とりかえしに いこう！」');
+  $('#storyBuddyMsg').textContent = withName('「たいへんだ！ しまの たからを とりかえしに いこう！」');
   const modal = $('#storyModal');
   modal.classList.add('show');
   $('#storyGo').onclick = () => {
-    state.storySeen = 1; save();
+    state.storySeen2 = 1; save();
     modal.classList.remove('show');
   };
 }
@@ -2179,8 +2697,8 @@ function showStory() {
 /* ================= init ================= */
 initParticles();
 loadWords();
-show('map');
-if (!state.buddyName) askBuddyName(); else showStory();
+show('sea');
+if (!state.buddyName) askBuddyName(); else showStory9();
 
 /* ---- Service Worker：登録＋更新検知 → 子ども向けトースト（P0） ---- */
 function notifyUpdate(sw) {
