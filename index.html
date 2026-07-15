@@ -429,6 +429,8 @@ td.l{text-align:left}
   border:2px solid var(--sand2); border-radius:12px; padding:9px 13px; font-weight:bold; font-size:14px;
   color:var(--ink-soft); box-shadow:0 3px 0 rgba(0,0,0,.12)}
 #seaBtn:active{transform:translateY(2px)}
+#unlockBadge{position:sticky; top:14px; float:right; margin:10px 12px -46px 0; z-index:6;
+  background:#7A5713; color:#fff; border-radius:999px; padding:7px 12px; font-weight:bold; font-size:12px}
 /* tapcount（タップでかぞえる） */
 #tapArea{background:var(--white); border:3px solid var(--sand2); border-radius:18px; padding:12px;
   margin-bottom:12px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center}
@@ -487,6 +489,7 @@ td.l{text-align:left}
   <!-- しまマップ -->
   <section class="screen" id="scr-map">
     <button id="seaBtn">⛵ しまえらび</button>
+    <span id="unlockBadge" hidden>🔓 かくにんモード</span>
     <div id="mapWrap">
       <div id="island"></div>
       <svg id="trail" aria-hidden="true"></svg>
@@ -2077,7 +2080,7 @@ const isl = id => state.islands[id] || (state.islands[id] = { stats:{}, treasure
 const stg = (islandId, sid) => isl(islandId).stats[sid] || { plays:0, best:0, tq:0, tc:0, cleared:false, last:'' };
 const today = () => new Date().toISOString().slice(0, 10);
 let curIsland = ISLANDS[0];
-function isUnlocked(island, i) { return i === 0 || stg(island.id, island.stages[i - 1].id).cleared; }
+function isUnlocked(island, i) { if (state.unlockAll) return true; return i === 0 || stg(island.id, island.stages[i - 1].id).cleared; }
 function islandCleared(island) { return island.stages.every(st => stg(island.id, st.id).cleared); }
 
 /* ================= 画面切替 ================= */
@@ -2138,6 +2141,7 @@ const xsFor = stages => stages.map((st, i) =>
   (st.boss || st.test) ? 48 + ((i % 2) ? 6 : -6) : ((i % 2) ? 64 : 32) + ((i * 7) % 9 - 4));
 
 function renderMap() {
+  $('#unlockBadge').hidden = !state.unlockAll;
   const island = curIsland;
   const stages = island.stages;
   const XS = xsFor(stages);
@@ -2605,9 +2609,13 @@ function openDash() {
     </div>
     <input type="file" id="importFile" accept="application/json" hidden>
     <div id="backupMsg"></div>
+    <button id="unlockBtn" style="margin-top:12px;width:100%;min-height:48px;border-radius:14px;background:#fff;border:2px solid ${state.unlockAll ? 'var(--gold-d)' : 'var(--sand2)'};color:${state.unlockAll ? '#7A5713' : 'var(--ink-soft)'};font-weight:bold;font-size:15px">🔓 かくにんモード（全ステージ解放）：${state.unlockAll ? 'ON' : 'OFF'}</button>
     <button id="renameBtn" style="margin-top:12px;width:100%;min-height:48px;border-radius:14px;background:#fff;border:2px solid var(--ocean);color:var(--ocean-d);font-weight:bold;font-size:15px">コンパスの なまえを かえる（いま：${buddyName()}）</button>
     <button id="resetBtn">データをすべてリセット</button>
-    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※バックアップはファイルとして書き出し／読み込みできます。<br>※PINは v1 では「1234」固定です。</p>`;
+    <p class="note">※苦手の目安：正答率が低い、または回数が多いのに星が増えないステージ。<br>※バックアップはファイルとして書き出し／読み込みできます。<br>※PINは v1 では「1234」固定です。<br>※かくにんモード：動作確認用に全ステージを一時的に解放します（進捗には影響しません）。</p>`;
+  $('#unlockBtn').onclick = () => {
+    state.unlockAll = state.unlockAll ? 0 : 1; save(); openDash();
+  };
   $('#renameBtn').onclick = () => { askBuddyName(); };
   $('#resetBtn').onclick = () => {
     if (confirm('本当にすべての進捗を消しますか？')) {
