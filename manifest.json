@@ -1,14 +1,32 @@
 {
-  "name": "ぼうけんドリル 〜まなびの しま〜",
-  "short_name": "ぼうけんドリル",
-  "start_url": "./",
+  "name": "ひらめき工房と そらのまち",
+  "short_name": "ひらめき工房",
+  "description": "足し算で空のまちを修理する、小学1年生向け学習ゲーム",
+  "lang": "ja",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#153A49",
-  "theme_color": "#153A49",
+  "orientation": "any",
+  "background_color": "#10143c",
+  "theme_color": "#161b47",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }
