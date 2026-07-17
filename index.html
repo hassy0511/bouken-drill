@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ぼうけんドリル">
-<meta name="theme-color" content="#2C819C">
+<meta name="theme-color" content="#153A49">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>ぼうけんドリル 〜まなびの しま〜</title>
@@ -281,8 +281,8 @@ td.l{text-align:left}
   border-radius:14px; background:#fff; margin:10px 0 16px; font-family:inherit; color:var(--inkline)}
 
 /* 宝物演出（結果画面の巻物） */
-#resScroll{margin:8px auto 0; width:120px; height:96px}
-#resScroll.pop{animation:scroll-pop .5s cubic-bezier(0.34,1.56,0.64,1)}
+#resTreasureIco .scroll-wrap{margin:8px auto 0; width:120px; height:96px}
+#resTreasureIco .scroll-wrap.pop{animation:scroll-pop .5s cubic-bezier(0.34,1.56,0.64,1)}
 @keyframes scroll-pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 #resBuddyWrap{margin-top:6px; opacity:0}
 #resBuddyWrap.in{animation:ans-fade .3s ease forwards}
@@ -302,7 +302,7 @@ td.l{text-align:left}
 #resBuddy svg{width:80px; height:80px}
 #fbMark:empty{display:none}
 #resTreasureText{font-size:16px; font-weight:bold; margin-bottom:2px}
-#resScroll{display:inline-block; overflow:visible}
+#resTreasureIco .scroll-wrap{display:inline-block; overflow:visible}
 
 /* ---- エリア別テーマ配色（rev v3） ---- */
 #scr-quiz[data-stage-theme="mori"],
@@ -467,12 +467,195 @@ td.l{text-align:left}
   #updToast.show,.stageNode.current .nodeBuddy,#scr-map,.mcard.ng,.digBtn.ng{animation:none; transition:none}
   .stageNode.current .disc.disc-scene .bd-arch{opacity:.7}
 }
+/* ========================================================================
+   v10 REDESIGN — 上質な絵本 × 海賊の冒険ボードゲーム
+   ======================================================================== */
+:root{
+  --v10-navy:#153A49; --v10-navy2:#0E2B38; --v10-sea:#2388A7; --v10-sky:#76C8DC;
+  --v10-foam:#E9F8F5; --v10-cream:#FFF7E4; --v10-paper:#FFFDF8; --v10-ink:#243A3E;
+  --v10-muted:#5F7372; --v10-coral:#F06F51; --v10-coral2:#CB4E39; --v10-gold:#F5BE45;
+  --v10-gold2:#C9871D; --v10-green:#4B9B70; --v10-line:#173B49;
+  --v10-shadow:0 18px 50px rgba(14,43,56,.18); --v10-small-shadow:0 8px 20px rgba(14,43,56,.14);
+}
+body{background:#F6F0E2;color:var(--v10-ink);font-weight:500}
+button{outline-offset:3px}
+button:focus-visible,input:focus-visible{outline:4px solid rgba(245,190,69,.75)}
+main{background:
+  radial-gradient(circle at 8% 8%,rgba(255,255,255,.8) 0 4px,transparent 5px),
+  linear-gradient(180deg,#F9F3E5,#F4EBD7);background-size:36px 36px,auto}
+section.screen{padding-bottom:34px}
+
+/* Brand / chrome */
+#topbar{min-height:74px;padding:calc(env(safe-area-inset-top) + 8px) clamp(16px,4vw,34px) 8px;
+  background:var(--v10-navy);border-bottom:4px solid rgba(245,190,69,.9);box-shadow:0 5px 0 rgba(14,43,56,.18);z-index:30}
+.brand{display:flex;align-items:center;gap:11px}.brandMark{width:48px;height:48px;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.16))}
+.brandMark svg{display:block;width:100%;height:100%}.brandWords{display:flex;flex-direction:column;color:#fff;line-height:1.05}
+.brandWords b{font-size:19px;letter-spacing:.04em}.brandWords small{font-size:10px;letter-spacing:.16em;color:#AEE1E9;margin-top:5px;font-weight:800}
+#soundBtn{width:46px;height:46px;border-radius:50%;font-size:20px;background:#214F5E;border:2px solid #5B91A0;box-shadow:inset 0 0 0 3px rgba(255,255,255,.05)}
+
+#tabs{min-height:74px;background:rgba(255,253,248,.98);border-top:1px solid #D9D7C9;box-shadow:0 -8px 28px rgba(14,43,56,.1);z-index:35}
+#tabs button{position:relative;padding:8px 0 7px;gap:3px;color:#7D8B88;font-size:11px;font-weight:800;letter-spacing:.03em}
+#tabs button .ticon{width:28px;height:28px;display:block}.ticon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+#tabs button.on{color:var(--v10-sea)}#tabs button.on:before{content:"";position:absolute;top:-1px;width:48px;height:4px;border-radius:0 0 4px 4px;background:var(--v10-coral)}
+
+.eyebrow,.mapKicker,.resultKicker,.summaryKicker{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
+.eyebrow:before,.mapKicker:before,.resultKicker:before,.summaryKicker:before{content:"";width:18px;height:3px;border-radius:9px;background:currentColor}
+
+/* Sea / curriculum home */
+#scr-sea{padding:34px clamp(16px,5vw,44px) 44px;background:
+  radial-gradient(circle at 88% 12%,rgba(255,255,255,.18) 0 70px,transparent 72px),
+  radial-gradient(circle at 12% 84%,rgba(108,215,213,.16) 0 90px,transparent 92px),
+  linear-gradient(155deg,#17657E 0%,#238BA8 48%,#1C718B 100%);position:relative;overflow:hidden}
+#scr-sea:before,#scr-sea:after{content:"";position:absolute;left:-10%;right:-10%;height:80px;opacity:.14;pointer-events:none;
+  background:radial-gradient(40px 12px at 40px 12px,transparent 62%,#fff 64% 68%,transparent 70%);background-size:80px 28px}
+#scr-sea:before{top:165px}#scr-sea:after{bottom:90px;transform:scaleX(-1)}
+#seaHead,#seaGrid,#seaRoutes{position:relative;z-index:1;max-width:760px;margin-left:auto;margin-right:auto}
+#seaHead{color:#fff;margin-bottom:22px}#seaHead .eyebrow{color:#BDEAF0;margin-bottom:10px}
+#seaHead h2{font-size:clamp(31px,6vw,50px);line-height:1.08;letter-spacing:.02em;color:#fff;text-shadow:0 4px 0 rgba(14,43,56,.2)}
+#seaHead h2 em{font-style:normal;color:#FFE07A}#seaSub{display:block;max-width:570px;margin:12px 0 0;padding:0;background:none;color:#EAF8F8;font-size:15px;line-height:1.7;font-weight:700}
+#seaGrid{display:block}.islCard.hero{display:grid;grid-template-columns:minmax(260px,43%) 1fr;gap:0;padding:0;overflow:hidden;border:0;border-radius:30px;background:var(--v10-paper);box-shadow:0 10px 0 rgba(14,43,56,.25),0 25px 60px rgba(14,43,56,.26);text-align:left}
+.islCard.hero:hover{transform:translateY(-2px)}.islCard.hero:active{transform:translateY(7px);box-shadow:0 3px 0 rgba(14,43,56,.25),0 12px 30px rgba(14,43,56,.22)}
+.islCard.hero .islArt{height:100%;min-height:288px;background:#9DD9E2;border-right:4px solid var(--v10-line);position:relative;overflow:hidden}
+.islCard.hero .islArt:after{content:"PLAYABLE";position:absolute;left:14px;bottom:13px;padding:6px 10px;border-radius:999px;background:var(--v10-navy);color:#fff;font-size:9px;font-weight:900;letter-spacing:.14em}
+.islCard.hero .islArt svg{width:100%;height:100%;min-height:288px;object-fit:cover;border-radius:0;transform:scale(1.08)}
+.islBody{padding:28px 27px 24px;display:flex;flex-direction:column;min-width:0}.islRoute{font-size:10px;font-weight:900;letter-spacing:.16em;color:var(--v10-coral);margin-bottom:7px}
+.islCard.hero .islName{font-size:28px;line-height:1.2;color:var(--v10-navy);letter-spacing:.02em}.islCard.hero .islMeta{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--v10-muted);margin-top:8px}
+.islCard.hero .islMeta b{color:var(--v10-navy)}.islProgress{height:10px;border-radius:999px;background:#E6E5D9;overflow:hidden;margin:15px 0 18px;border:1px solid #D2D1C4}
+.islProgress i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--v10-gold),#F7D972);box-shadow:inset 0 -2px 0 rgba(201,135,29,.3)}
+.continueLabel{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:13px 15px;border-radius:16px;background:#EAF6F3;border:2px solid #BFDCD6;color:var(--v10-navy)}
+.continueLabel small{grid-column:1;font-size:10px;color:#5D817A;font-weight:900;letter-spacing:.08em}.continueLabel b{grid-column:1;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.continueLabel em{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-size:13px;font-weight:900;color:var(--v10-coral)}
+#seaRoutes{margin-top:26px;padding:18px;border-radius:22px;background:rgba(10,46,59,.46);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);color:#fff}
+.routeHead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.routeHead span{font-size:15px;font-weight:900}.routeHead b{font-size:11px;color:#BDEAF0}
+.routeGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.futureRoute{display:grid;grid-template-columns:32px 1fr;gap:3px 9px;align-items:center;padding:11px;border-radius:14px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14)}
+.routeDot{grid-row:1/3;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#174A5B;border:2px solid #6794A0;color:#9CC4CC;font-size:12px;font-weight:900}
+.futureRoute b{display:block;font-size:12px;color:#EAF8F8}.futureRoute small{display:block;font-size:9px;color:#9CC4CC;margin-top:2px}.futureRoute em{grid-column:2;font-size:8px;font-style:normal;letter-spacing:.12em;color:#FFE07A;font-weight:900}
+
+/* Map */
+#scr-map{padding:0;background:
+  radial-gradient(circle at 20% 20%,rgba(255,255,255,.12) 0 3px,transparent 4px),
+  linear-gradient(160deg,#1C7995,#2A9AB6 45%,#16657E);background-size:42px 42px,auto;animation:none}
+#mapHud{position:sticky;top:0;z-index:12;padding:12px clamp(14px,4vw,28px) 14px;background:rgba(14,43,56,.96);color:#fff;display:grid;grid-template-columns:auto 1fr minmax(260px,39%);gap:15px;align-items:center;box-shadow:0 8px 24px rgba(14,43,56,.24);border-bottom:3px solid var(--v10-gold)}
+#seaBtn{position:static;margin:0;padding:10px 13px;border:1px solid #557987;border-radius:12px;background:#214B5A;color:#D9F0F2;box-shadow:none;font-size:12px;white-space:nowrap}
+.mapHudMain{display:grid;grid-template-columns:1fr auto;gap:2px 12px}.mapKicker{grid-column:1/3;color:#7FC7D5}.mapHudMain strong{font-size:20px;line-height:1.2}.mapHudMain>span:not(.mapKicker){font-size:11px;color:#B4D4D9;align-self:end}
+.mapProgress{grid-column:1/3;height:7px;border-radius:999px;background:#315C69;overflow:hidden;margin-top:5px}.mapProgress i{display:block;height:100%;background:var(--v10-gold);border-radius:inherit;transition:width .4s ease}
+#mapMission{position:relative;display:grid;grid-template-columns:48px 1fr;gap:4px 9px;align-items:center;padding:9px 12px;border-radius:15px;background:#FFF6DF;color:var(--v10-ink);border:2px solid #D59B2A;box-shadow:0 3px 0 #9F6C13}
+.missionCompass{grid-row:1/3}.missionCompass svg{width:46px;height:46px}.missionCompass+span small{display:block;font-size:9px;color:#856B3F;font-weight:900}.missionCompass+span b{display:block;font-size:13px;line-height:1.25}
+.missionReward{grid-column:2;font-size:10px;color:#B1513E;font-weight:800}.missionReward:before{content:"◆ ";color:var(--v10-gold2)}
+#unlockBadge{position:absolute;right:12px;top:100%;float:none;margin:8px 0 0;background:#7A5713;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+#mapWrap{margin:18px clamp(10px,3vw,24px) 28px}.stageNode{width:172px;gap:4px;z-index:3}.stageNode .disc{width:88px;height:88px;border-width:5px;background:#fff;border-color:var(--v10-sea);box-shadow:0 7px 0 rgba(14,43,56,.24),0 12px 24px rgba(14,43,56,.12)}
+.stageNode .disc.disc-scene{background:#DDEAE5}.stageNode .nm{max-width:168px;padding:5px 11px;border:2px solid #E4D8B9;background:#FFFDF8;font-size:13px;color:var(--v10-navy);overflow:hidden;text-overflow:ellipsis}
+.stageNode .skill{max-width:164px;padding:2px 8px;border-radius:999px;background:rgba(21,58,73,.84);color:#fff;font-size:9px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stageNode .st{font-size:12px;height:14px;text-shadow:0 1px 0 #fff}.stageNode .nodeNo{position:absolute;top:12px;left:33px;z-index:5;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--v10-navy);border:3px solid #fff;color:#fff;font-size:11px;font-weight:900;box-shadow:0 3px 0 rgba(0,0,0,.15)}
+.stageNode .nodeState{position:absolute;top:-10px;z-index:5;padding:3px 8px;border-radius:999px;background:#55717A;color:#fff;border:2px solid #fff;font-size:8px;font-weight:900;letter-spacing:.14em}
+.stageNode.current .nodeState{background:var(--v10-coral)}.stageNode.cleared .nodeState{background:var(--v10-green)}.stageNode.cleared .disc{border-color:var(--v10-gold);box-shadow:0 7px 0 #B17A1E,0 0 0 6px rgba(245,190,69,.19)}
+.stageNode.locked{opacity:.72}.stageNode.locked .disc.disc-scene{filter:saturate(.2) brightness(.94);border-color:#789099}.stageNode.locked .nm{color:#687779;background:#EDF0EA}.stageNode.locked .skill{background:#73878A}
+.stageNode.current .disc{box-shadow:0 7px 0 #9B3C2A,0 0 0 8px rgba(240,111,81,.19);border-color:var(--v10-coral)}
+.stageNode.current .nodeBuddy{top:-10px;left:-26px}.stageNode.current .nodeBuddy svg{width:50px;height:50px}.nodeFlag{top:-8px;right:15px}
+#island{background:
+  radial-gradient(circle at 14% 18%,rgba(75,155,112,.16) 0 5px,transparent 6px),
+  radial-gradient(circle at 82% 70%,rgba(35,136,167,.12) 0 7px,transparent 8px),
+  #F7EBC9;border:9px solid #E7D29A;box-shadow:0 0 0 5px rgba(255,255,255,.55),0 22px 50px rgba(14,43,56,.25)}
+
+/* Quiz / mission battle */
+#scr-quiz{max-width:760px;padding:16px clamp(14px,3vw,24px) 34px;background:
+  radial-gradient(circle at 90% 14%,rgba(117,200,220,.18) 0 90px,transparent 92px),
+  linear-gradient(180deg,#FBF6E8,#F6EEDC);min-height:100%}
+#quizTop{display:grid;grid-template-columns:46px 1fr auto;gap:12px;margin-bottom:10px}.questHead{display:flex;flex-direction:column;justify-content:center;min-width:0}
+#questEyebrow{font-size:9px;color:var(--v10-coral);font-weight:900;letter-spacing:.15em}#questName{font-size:17px;color:var(--v10-navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#backBtn{width:46px;height:46px;padding:0;border-radius:50%;border:2px solid #D8D4C5;background:#FFFDF8;color:var(--v10-navy);font-size:22px;box-shadow:0 3px 0 #C7C2B1}
+#comboPill{align-self:center;padding:8px 11px;border-radius:999px;background:#E2E7E3;color:#75817D;font-size:9px;font-weight:900;letter-spacing:.1em;border:1px solid #CFD6D1;white-space:nowrap}
+#comboPill b{font-size:15px;margin-left:4px}#comboPill.hot{background:#FFF1C9;color:#A96B0F;border-color:#E9B640;animation:combo-pop .32s ease}
+@keyframes combo-pop{50%{transform:scale(1.12)}}
+#battleHud{display:grid;grid-template-columns:62px 1fr auto;gap:11px;align-items:center;background:var(--v10-navy);border-radius:20px;padding:10px 13px;color:#fff;box-shadow:0 6px 0 #0A2834,0 12px 24px rgba(14,43,56,.18);position:relative;overflow:hidden}
+#battleHud:after{content:"";position:absolute;right:-20px;top:-35px;width:110px;height:110px;border-radius:50%;border:18px solid rgba(255,255,255,.04)}
+.battleEnemy{position:relative;z-index:1;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#FFF0D2;border:3px solid var(--v10-gold);overflow:hidden}.battleEnemy svg{width:68px;height:68px}
+.battleCore{position:relative;z-index:1;min-width:0}.battleLabels{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-bottom:6px}.battleLabels b{font-size:13px}.battleLabels small{font-size:9px;color:#BFE3E5;text-align:right}
+#battleBar{height:15px;border-radius:999px;background:#09232E;border:2px solid #446D78;overflow:hidden;position:relative}#battleBar i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,#F47B5A,#FFD96B);border-radius:inherit;transition:width .35s cubic-bezier(.2,.8,.2,1)}
+#battleBar i:after{content:"";position:absolute;inset:2px 5px auto 5px;height:3px;border-radius:99px;background:rgba(255,255,255,.5)}#battleBar.broken i{background:linear-gradient(90deg,#4FB485,#8DE0B5)}
+#questionCounter{position:relative;z-index:1;min-width:48px;text-align:center;font-size:12px;font-weight:900;color:#FFF1C8}
+#dots{display:grid;grid-template-columns:repeat(14,1fr);gap:5px;margin:13px 3px 12px}#dots i{width:auto;height:6px;border:0;border-radius:99px;background:#DED9C9}#dots i.ok{background:var(--v10-green)}#dots i.ng{background:var(--v10-coral)}#dots i.now{background:var(--v10-gold);box-shadow:0 0 0 3px rgba(245,190,69,.18)}
+#qCard{min-height:170px;margin-bottom:14px;padding:27px 24px 22px;border:0;border-radius:24px;background:#FFFDF8!important;box-shadow:var(--v10-small-shadow),inset 0 0 0 3px var(--card-frame,#D7CBAE);position:relative;overflow:hidden!important}
+#qCard:before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--card-frame,var(--v10-sea))}.qcorner,.qmoss{display:none!important}
+#qTypeBadge{align-self:center;padding:5px 11px;border-radius:999px;background:#E7F2EF;color:#426E66;font-size:10px;font-weight:900;letter-spacing:.08em;margin-bottom:3px}
+#qText{font-size:clamp(24px,4.4vw,34px);line-height:1.45;color:var(--v10-ink)}#qSub{font-size:14px;color:var(--v10-muted);font-weight:700}
+#choices{gap:13px}.chBtn{min-height:80px;border:2px solid #A8CDC8!important;border-radius:18px;background:#FFFDF8;box-shadow:0 5px 0 #6F9C96!important;color:var(--v10-navy);transition:transform .12s,box-shadow .12s}.chBtn:hover{background:#F0FAF7}.chBtn:active{transform:translateY(4px);box-shadow:0 1px 0 #6F9C96!important}
+#pad{gap:12px}.answerRail{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:9px 14px 9px 17px;border:2px solid #C8C7B9;border-radius:18px;background:#FFFDF8;box-shadow:0 4px 0 #D8D2C0}.answerRail>span{font-size:11px;font-weight:900;color:#7A8580;letter-spacing:.1em}
+#ansBox{border:0;min-height:47px;background:#EAF5F2;border-radius:12px;font-size:32px;color:var(--v10-navy);box-shadow:inset 0 0 0 2px #C0DCD7}#ansBox:empty:before{content:"?";color:#AAB9B5}#answerUnit{min-width:25px;font-size:17px;font-weight:900;color:var(--v10-navy)}
+#keys{gap:9px}.key{min-height:58px;border:2px solid #D4D1C2;border-radius:15px;background:#FFFDF8;box-shadow:0 4px 0 #C9C5B5;color:var(--v10-navy)}.key.go{background:var(--v10-gold);border-color:#D99A20;box-shadow:0 4px 0 #B87912;color:var(--v10-navy)}
+#tapArea{display:block;border:2px solid #B8D5CF;border-radius:20px;background:#FFFDF8;padding:14px;margin-bottom:12px;box-shadow:0 4px 0 #C8D6CF}.tapItems{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;min-height:64px;align-items:center}.tapItem{width:58px;height:58px;transition:transform .15s}.tapItem.counted{transform:translateY(-5px) scale(1.04);filter:drop-shadow(0 6px 4px rgba(14,43,56,.16))}.tapStatus{display:flex;justify-content:center;align-items:baseline;gap:5px;margin:9px -14px -14px;padding:7px;border-radius:0 0 17px 17px;background:#EAF5F2;color:#4A716A}.tapStatus b{font-size:23px;color:var(--v10-coral)}.tapStatus span{font-size:12px;font-weight:800}
+#choices.matchGrid{gap:10px}.mcard{min-height:70px;border:2px solid #A8CDC8;box-shadow:0 4px 0 #6F9C96;background:#FFFDF8;color:var(--v10-navy)}.mcard.sel{border-color:var(--v10-gold);box-shadow:0 4px 0 var(--v10-gold2);background:#FFF8DC}.mcard.ok{background:#DDF3E7;border-color:#60AA81;color:#276143}
+#choices.digGrid{gap:10px}.digBtn{min-height:86px;border-radius:18px;background:#FFF9E9;box-shadow:0 4px 0 #D5C490}.digBtn b{color:var(--v10-navy)}
+
+/* Feedback is a quick in-world response, not a separate screen */
+#fb{align-items:flex-end;justify-content:center;padding:0 18px calc(env(safe-area-inset-bottom) + 98px);background:linear-gradient(180deg,transparent 20%,rgba(14,43,56,.18));backdrop-filter:none;pointer-events:none}
+#fbCard{width:min(520px,100%);min-width:0;display:grid;grid-template-columns:76px 1fr;grid-template-rows:auto auto;column-gap:13px;text-align:left;padding:13px 18px 13px 12px;border-radius:22px;border:3px solid var(--v10-gold);background:#FFFDF8;box-shadow:0 12px 40px rgba(14,43,56,.28);transform:translateY(12px)}
+#fb.show #fbCard{animation:feedback-rise .24s ease forwards}@keyframes feedback-rise{to{transform:translateY(0)}}#fbCard.ok{border-color:#58A97C}#fbCard.ng{border-color:var(--v10-coral)}
+#fbBuddy{grid-row:1/3;align-self:center;margin:0}#fbBuddy svg{width:72px;height:72px}#fbMsg{grid-column:2;font-size:18px;line-height:1.35;margin:7px 0 0;color:var(--v10-navy)}#fbAns{grid-column:2;font-size:14px;margin:2px 0 5px;color:var(--v10-coral2);font-weight:800}.particles{top:50%;left:20%}
+
+/* Results */
+#scr-result{padding:30px 18px;background:
+  radial-gradient(circle at 15% 15%,rgba(245,190,69,.18) 0 70px,transparent 72px),
+  linear-gradient(155deg,#1C6D86,#2A99B4)}
+#resCard{max-width:620px;padding:29px;border:0;border-radius:30px;background:#FFFDF8;box-shadow:0 10px 0 rgba(14,43,56,.25),0 28px 70px rgba(14,43,56,.3);text-align:left}
+.resultKicker{color:var(--v10-coral);margin-bottom:7px}#resTitle{font-size:clamp(25px,4.5vw,34px);color:var(--v10-navy);line-height:1.2}
+.resultHero{display:flex;gap:20px;align-items:center;padding:18px 0 16px}.scoreOrb{--score:0deg;flex:none;width:112px;height:112px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at center,#FFFDF8 0 57%,transparent 58%),conic-gradient(var(--v10-gold) var(--score),#E4E2D7 0);box-shadow:inset 0 0 0 2px #D7D4C5}
+.scoreOrb strong{font-size:28px;color:var(--v10-navy)}.scoreOrb span{font-size:10px;color:var(--v10-muted);font-weight:900}#resStars{font-size:39px;letter-spacing:3px;color:var(--v10-gold2);margin:0}#resScore{font-size:16px;color:var(--v10-muted);margin-top:4px;font-weight:800}
+#resStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}#resStats>div{padding:11px 10px;border-radius:15px;background:#EEF5F1;border:1px solid #CEDDD5}#resStats small{display:block;font-size:9px;color:#556C67;font-weight:900;margin-bottom:3px}#resStats b{display:block;font-size:16px;color:var(--v10-navy)}
+#resVillain{background:#FFF1E6;border:1px solid #F0C4A9;border-radius:16px;padding:9px 12px;margin:10px 0}#resTreasure{position:relative;min-height:170px;margin:14px 0;padding:18px 170px 18px 17px;background:linear-gradient(135deg,#FFF2C3,#FFF9E6);border:2px solid #D9A637;border-radius:20px;overflow:hidden;text-align:left}
+#resTreasure:before{content:"NEW TREASURE";display:block;font-size:9px;letter-spacing:.15em;color:#A76D0B;font-weight:900;margin-bottom:4px}#resTreasureText{font-size:18px;color:var(--v10-navy)}#resTreasureIco{position:absolute;right:24px;top:50%;transform:translateY(-50%)}#resTreasureIco svg{width:130px;height:105px}#resBuddyWrap{position:absolute;right:3px;bottom:-8px}#resBuddy svg{width:64px;height:64px}
+#resTreasureSkill{margin-top:8px;font-size:11px;font-weight:800;color:#7A6740}
+.bigBtn{min-height:59px;border-radius:16px;margin-top:10px;font-size:16px;box-shadow:none}.bigBtn.next{background:var(--v10-coral);box-shadow:0 5px 0 var(--v10-coral2);font-size:18px}.resultActions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.resultActions .bigBtn{margin-top:10px}.bigBtn.alt{background:#EAF4F2;color:var(--v10-navy);box-shadow:0 4px 0 #BDD1CD}.bigBtn.ghost{background:#fff;color:var(--v10-muted);border:2px solid #D8D5C7}
+
+/* Collection */
+#scr-zukan{max-width:820px;padding:28px clamp(15px,4vw,30px) 45px}.collectionHead{padding:24px 27px;border-radius:26px;background:var(--v10-navy);color:#fff;box-shadow:0 7px 0 #0B2834;margin-bottom:22px;position:relative;overflow:hidden}
+.collectionHead:after{content:"◆";position:absolute;right:24px;top:13px;font-size:76px;color:rgba(245,190,69,.13);transform:rotate(14deg)}.collectionHead .eyebrow{color:#8CD2DD}.collectionHead h2{font-size:30px;margin:7px 0 5px}.collectionHead p{font-size:13px;color:#C8E1E4;line-height:1.6;max-width:520px}
+#zkCount{margin:13px 0 7px;color:#fff}#zkCount strong{font-size:24px;color:#FFE07A}#zkCount span{font-size:12px;color:#C8E1E4;font-weight:800}.collectionProgress{height:9px;border-radius:99px;background:#315B68;overflow:hidden}.collectionProgress i{height:100%;display:block;background:linear-gradient(90deg,var(--v10-gold),#FFE080);border-radius:inherit}
+.collectionIsland{margin-top:19px}.collectionIslandHead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:0 3px 10px}.collectionIslandHead small{display:block;font-size:8px;letter-spacing:.14em;color:var(--v10-coral);font-weight:900}.collectionIslandHead b{display:block;font-size:19px;color:var(--v10-navy)}.collectionIslandHead em{font-style:normal;font-size:13px;font-weight:900;color:var(--v10-sea)}
+.zkGridIn{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.zkCard{position:relative;min-height:245px;padding:13px;border:2px solid #DED7C4;border-radius:20px;background:#FFFDF8;text-align:left;box-shadow:0 5px 0 #D9D1BC;overflow:hidden}.zkCard.yes{border-color:#D5A337;background:linear-gradient(180deg,#FFF9E8,#FFFDF8)}.zkNo{font-size:8px;letter-spacing:.14em;color:#9B927E;font-weight:900}.zkCard .zi{position:relative;height:92px;display:flex;align-items:center;justify-content:center;margin:2px 0}.zkCard .zi svg{width:112px;height:88px}.zkCard.no{opacity:1}.zkCard.no .zi svg{filter:grayscale(1) brightness(.35) opacity(.25)}.lockMark{display:none;position:absolute;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;background:var(--v10-navy);color:#fff;border:3px solid #fff;font-size:20px;font-weight:900;box-shadow:0 4px 0 rgba(0,0,0,.15)}.zkCard.no .lockMark{display:flex}
+.zkCard .zn{font-size:14px;color:var(--v10-navy);margin:3px 0 9px}.zkSkill{padding-top:8px;border-top:1px solid #E5E0D2}.zkSkill small{display:block;font-size:8px;color:#806D4B;font-weight:900}.zkSkill b{display:block;font-size:11px;margin:2px 0}.zkSkill span{display:block;font-size:9px;line-height:1.45;color:#566B68}.zkCard .zm{font-size:9px;line-height:1.45;margin-top:7px}.zkCard .zm.zp{padding:6px;border-radius:8px;background:#FFF0E5;color:#A44A37}
+
+/* Parent */
+#scr-parent{max-width:820px;padding:28px clamp(15px,4vw,30px) 45px;background:#F5F4EF}.parentHead{margin-bottom:20px}.parentHead .eyebrow{color:var(--v10-sea)}.parentHead h2{font-size:29px;color:var(--v10-navy);margin:6px 0 3px}.parentHead p{font-size:13px;color:#5D6F6D}
+#pinPad{max-width:360px;margin:28px auto;padding:24px;border-radius:24px;background:#fff;border:1px solid #D9DDD8;box-shadow:var(--v10-small-shadow)}#pinDots{color:var(--v10-navy)}
+#keys2{gap:9px!important}#keys2 .key{min-height:56px}.familySummary{padding:22px;border-radius:23px;background:var(--v10-navy);color:#fff;margin-bottom:14px}.summaryKicker{color:#89CED8}.familySummary h3{font-size:22px;margin:7px 0}.familySummary>p{font-size:12px;color:#C9E1E4;line-height:1.7;max-width:620px}
+.insightGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.insightGrid>div{padding:12px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)}.insightGrid small{display:block;font-size:9px;color:#8FD0DA;font-weight:900}.insightGrid b{display:block;font-size:14px;margin:3px 0}.insightGrid span{font-size:10px;color:#C9E1E4}
+#dash .cards{gap:10px}#dash .card{padding:17px;border:1px solid #D9DED8;border-radius:17px;box-shadow:0 3px 0 #DFE2DC}#dash .card b{font-size:29px;color:var(--v10-navy)}#week{padding:12px 10px;background:#fff;border-radius:16px;border:1px solid #D9DED8;height:105px}#week .bar i{background:var(--v10-sea)}
+table{border:1px solid #D9DED8;font-size:12px}th{background:#E7EFEC;color:var(--v10-navy)}#backupRow button,#unlockBtn,#renameBtn,#resetBtn{box-shadow:none!important}
+
+/* Dialogs and story */
+.modal{background:rgba(8,34,44,.66);backdrop-filter:blur(5px)}.mCard{max-width:500px;padding:27px;border:0;border-radius:28px;background:#FFFDF8;box-shadow:0 9px 0 rgba(14,43,56,.32),0 28px 70px rgba(0,0,0,.3)}.mCard:before{content:"";position:absolute;inset:8px;border:2px solid #E6D7B2;border-radius:21px;pointer-events:none}
+.mCard .mMsg{color:var(--v10-navy);font-size:17px;line-height:1.6}.mCard .mBtn{position:relative;background:var(--v10-coral);box-shadow:0 5px 0 var(--v10-coral2);border-radius:15px}#nameInput{position:relative;border:2px solid #A9C9C4;background:#F7FCFA;color:var(--v10-navy)}
+#storyModal .mCard{max-width:590px;padding:24px 28px 27px}#storyModal .villain svg{width:118px;height:118px}.storyLetter{position:relative;margin:6px 0 11px;padding:16px 17px;background:#FFF6D9;border:2px solid #D7A636;border-radius:16px;text-align:left}.storyLetter .letterKicker{font-size:8px;letter-spacing:.16em;color:#A66B0A;font-weight:900}.storyLetter h3{font-size:18px;color:var(--v10-navy);margin:4px 0 7px}.storyLetter p{font-size:14px;line-height:1.7;color:var(--v10-ink);font-weight:700}.storySign{font-size:10px;line-height:1.4}
+.vSay{border:2px solid #E09886;background:#FFF9F4}.modal #introVillain .villain svg{width:96px;height:96px}
+
+@media (max-width:620px){
+  #topbar{min-height:66px}.brandMark{width:42px;height:42px}.brandWords b{font-size:17px}
+  #scr-sea{padding:25px 13px 32px}#seaHead h2{font-size:34px}.islCard.hero{grid-template-columns:1fr}.islCard.hero .islArt{min-height:190px;border-right:0;border-bottom:4px solid var(--v10-line)}.islCard.hero .islArt svg{min-height:190px}.islBody{padding:20px}.routeGrid{grid-template-columns:1fr}.routeHead{align-items:flex-start;flex-direction:column}
+  #mapHud{position:relative;grid-template-columns:auto 1fr;padding:10px 11px;gap:10px}.mapHudMain strong{font-size:17px}#mapMission{grid-column:1/3}.stageNode{width:145px}.stageNode .nm{max-width:142px;font-size:11px}.stageNode .skill{max-width:140px}
+  #battleHud{grid-template-columns:52px 1fr}.battleEnemy{width:50px;height:50px}.battleEnemy svg{width:58px;height:58px}#questionCounter{position:absolute;right:12px;top:10px}.battleLabels{padding-right:48px;display:block}.battleLabels small{display:block;text-align:left;margin-top:2px}
+  #qCard{padding:25px 16px 20px}#qText{font-size:24px}.zkGridIn{grid-template-columns:repeat(2,1fr)}.zkCard{min-height:236px}.insightGrid{grid-template-columns:1fr}
+  #resCard{padding:22px 17px}.resultHero{gap:13px}.scoreOrb{width:94px;height:94px}#resStats{grid-template-columns:1fr 1fr}#resStats>div:last-child{grid-column:1/3}#resTreasure{padding:16px 125px 16px 14px}#resTreasureIco{right:4px}#resTreasureIco svg{width:115px}.resultActions{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
 </style>
 </head>
 <body>
 
 <header id="topbar">
-  <h1>🏝️ ぼうけんドリル</h1>
+  <div class="brand" aria-label="ぼうけんドリル まなびの ぐんとう">
+    <span class="brandMark" aria-hidden="true">
+      <svg viewBox="0 0 54 54">
+        <path d="M27 4 C39 4 49 14 49 27 C49 40 39 50 27 50 C14 50 4 40 4 27 C4 14 14 4 27 4Z" fill="#F7D36A" stroke="#173B49" stroke-width="3"/>
+        <path d="M27 9 C37 9 44 17 44 27 C44 37 37 44 27 44 C17 44 9 37 9 27 C9 17 17 9 27 9Z" fill="#FFF8DE" stroke="#173B49" stroke-width="2"/>
+        <path d="M27 12 L32 27 L27 34 L22 27Z" fill="#EC6E4C" stroke="#173B49" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M13 33 Q27 28 41 33 L38 39 Q27 44 16 39Z" fill="#2E93B2" stroke="#173B49" stroke-width="2"/>
+        <path d="M16 31 Q22 25 27 31 Q32 25 38 31" fill="none" stroke="#FFF8DE" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="brandWords"><b>ぼうけんドリル</b><small>まなびの ぐんとう</small></span>
+  </div>
   <button id="soundBtn" aria-label="おとの せってい">🔊</button>
 </header>
 
@@ -480,16 +663,31 @@ td.l{text-align:left}
   <!-- しまえらび（ぐんとうマップ） -->
   <section class="screen" id="scr-sea" hidden>
     <div id="seaHead">
-      <h2>🗺️ しまを えらぼう</h2>
-      <p id="seaSub">ダジャーレかいぞくだんから ぐんとうの たからを とりもどせ！</p>
+      <span class="eyebrow">STORY 01・うばわれた きんか</span>
+      <h2>きょうの ぼうけんを<br><em>はじめよう！</em></h2>
+      <p id="seaSub">ダジャーレかいぞくだんを おいかけて、しまの たからを とりもどそう。</p>
     </div>
     <div id="seaGrid"></div>
+    <div id="seaRoutes"></div>
   </section>
 
   <!-- しまマップ -->
   <section class="screen" id="scr-map">
-    <button id="seaBtn">⛵ しまえらび</button>
-    <span id="unlockBadge" hidden>🔓 かくにんモード</span>
+    <div id="mapHud">
+      <button id="seaBtn" aria-label="しまえらびに もどる">← ぐんとう</button>
+      <div class="mapHudMain">
+        <span class="mapKicker">NOW EXPLORING</span>
+        <strong id="mapTitle">たしざんの しま</strong>
+        <span id="mapProgressText">0 / 11 クリア</span>
+        <div class="mapProgress"><i id="mapProgressFill"></i></div>
+      </div>
+      <div id="mapMission">
+        <span class="missionCompass buddy" id="mapBuddy"></span>
+        <span><small>つぎの ミッション</small><b id="mapNextLabel">かぞえの すなはま</b></span>
+        <span class="missionReward" id="mapReward">たから：ひかる きんか</span>
+      </div>
+      <span id="unlockBadge" hidden>🔓 かくにんモード</span>
+    </div>
     <div id="mapWrap">
       <div id="island"></div>
       <svg id="trail" aria-hidden="true"></svg>
@@ -499,21 +697,35 @@ td.l{text-align:left}
   <!-- クイズ -->
   <section class="screen" id="scr-quiz" hidden>
     <div id="quizTop">
-      <button id="backBtn">← やめる</button>
-      <div id="dots"></div>
+      <button id="backBtn" aria-label="マップに もどる">←</button>
+      <div class="questHead">
+        <span id="questEyebrow">MISSION 1</span>
+        <strong id="questName">かぞえの すなはま</strong>
+      </div>
+      <span id="comboPill">COMBO <b>0</b></span>
     </div>
+    <div id="battleHud">
+      <span class="battleEnemy villain" id="battleEnemy"></span>
+      <div class="battleCore">
+        <span class="battleLabels"><b id="enemyName">ハサミーの バリア</b><small id="battleText">あと 6かい せいかい！</small></span>
+        <div id="battleBar"><i id="battleFill"></i><span></span></div>
+      </div>
+      <span id="questionCounter">1 / 10</span>
+    </div>
+    <div id="dots" aria-label="もんだいの しんちょく"></div>
     <div id="qCard">
       <span class="qcorner tl"></span><span class="qcorner tr"></span>
       <span class="qcorner bl"></span><span class="qcorner br"></span>
       <svg class="qmoss l" viewBox="0 0 60 70"><path d="M0 70 C6 50,0 40,10 26 C18 16,24 22,20 34 C30 24,34 36,26 46 C22 58,12 60,8 70Z" fill="#4E6E3B"/></svg>
       <svg class="qmoss r" viewBox="0 0 60 70"><path d="M0 70 C6 50,0 40,10 26 C18 16,24 22,20 34 C30 24,34 36,26 46 C22 58,12 60,8 70Z" fill="#4E6E3B"/></svg>
+      <div id="qTypeBadge">みて こたえる</div>
       <div id="qText"></div>
       <div id="qSub"></div>
     </div>
     <div id="tapArea" hidden></div>
     <div id="choices"></div>
     <div id="pad">
-      <div id="ansBox">&nbsp;</div>
+      <div class="answerRail"><span>こたえ</span><div id="ansBox" aria-live="polite"></div><small id="answerUnit"></small></div>
       <div id="keys"></div>
     </div>
   </section>
@@ -521,33 +733,50 @@ td.l{text-align:left}
   <!-- けっか -->
   <section class="screen" id="scr-result" hidden>
     <div id="resCard">
+      <span class="resultKicker" id="resKicker">MISSION COMPLETE</span>
       <div id="resTitle"></div>
-      <div id="resStars"></div>
-      <div id="resScore"></div>
+      <div class="resultHero">
+        <div class="scoreOrb"><strong id="resRate">0%</strong><span>せいかい</span></div>
+        <div><div id="resStars"></div><div id="resScore"></div></div>
+      </div>
+      <div id="resStats">
+        <div><small>さいだい コンボ</small><b id="resCombo">0</b></div>
+        <div><small>きらめき</small><b id="resSpark">+0</b></div>
+        <div><small>つぎの もくひょう</small><b id="resGoal">★を ふやそう</b></div>
+      </div>
       <div id="resVillain" hidden>
         <span class="villain" id="resVillainSvg"></span>
         <span id="resVillainMsg"></span>
       </div>
       <div id="resTreasure" hidden>
         <div id="resTreasureText"></div>
+        <div id="resTreasureSkill"></div>
         <div id="resTreasureIco"></div>
         <div id="resBuddyWrap"><span class="buddy" id="resBuddy"></span></div>
       </div>
-      <button class="bigBtn" id="retryBtn">もういちど やる</button>
-      <button class="bigBtn alt" id="mapBtn">マップに もどる</button>
+      <button class="bigBtn next" id="nextBtn">つぎの ステージへ</button>
+      <div class="resultActions">
+        <button class="bigBtn alt" id="retryBtn">もういちど</button>
+        <button class="bigBtn ghost" id="mapBtn">マップへ</button>
+      </div>
     </div>
   </section>
 
   <!-- ずかん -->
   <section class="screen" id="scr-zukan" hidden>
-    <h2>💎 たからもの ずかん</h2>
-    <div id="zkCount"></div>
+    <div class="collectionHead">
+      <span class="eyebrow">TREASURE COLLECTION</span>
+      <h2>たからもの ずかん</h2>
+      <p>とりもどした たからには、できるように なったことが きざまれるよ。</p>
+      <div id="zkCount"></div>
+      <div class="collectionProgress"><i id="zkProgressFill"></i></div>
+    </div>
     <div id="zkGrid"></div>
   </section>
 
   <!-- おうちのひと -->
   <section class="screen" id="scr-parent" hidden>
-    <h2>👨‍👩‍👧 おうちの ひと メニュー</h2>
+    <div class="parentHead"><span class="eyebrow">FOR FAMILY</span><h2>おうちの ひと</h2><p>学習の記録と、アプリの設定を確認できます。</p></div>
     <div id="pinPad">
       <p style="font-size:14px;color:var(--ink-soft)">PINを いれてね</p>
       <div id="pinDots"></div>
@@ -559,9 +788,9 @@ td.l{text-align:left}
 </main>
 
 <nav id="tabs">
-  <button data-scr="sea" class="on"><span class="ticon">🗺️</span>ぼうけん</button>
-  <button data-scr="zukan"><span class="ticon">💎</span>ずかん</button>
-  <button data-scr="parent"><span class="ticon">👨‍👩‍👧</span>おうちのひと</button>
+  <button data-scr="sea" class="on"><span class="ticon"><svg viewBox="0 0 32 32"><path d="M5 24 Q9 10 16 7 Q24 10 27 24 Q17 28 5 24Z"/><path d="M16 8 V23 M11 17 Q16 13 21 17"/></svg></span>ぼうけん</button>
+  <button data-scr="zukan"><span class="ticon"><svg viewBox="0 0 32 32"><path d="M7 12 L12 6 H21 L26 12 L16 27Z"/><path d="M7 12 H26 M12 6 L16 12 L21 6"/></svg></span>ずかん</button>
+  <button data-scr="parent"><span class="ticon"><svg viewBox="0 0 32 32"><circle cx="11" cy="11" r="4"/><circle cx="22" cy="12" r="3.5"/><path d="M4 26 Q4 18 11 18 Q18 18 18 26 M17 26 Q17 19 22 19 Q28 19 28 26"/></svg></span>おうち</button>
 </nav>
 
 <!-- せいかい／ざんねん オーバーレイ -->
@@ -599,7 +828,7 @@ td.l{text-align:left}
   </div>
 </div>
 
-<!-- エンディング（全17ステージクリア時・1回） -->
+<!-- 島エンディング（島内の全ステージクリア時・1回） -->
 <div class="modal" id="endModal">
   <div class="mCard">
     <div class="mMsg" style="margin-top:0">🎆 しまの たからが ぜんぶ もどった！</div>
@@ -1060,7 +1289,7 @@ const ISEKI_NODE_SVG = `<svg viewBox="0 0 120 120" width="100%" height="100%" ar
   <path d="M74 20 l3 4.5 -3 4.5 -3 -4.5 z" fill="#8E7BC4" opacity="0.5"/>
 </svg>`;
 
-const SCROLL_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+const SCROLL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
   <g class="tr-a">
     <rect x="30" y="14" width="40" height="52" rx="8" fill="#EFE0B8" stroke="#3D3323" stroke-width="2"/>
     <rect x="26" y="10" width="48" height="10" rx="5" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/>
@@ -1254,7 +1483,7 @@ const RAINBOWFEATHER_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width=
 const GOLDKEY_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><circle cx="34" cy="40" r="14" fill="none" stroke="#3D3323" stroke-width="10" opacity="0.25"/><circle cx="34" cy="40" r="14" fill="none" stroke="#D4A63C" stroke-width="7"/><path d="M48 40 L82 40" stroke="#D4A63C" stroke-width="7" stroke-linecap="round"/><path d="M70 40 L70 52 M80 40 L80 50" stroke="#D4A63C" stroke-width="6" stroke-linecap="round"/><circle cx="34" cy="40" r="4" fill="#F5C56B"/></svg>`;
 const FLAMEORB_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M50 8 Q34 28 40 44 Q44 54 50 54 Q56 54 60 44 Q66 28 50 8Z" fill="#E8763D" stroke="#3D3323" stroke-width="2"/><path d="M50 22 Q44 34 48 44 Q50 48 52 44 Q56 34 50 22Z" fill="#F5C56B"/><circle cx="50" cy="60" r="10" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="47" cy="57" r="3" fill="#F5C56B"/></svg>`;
 const CROWN_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M26 58 L22 26 L38 42 L50 20 L62 42 L78 26 L74 58 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><path d="M26 58 L22 26 L38 42 L44 32 L44 58 Z" fill="#B8892E"/><rect x="24" y="56" width="52" height="9" rx="4" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="47" r="5" fill="#E8705A" stroke="#3D3323" stroke-width="1.5"/><circle cx="34" cy="50" r="3" fill="#5B9FC4" stroke="#3D3323" stroke-width="1.5"/><circle cx="66" cy="50" r="3" fill="#5B9FC4" stroke="#3D3323" stroke-width="1.5"/></svg>`;
-const TROPHY_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+const TROPHY_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
   <g class="tr-a">
     <path d="M34 16 L66 16 L62 44 Q50 52 38 44 Z" fill="#8C8272" stroke="#3D3323" stroke-width="2"/>
     <rect x="44" y="50" width="12" height="10" fill="#8C8272" stroke="#3D3323" stroke-width="2"/>
@@ -1360,7 +1589,7 @@ const WATERINGCAN_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="12
 const TELESCOPE_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M18 56 L66 26 L74 38 L26 68 Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><path d="M64 22 L80 32 L74 42 L58 32 Z" fill="#4A6FA8" stroke="#3D3323" stroke-width="2"/><circle cx="78" cy="30" r="4" fill="#7EE0D0" stroke="#3D3323" stroke-width="1.5"/><path d="M30 66 L26 76 M38 62 L42 74" stroke="#8C7B66" stroke-width="3" stroke-linecap="round"/></svg>`;
 const PEARL_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M22 52 Q50 20 78 52 Q64 66 50 66 Q36 66 22 52Z" fill="#F2A0B4" stroke="#3D3323" stroke-width="2"/><path d="M22 52 Q50 20 78 52 Q64 44 50 44 Q36 44 22 52Z" fill="#E07A94"/><circle cx="50" cy="48" r="11" fill="#FFFDF7" stroke="#3D3323" stroke-width="2"/><circle cx="46" cy="44" r="3.5" fill="#7EE0D0" opacity="0.7"/></svg>`;
 const CAPTAINHAT_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true"><path d="M22 50 Q50 22 78 50 L78 56 Q50 48 22 56 Z" fill="#2E4A6E" stroke="#3D3323" stroke-width="2"/><path d="M22 50 Q36 36 50 32 L50 52 Q36 52 22 56 Z" fill="#1F3852"/><path d="M14 56 Q50 46 86 56 Q50 64 14 56Z" fill="#D4A63C" stroke="#3D3323" stroke-width="2"/><circle cx="50" cy="42" r="6" fill="#F2C14E" stroke="#3D3323" stroke-width="1.5"/></svg>`;
-const TAMATEBAKO_SVG = `<svg id="resScroll" class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
+const TAMATEBAKO_SVG = `<svg class="scroll-wrap" viewBox="0 0 100 80" width="120" height="96" aria-hidden="true">
   <g class="tr-a">
     <rect x="28" y="34" width="44" height="28" rx="4" fill="#C9622E" stroke="#3D3323" stroke-width="2"/>
     <path d="M28 34 Q50 22 72 34 L72 42 L28 42 Z" fill="#A84A20" stroke="#3D3323" stroke-width="2"/>
@@ -1880,7 +2109,7 @@ function qWitch() {
   const arr = [k, k, k]; arr[idx] = j;
   const choices = arr.map(n => bagSVG(n));
   return { text:'かずが ちがう ふくろは どれ？', html:true, choices, ans:idx,
-    ansLabel:`${j}この ふくろ`, sub:'よーく かぞえてね', key:`w:${k}:${j}` };
+    choiceLabels:arr.map(n => `${n}この ふくろ`), ansLabel:`${j}この ふくろ`, sub:'よーく かぞえてね', key:`w:${k}:${j}` };
 }
 function qMatchTo(t) {
   const as = shuffle(Array.from({length:t-1}, (_,i) => i+1)).slice(0, 4);
@@ -2076,7 +2305,7 @@ try {
 } catch (e) {}
 if (!state.islands) state.islands = {};
 const save = () => store.set('bk_state', JSON.stringify(state));
-const isl = id => state.islands[id] || (state.islands[id] = { stats:{}, treasures:[], introSeen:{}, endingSeen:0 });
+const isl = id => state.islands[id] || (state.islands[id] = { stats:{}, treasures:[], introSeen:{}, endingSeen:0, spark:0 });
 const stg = (islandId, sid) => isl(islandId).stats[sid] || { plays:0, best:0, tq:0, tc:0, cleared:false, last:'' };
 const today = () => new Date().toISOString().slice(0, 10);
 let curIsland = ISLANDS[0];
@@ -2101,22 +2330,28 @@ $('#seaBtn').onclick = () => show('sea');
 
 /* ================= しまえらび ================= */
 function renderSea() {
-  $('#seaGrid').innerHTML = ISLANDS.map((il, i) => {
-    if (il.soon) {
-      return `<div class="islCard soon">
-        <span class="islArt">${ISLAND_SOON_CARD}</span>
-        <span><span class="islName">？？？の しま</span>
-        <span class="islMeta">${il.subject}・ちかいうちに あらわれる…</span></span></div>`;
-    }
+  const playable = ISLANDS.map((il, i) => ({ il, i })).filter(x => !x.il.soon);
+  $('#seaGrid').innerHTML = playable.map(({ il, i }) => {
     const d = isl(il.id);
     const done = il.stages.filter(st => stg(il.id, st.id).cleared).length;
-    const flag = islandCleared(il) ? `<span class="islDone">🚩 クリアずみ！「${il.clearTitle}」</span>` : '';
-    return `<button class="islCard" data-i="${i}">
+    const nextIdx = il.stages.findIndex(st => !stg(il.id, st.id).cleared);
+    const next = il.stages[nextIdx < 0 ? il.stages.length - 1 : nextIdx];
+    const pct = Math.round(done / il.stages.length * 100);
+    const complete = islandCleared(il);
+    return `<button class="islCard hero" data-i="${i}" data-island-id="${il.id}" aria-label="${il.title}を ぼうけんする">
       <span class="islArt">${il.card}</span>
-      <span><span class="islName">${il.title}</span>
-      <span class="islMeta">${il.subject}・たから ${d.treasures.length}／${il.stages.length}</span>${flag}</span>
+      <span class="islBody">
+        <span class="islRoute">${complete ? 'ISLAND COMPLETE' : `ROUTE ${Math.min(done + 1, il.stages.length)} / ${il.stages.length}`}</span>
+        <span class="islName">${il.title}</span>
+        <span class="islMeta">${il.subject}<b>たから ${d.treasures.length} / ${il.stages.length}</b></span>
+        <span class="islProgress"><i style="width:${pct}%"></i></span>
+        <span class="continueLabel"><small>${complete ? 'なんどでも ちょうせん！' : 'つぎの もくひょう'}</small><b>${next.name}</b><em>${complete ? 'もういちど →' : 'つづきから →'}</em></span>
+      </span>
     </button>`;
   }).join('');
+  const soon = ISLANDS.filter(il => il.soon);
+  $('#seaRoutes').innerHTML = `<div class="routeHead"><span>このさきの こうろ</span><b>${soon.length}つの しまを はっけんちゅう</b></div><div class="routeGrid">${soon.map((il, i) => `
+    <div class="futureRoute"><span class="routeDot">${i + 2}</span><span><b>${il.title}</b><small>${il.subject}</small></span><em>COMING SOON</em></div>`).join('')}</div>`;
   $('#seaGrid').querySelectorAll('button.islCard').forEach(b => b.onclick = () => {
     curIsland = ISLANDS[Number(b.dataset.i)];
     show('map');
@@ -2124,7 +2359,7 @@ function renderSea() {
 }
 
 /* ================= しまマップ ================= */
-const STEP = 132, TOPPAD = 152;
+const STEP = 124, TOPPAD = 126;
 const FLAG_SVG = `<svg viewBox="0 0 30 34" width="26" height="30" aria-hidden="true">
   <line x1="6" y1="2" x2="6" y2="32" stroke="#6E4A28" stroke-width="3" stroke-linecap="round"/>
   <path d="M8 3 L26 8 L8 13 Z" fill="#E8763D" stroke="#3D3323" stroke-width="1.5" stroke-linejoin="round"/>
@@ -2144,6 +2379,16 @@ function renderMap() {
   $('#unlockBadge').hidden = !state.unlockAll;
   const island = curIsland;
   const stages = island.stages;
+  const doneCount = stages.filter(s => stg(island.id, s.id).cleared).length;
+  const nextIndex = stages.findIndex(s => !stg(island.id, s.id).cleared);
+  const focusIndex = nextIndex < 0 ? stages.length - 1 : nextIndex;
+  const focusStage = stages[focusIndex];
+  $('#mapTitle').textContent = island.title;
+  $('#mapProgressText').textContent = `${doneCount} / ${stages.length} クリア`;
+  $('#mapProgressFill').style.width = Math.round(doneCount / stages.length * 100) + '%';
+  $('#mapNextLabel').textContent = focusStage.name;
+  $('#mapReward').textContent = `たから：${focusStage.treasure.n}`;
+  setBuddyFace($('#mapBuddy'), doneCount === stages.length ? 'super' : 'normal');
   const XS = xsFor(stages);
   const wrap = $('#mapWrap');
   wrap.querySelectorAll('.stageNode').forEach(n => n.remove());
@@ -2202,6 +2447,8 @@ function renderMap() {
     const st = stg(island.id, s.id);
     const node = document.createElement('button');
     node.className = 'stageNode' + (unlocked ? '' : ' locked') + (st.cleared ? ' cleared' : '');
+    node.dataset.stageId = s.id;
+    node.setAttribute('aria-label', unlocked ? `${i + 1}. ${s.name}。${s.skill}` : `${i + 1}. ${s.name}。まだ ロックされています`);
     if (unlocked && !st.cleared && !currentSet) { node.classList.add('current'); currentSet = true; }
     node.style.left = x + 'px'; node.style.top = y + 'px';
     node.style.setProperty('--stagecolor', s.boss ? 'var(--purple)' : s.test ? 'var(--coral)' : 'var(--ocean)');
@@ -2209,7 +2456,8 @@ function renderMap() {
     const discInner = SCENE_SVGS[s.scene] || (unlocked ? '⭐' : '🔒');
     const flag = st.cleared ? `<span class="nodeFlag">${FLAG_SVG}</span>` : '';
     const here = node.classList.contains('current') ? `<span class="nodeBuddy buddy" aria-hidden="true">${BUDDY_SVG}</span>` : '';
-    node.innerHTML = `<span class="disc disc-scene">${discInner}</span><span class="nm">${s.name}</span><span class="st">${stars}</span>${flag}${here}`;
+    const stateLabel = st.cleared ? 'CLEAR' : node.classList.contains('current') ? 'NEXT' : unlocked ? 'OPEN' : 'LOCK';
+    node.innerHTML = `<span class="nodeState">${stateLabel}</span><span class="nodeNo">${i + 1}</span><span class="disc disc-scene">${discInner}</span><span class="nm">${s.name}</span><span class="skill">${s.skill || ''}</span><span class="st">${stars}</span>${flag}${here}`;
     if (unlocked) node.onclick = () => startQuiz(i);
     else node.onclick = () => { $('#fbBuddy').hidden = true; $('#fbMark').textContent = '🔒'; $('#fbMsg').textContent = 'まえの ステージを クリアしよう！'; $('#fbAns').textContent = ''; $('#fbAns').classList.remove('fade'); flashFB(1100); };
     wrap.appendChild(node);
@@ -2232,7 +2480,31 @@ function renderMap() {
 window.addEventListener('resize', () => { if (!$('#scr-map').hidden) renderMap(); });
 
 /* ================= クイズエンジン ================= */
-let Q = { stageIdx:0, list:[], pos:0, correct:0, busy:false };
+let Q = { stageIdx:0, list:[], pos:0, correct:0, busy:false, combo:0, maxCombo:0, spark:0 };
+
+const QTYPE_LABELS = {
+  tapcount:'タップで かぞえる', match:'ペアを みつける', dig:'たからを ほりだす',
+  input:'すうじで こたえる', choice:'みて こたえる'
+};
+
+function qTypeOf(q) {
+  if (q.type && QTYPE_LABELS[q.type]) return q.type;
+  return q.input ? 'input' : 'choice';
+}
+
+function updateBattleHUD() {
+  const stage = curIsland.stages[Q.stageIdx];
+  const total = Q.list.length || stage.n;
+  const passLine = Math.ceil(total * 0.6);
+  const remain = Math.max(0, passLine - Q.correct);
+  const power = Math.min(100, Math.round(Q.correct / passLine * 100));
+  $('#battleFill').style.width = power + '%';
+  $('#battleBar').classList.toggle('broken', remain === 0);
+  $('#battleText').textContent = remain ? `あと ${remain}かい せいかいで バリアを こわせる！` : 'バリア かいじょ！ ★を ねらおう';
+  $('#comboPill').classList.toggle('hot', Q.combo >= 3);
+  $('#comboPill').innerHTML = `COMBO <b>${Q.combo}</b>`;
+  $('#questionCounter').textContent = `${Math.min(Q.pos + 1, total)} / ${total}`;
+}
 
 const RECENT_KEYS = {};
 function buildQuestions(stage) {
@@ -2262,10 +2534,15 @@ function startQuiz(i) {
   const openQuiz = () => {
     const scr = $('#scr-quiz');
     wordsReady.then(() => {
-      Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false };
+      Q = { stageIdx:i, list:buildQuestions(s), pos:0, correct:0, busy:false, combo:0, maxCombo:0, spark:0 };
       if (s.theme) scr.setAttribute('data-stage-theme', s.theme); else scr.removeAttribute('data-stage-theme');
+      $('#questEyebrow').textContent = `${s.boss ? 'BOSS' : s.test ? 'CHECK' : 'MISSION'} ${i + 1}`;
+      $('#questName').textContent = s.name;
+      $('#enemyName').textContent = island.hench.name + 'の バリア';
+      setCharFace($('#battleEnemy'), island.hench.svg, (s.boss || s.test) ? 'angry' : 'normal');
       show('quiz');
       playBGM(s.boss || s.test ? 'tou' : bgmOfTheme(s.theme));
+      updateBattleHUD();
       renderQ();
     });
   };
@@ -2296,6 +2573,8 @@ $('#backBtn').onclick = () => show('map');
 function renderQ() {
   const q = Q.list[Q.pos];
   const stage = curIsland.stages[Q.stageIdx];
+  updateBattleHUD();
+  $('#qTypeBadge').textContent = QTYPE_LABELS[qTypeOf(q)];
   $('#dots').innerHTML = Q.list.map((_, i) => {
     if (i < Q.pos) return `<i class="${Q.list[i]._ok ? 'ok' : 'ng'}"></i>`;
     return `<i class="${i === Q.pos ? 'now' : ''}"></i>`;
@@ -2311,16 +2590,16 @@ function renderQ() {
   if (q.type === 'match') { renderMatch(q, ch); return; }
   if (q.type === 'tapcount') {
     renderTapCount(q, tap);
-    pad.classList.add('show'); $('#ansBox').textContent = ''; renderKeys();
+    pad.classList.add('show'); $('#ansBox').textContent = ''; $('#answerUnit').textContent = q.unit || ''; renderKeys();
     return;
   }
   if (q.type === 'dig') { renderDig(q, ch); return; }
   if (q.input) {
-    pad.classList.add('show'); $('#ansBox').textContent = ''; renderKeys();
+    pad.classList.add('show'); $('#ansBox').textContent = ''; $('#answerUnit').textContent = q.unit || ''; renderKeys();
   } else {
     ch.style.display = 'grid';
     ch.className = q.choices.length === 2 ? 'one' : '';
-    ch.innerHTML = q.choices.map((c, i) => `<button class="chBtn" data-i="${i}">${c}</button>`).join('');
+    ch.innerHTML = q.choices.map((c, i) => `<button class="chBtn" data-i="${i}" aria-label="${(q.choiceLabels && q.choiceLabels[i]) || String(c).replace(/<[^>]*>/g, '') || `こたえ ${i + 1}`}">${c}</button>`).join('');
     ch.querySelectorAll('button').forEach(b => b.onclick = () => answer(Number(b.dataset.i)));
   }
 }
@@ -2328,13 +2607,14 @@ function renderQ() {
 function renderTapCount(q, host) {
   host.hidden = false;
   let counted = 0;
-  host.innerHTML = Array.from({length:q.k}, (_, i) =>
-    `<button class="tapItem" data-i="${i}">${ITEM_SVGS[q.item] || ITEM_SVGS.coin}<span class="cnt"></span></button>`).join('');
+  host.innerHTML = `<div class="tapItems">${Array.from({length:q.k}, (_, i) =>
+    `<button class="tapItem" data-i="${i}" aria-label="${ITEM_NAME[q.item] || 'きんか'} ${i + 1}">${ITEM_SVGS[q.item] || ITEM_SVGS.coin}<span class="cnt"></span></button>`).join('')}</div><div class="tapStatus" id="tapStatus"><b>0</b><span>こ かぞえたよ</span></div>`;
   host.querySelectorAll('.tapItem').forEach(b => b.onclick = () => {
     if (b.classList.contains('counted')) return;
     b.classList.add('counted');
     counted++;
     b.querySelector('.cnt').textContent = counted;
+    $('#tapStatus').querySelector('b').textContent = counted;
   });
 }
 
@@ -2342,8 +2622,8 @@ function renderMatch(q, host) {
   host.style.display = 'grid';
   host.className = 'matchGrid';
   host.innerHTML =
-    q.tops.map((v, i) => `<button class="mcard" data-row="t" data-v="${v}" data-i="${i}">${v}</button>`).join('') +
-    q.bots.map((v, i) => `<button class="mcard" data-row="b" data-v="${v}" data-i="${i}">${v}</button>`).join('');
+    q.tops.map((v, i) => `<button class="mcard" aria-label="うえの ${v}" data-row="t" data-v="${v}" data-i="${i}">${v}</button>`).join('') +
+    q.bots.map((v, i) => `<button class="mcard" aria-label="したの ${v}" data-row="b" data-v="${v}" data-i="${i}">${v}</button>`).join('');
   let sel = null, done = 0, miss = 0;
   host.querySelectorAll('.mcard').forEach(b => b.onclick = () => {
     if (b.classList.contains('ok') || Q.busy) return;
@@ -2369,7 +2649,7 @@ function renderDig(q, host) {
   host.style.display = 'grid';
   host.className = 'digGrid';
   host.innerHTML = q.choices.map((c, i) =>
-    `<button class="digBtn" data-i="${i}">${moundSVG}<b>${c}</b></button>`).join('');
+    `<button class="digBtn" data-i="${i}" aria-label="${c}の すなやま">${moundSVG}<b>${c}</b></button>`).join('');
   host.querySelectorAll('.digBtn').forEach(b => b.onclick = () => {
     const i = Number(b.dataset.i);
     if (i === q.ans) { b.innerHTML = coinBurstSVG; answer(i); }
@@ -2404,12 +2684,25 @@ function judge(ok, correctLabel) {
   Q.busy = true;
   const q = Q.list[Q.pos];
   q._ok = ok;
-  if (ok) { Q.correct++; sndOK(); } else sndNG();
+  if (ok) {
+    Q.correct++;
+    Q.combo++;
+    Q.maxCombo = Math.max(Q.maxCombo, Q.combo);
+    Q.spark += 10 + Math.min(10, (Q.combo - 1) * 2);
+    sndOK();
+  } else {
+    Q.combo = 0;
+    sndNG();
+  }
+  updateBattleHUD();
 
   $('#fbMark').textContent = '';
   $('#fbBuddy').hidden = false;
   setBuddyFace($('#fbBuddy'), ok ? 'happy' : 'oops');
-  $('#fbMsg').textContent = withName(ok ? pick(CHEER_OK) : pick(CHEER_NG));
+  const comboLine = ok && Q.combo >= 3 ? ` ${Q.combo}コンボ！` : '';
+  $('#fbMsg').textContent = withName(ok ? pick(CHEER_OK) + comboLine : pick(CHEER_NG));
+  $('#fbCard').classList.toggle('ok', ok);
+  $('#fbCard').classList.toggle('ng', !ok);
 
   const ansEl = $('#fbAns');
   ansEl.classList.remove('fade');
@@ -2422,7 +2715,7 @@ function judge(ok, correctLabel) {
     const card = $('#fbCard'); card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
   }
 
-  flashFB(ok ? 1020 : 1920, () => {
+  flashFB(ok ? 760 : 1280, () => {
     Q.busy = false;
     Q.pos++;
     if (Q.pos < Q.list.length) renderQ(); else finish();
@@ -2459,11 +2752,19 @@ function finish() {
   const day = state.days[today()] || { q:0, c:0 };
   day.q += n; day.c += c; state.days[today()] = day;
   if (firstClear && !d.treasures.includes(s.id)) d.treasures.push(s.id);
+  d.spark = (d.spark || 0) + Q.spark;
   save();
 
+  const rate = Math.round(c / n * 100);
   $('#resTitle').textContent = cleared ? (s.clearTitle || (s.name + ' クリア！')) : 'あと すこし！';
   $('#resStars').textContent = cleared ? '★'.repeat(starN) + '☆'.repeat(3 - starN) : '🔥';
   $('#resScore').textContent = `${n}もんちゅう ${c}もん せいかい！`;
+  $('#resKicker').textContent = cleared ? 'MISSION COMPLETE' : 'ONE MORE TRY';
+  $('#resRate').textContent = rate + '%';
+  $('.scoreOrb').style.setProperty('--score', rate * 3.6 + 'deg');
+  $('#resCombo').textContent = Q.maxCombo;
+  $('#resSpark').textContent = '+' + Q.spark;
+  $('#resGoal').textContent = cleared ? (starN < 3 ? `あと ${n - c}もんで ★★★` : 'パーフェクト！') : `あと ${passLine - c}もんで クリア`;
 
   const rv = $('#resVillain');
   if (cleared) {
@@ -2479,6 +2780,7 @@ function finish() {
   if (firstClear) {
     tr.hidden = false;
     $('#resTreasureText').textContent = `「${s.treasure.n}」を とりもどした！`;
+    $('#resTreasureSkill').textContent = `みにつけた ちから：${s.skill || 'ぼうけんする ちから'}`;
     const ico = $('#resTreasureIco');
     const tsvg = TREASURE_SVGS[s.treasure.scene];
     ico.innerHTML = tsvg || '';
@@ -2503,6 +2805,22 @@ function finish() {
 
   if (cleared && islandCleared(island) && !d.endingSeen) {
     setTimeout(() => showIslandClear(island), s.boss ? 1800 : 900);
+  }
+
+  const nextIdx = Q.stageIdx + 1;
+  const nextBtn = $('#nextBtn');
+  if (cleared && nextIdx < island.stages.length) {
+    nextBtn.textContent = `つぎへ：${island.stages[nextIdx].name}`;
+    nextBtn.onclick = () => startQuiz(nextIdx);
+    $('#retryBtn').hidden = false;
+  } else if (cleared) {
+    nextBtn.textContent = 'しまの マップへ もどる';
+    nextBtn.onclick = () => show('map');
+    $('#retryBtn').hidden = false;
+  } else {
+    nextBtn.textContent = 'もういちど ちょうせん！';
+    nextBtn.onclick = () => startQuiz(Q.stageIdx);
+    $('#retryBtn').hidden = true;
   }
 }
 $('#retryBtn').onclick = () => startQuiz(Q.stageIdx);
@@ -2529,20 +2847,24 @@ function renderZukan() {
   playable.forEach(il => {
     const d = isl(il.id);
     total += il.stages.length; got += d.treasures.length;
-    html += `<h3 style="font-size:16px;margin:14px 0 8px">⛵ ${il.title}</h3><div class="zkGridIn" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">`;
-    html += il.stages.map(s => {
+    html += `<div class="collectionIsland"><div class="collectionIslandHead"><span><small>ISLAND COLLECTION</small><b>${il.title}</b></span><em>${d.treasures.length} / ${il.stages.length}</em></div><div class="zkGridIn">`;
+    html += il.stages.map((s, idx) => {
       const has = d.treasures.includes(s.id);
       const memo = (has && s.treasure.memo) ? `<div class="zm">${s.treasure.memo}</div>` : '';
       const pc = (has && s.treasure.pc) ? `<div class="zm zp">${il.hench.name}「${s.treasure.pc}」</div>` : '';
+      const art = TREASURE_SVGS[s.treasure.scene] || '';
       return `<div class="zkCard ${has ? 'yes' : 'no'}">
-        <div class="zi">${has ? (TREASURE_SVGS[s.treasure.scene] || '') : '❓'}</div>
-        <div class="zn">${has ? s.treasure.n : '？？？'}</div>
+        <div class="zkNo">TREASURE ${String(idx + 1).padStart(2, '0')}</div>
+        <div class="zi">${art}<span class="lockMark">?</span></div>
+        <div class="zn">${has ? s.treasure.n : 'まだ ひみつの たから'}</div>
+        <div class="zkSkill"><small>はっけんばしょ</small><b>${s.name}</b><span>${has ? `みにつけた ちから：${s.skill || 'ぼうけんする ちから'}` : 'この ステージを クリアしよう'}</span></div>
         ${memo}${pc}
       </div>`;
     }).join('');
-    html += '</div>';
+    html += '</div></div>';
   });
-  $('#zkCount').textContent = `みつけた たから：${got} ／ ${total}`;
+  $('#zkCount').innerHTML = `<strong>${got}</strong><span> / ${total} みつけた</span>`;
+  $('#zkProgressFill').style.width = Math.round(got / Math.max(1, total) * 100) + '%';
   $('#zkGrid').innerHTML = html;
 }
 
@@ -2569,10 +2891,17 @@ function openDash() {
   $('#pinPad').style.display = 'none';
   const dash = $('#dash'); dash.hidden = false;
   let tq = 0, tc = 0;
+  const playedStats = [];
   ISLANDS.filter(il => !il.soon).forEach(il => {
     Object.values(isl(il.id).stats).forEach(s => { tq += s.tq; tc += s.tc; });
+    il.stages.forEach(stage => {
+      const s = stg(il.id, stage.id);
+      if (s.tq) playedStats.push({ name:stage.name, skill:stage.skill, rate:Math.round(s.tc / s.tq * 100), plays:s.plays });
+    });
   });
   const rate = tq ? Math.round(tc / tq * 100) : 0;
+  const strongest = playedStats.slice().sort((a,b) => b.rate - a.rate || b.plays - a.plays)[0];
+  const watch = playedStats.slice().sort((a,b) => a.rate - b.rate || b.plays - a.plays)[0];
 
   const days = [];
   for (let i = 6; i >= 0; i--) {
@@ -2593,6 +2922,15 @@ function openDash() {
   });
 
   dash.innerHTML = `
+    <div class="familySummary">
+      <span class="summaryKicker">LEARNING SNAPSHOT</span>
+      <h3>${tq ? '今週も、ぼうけんが進んでいます。' : '最初のぼうけんを待っています。'}</h3>
+      <p>${tq ? `これまでに ${tq} 問へ挑戦し、正答率は ${rate}% です。結果だけでなく、取り組んだ回数も成長として見守れます。` : 'ステージを遊ぶと、ここに学習の記録と見守りポイントが表示されます。'}</p>
+      <div class="insightGrid">
+        <div><small>得意になっていること</small><b>${strongest ? strongest.skill : 'これから見つかります'}</b><span>${strongest ? strongest.name + `・正答率 ${strongest.rate}%` : 'まずは「かぞえの すなはま」から'}</span></div>
+        <div><small>次に見守るポイント</small><b>${watch ? watch.skill : '楽しく始められるか'}</b><span>${watch ? watch.name + `・正答率 ${watch.rate}%` : '最初は一緒に名前をつけてみましょう'}</span></div>
+      </div>
+    </div>
     <div class="cards">
       <div class="card"><b>${tq}</b><span>合計解答数</span></div>
       <div class="card"><b>${rate}%</b><span>正答率</span></div>
@@ -2687,13 +3025,13 @@ function askBuddyName() {
   $('#nameInput').onkeydown = e => { if (e.key === 'Enter') done(); };
 }
 
-const LETTER9 = 'まなびの ぐんとうの たからは ぜーんぶ いただいた！ しまじまには おれさまの かんぶたちを おいてある。とりかえせる もんなら とりかえして みな！ …おっと、こうかい するなよ？ かいぞくだけに、こうかい（ふねの たび）なら まいにち してるけどな！ がっはっは！';
+const LETTER9 = 'まなびの ぐんとうの きんかは、おれさまが いただいた！ さいしょの しまには カニの ハサミーが まっている。もんだいで バリアを こわせたら、たからを かえしてやるぞ！';
 function showStory9() {
   if (state.storySeen2) return;
   setCharFace($('#storyVillain'), 'dajare', 'normal');
-  $('#storyText').innerHTML = LETTER9.replace(/</g, '&lt;') +
-    '<div class="storySign">—— ダジャレかいぞくだん キャプテン・ダジャーレ</div>';
-  $('#storyBuddyMsg').textContent = withName('「たいへんだ！ しまの たからを とりかえしに いこう！」');
+  $('#storyText').innerHTML = '<span class="letterKicker">WANTED MESSAGE</span><h3>キャプテンからの ちょうせんじょう</h3><p>' + LETTER9.replace(/</g, '&lt;') +
+    '</p><div class="storySign">—— ダジャレかいぞくだん<br>キャプテン・ダジャーレ</div>';
+  $('#storyBuddyMsg').textContent = withName('「もんだいに こたえて、ハサミーの バリアを こわそう！」');
   const modal = $('#storyModal');
   modal.classList.add('show');
   $('#storyGo').onclick = () => {
